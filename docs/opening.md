@@ -8,14 +8,19 @@ A commit this opening names from before 2026-11-08's new start is of the platfor
 - The platform (`README.md`) is the core and its additions alone (`core/README.md`; the platform's library,
   `lib/README.md`; acquisition, the printer, `query`, the stores, Massive's reader, the validation; the tutorial,
   `docs/tutorial/`), every program Go.
-- **This round** (one commit after `0d22bc0`; `docs/decisions.md`, 2026-11-08 and 2026-11-09 on the charting consumer,
-  and Open): the charting consumer designed, no code, `docs/designs/design-chart-consumer-2026-11-09.md`: one series'
-  chart in a browser, drawn by `@qi/chart` 2.0.1 (`qi-v2-visualization` at the tag `qi-chart-2.0.1`, read over HTTPS
-  with no login) and updated as the series' K-lines come, of the K-lines and their volume alone. The owner's: the
-  decision of 2026-11-08 on `@qi/chart`, recorded; the design's brief; the page the consumer's, asked in the session.
-  The session's: how it is designed, a proposal; two entries under Open. Its review, role `reviewer`, once, its findings
-  settled before the commit. `docs/milestones.md` (4, Left: the consumer, the next step), `docs/designs/README.md`. No
-  code, no lock, no flake change; the stack and the test stack not touched.
+- **This round** (two commits after `0d22bc0`, `3546680` and the one after; `docs/decisions.md`, 2026-11-08 and
+  2026-11-09 on the charting consumer): the charting consumer designed, no code,
+  `docs/designs/design-chart-consumer-2026-11-09.md`: one series' chart in a browser, drawn by `@qi/chart` (made from
+  2.0.1, `qi-v2-visualization` at the tag `qi-chart-2.0.1`, read over HTTPS with no login) and updated as the series'
+  K-lines come, of the K-lines and their volume alone. The owner's: the decision of 2026-11-08 on `@qi/chart`,
+  recorded; the design's brief; the page the consumer's, asked in the session; then its answers on the design: the
+  platform takes visualization's next release, not 2.0.1, nothing of the structure contract older than 3.1.0 in it,
+  the build waiting for it; the palette asked of visualization in that release, no other; a running chart holding its
+  series' reset off, a reader that stops and starts itself at a reset a step of its own; the rules restated at the
+  build as proposed. The session's: how it is designed, a proposal, its reset part decided. Its review, role
+  `reviewer`, once, its findings settled before the first commit; the second, the owner's answers recorded and the
+  design, `docs/milestones.md` (4, Left) and this opening brought to them, not reviewed. No code, no lock, no flake
+  change; the stack and the test stack not touched.
 - **The round before** (`71a6391`, `0d22bc0`): the platform's history begun anew, this repository public from its start,
   its first commit the tree of the earlier history's last (`b1c325b`), as it is; the decisions of 2026-11-08 on it, the
   restated rules, `make modules` and the branch `main`.
@@ -28,17 +33,19 @@ A commit this opening names from before 2026-11-08's new start is of the platfor
 ## The next task
 
 The charting consumer's build, by a brief to come from its design (`docs/designs/design-chart-consumer-2026-11-09.md`),
-once the owner has decided its two Open entries (`@qi/chart` 2.0.1's structure contract, at 1.1.0 in the lock and the
-page; the rules' lines on the dependencies and on a browser page) and the session's proposal on how it is designed
-(the reset held off while the chart runs, the owner's to judge). The build's first check: the module's test on the
-test stack holding that a reader stops when its topic is made again under it (the design, At a reset, the one way);
-if Redpanda gives no topic IDs, the build stops and the design comes back. What the design leaves for visualization, the
-owner's to take there: the palette (the package holds none and its README names none of the names a chart uses); the
-structure contract at 1.1.0 in a chart of market's K-lines alone.
+once visualization's next release is out: the build waits for it. That release, asked of visualization, holds nothing
+of the structure contract older than 3.1.0 (2.0.1 takes it at 1.1.0 into the lock and the page) and gives the palette
+(2.0.1 holds none and its README names none of the names a chart uses). The brief names its tag and what it brings
+into `flake.lock`, from the release's own; the build's first step holds to it each part of 2.0.1 the design uses (the
+design, What the platform takes), a part not kept bringing the design back; then the module's test on the test stack
+holding that a reader stops when its topic is made again under it (the design, At a reset, the one way), and if
+Redpanda gives no topic IDs, the build stops and the design comes back. With the build, `agents/rules.md`'s lines on
+the dependencies and on a browser page restated as decided (`docs/decisions.md`, 2026-11-09).
 
 Then milestone 4's other Left (`docs/milestones.md`): the rest of the live feed, a gateway on the core; the other
 sources as plugins and a source plugin's live stream; the runs in the session (Massive's free plan, `delay`); a clean
-topic's readers stopped and started again at a reset, and a reset cut short made whole; CI, none today, in the flake's
+topic's readers stopped and started again at a reset, a reader that stops and starts itself among them, and a reset cut
+short made whole; CI, none today, in the flake's
 shell; the library taken outside this repository. The sessions' findings, each a step of its own. Of the charting
 consumer's design: acquisition's first reset after one that failed checks no group of the topic it makes, so a reader
 started between the two has its topic made again under it. Of `go/`'s removal: `plugins.md`'s sections are 1, 3 and 5, their numbers kept since many files cite §3;
@@ -58,8 +65,8 @@ rebalance. The rounds before: `nixpkgs` through `qi-v2-nix`.
 
 Read: the design; `core/README.md`; `docs/tutorial/medium/README.md` and `docs/tutorial/advanced/README.md` (4);
 `publishers/acquisition/clean.go` (`reset`); `core/stream/stream.go`; `docs/decisions.md`, 2026-11-08 and 2026-11-09,
-and Open; `agents/rules.md`; `@qi/chart`'s README, the package's `README.md` (`dev/ts/lib/chart/README.md` at the tag,
-over HTTPS).
+and Open; `agents/rules.md`; `@qi/chart`'s README, the package's `README.md` (`dev/ts/lib/chart/README.md` at the next
+release's tag, over HTTPS), and its `flake.lock`.
 
 ## Standing rules learnt (until the owner approves them for `agents/rules.md`)
 
@@ -81,8 +88,7 @@ over HTTPS).
 
 ## Open, for the owner
 
-In `docs/decisions.md`, Open: CI in the flake's shell; `carrier.md`'s form; `@qi/chart` 2.0.1's structure contract;
-the rules on the dependencies and on a browser page. Decided, proposals until the owner
+In `docs/decisions.md`, Open: CI in the flake's shell; `carrier.md`'s form. Decided, proposals until the owner
 decides: the session's entries of 2026-11-06 (no check of the flake; the state's status and health and the stops of
 `make check`; `TestMigrations`' race fixed in the test, the test gone with `go/`; how steps 8.1 to 8.4 are built
 where their briefs leave the choice), of 2026-11-07 (how step 8.5 is built) and of 2026-11-08 (how steps 8.6 to 8.9
@@ -96,4 +102,4 @@ failed reset deleting its topic; of 8.9, the tutorial's programs a list of their
 `correct-high`; acquisition run by hand on the advanced level; how `go/`'s removal is built, but `make modules`,
 accepted: CI removed whole, the documents removed and restated, the catalog's and the flake's changes; and, the
 owner's to judge, of 8.8, a reader running not stopped, a crash mid-reset), and of 2026-11-09 (how the charting
-consumer is designed; the owner's to judge, its reset held off while it runs).
+consumer is designed, but its reset held off while it runs, decided).

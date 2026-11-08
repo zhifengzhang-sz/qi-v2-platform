@@ -7,7 +7,8 @@ core's topics as the tutorial shows one (`docs/tutorial/`, the basic and medium 
 (`docs/tutorial/advanced/README.md`, 4; `docs/impl/engineering/plugins.md`, 3); `@qi/chart` 2.0.1, `qi-v2-visualization`
 at the tag `qi-chart-2.0.1`: its README (the package's `README.md`, `dev/ts/lib/chart/README.md` in its source), its
 source, and its online design (`docs/designs/design-chart-online-2026-11-08.md` there); market 1.1.0 (`qi-v2-contracts`,
-`market/SPEC.md`).
+`market/SPEC.md`). The platform takes not 2.0.1 but visualization's next release (What the platform takes): every part
+of the library this design names is 2.0.1's, held to that release by the build.
 
 ## What this design guarantees
 
@@ -21,8 +22,9 @@ source, and its online design (`docs/designs/design-chart-online-2026-11-08.md` 
    does; a topic made again under it all the same (At a reset, the one way) stops it with a fault; started again, it
    reads the topic from its start, and each page draws its chart whole again from it. A K-line of a topic made again is
    never stepped onto a chart of the topic before.
-4. **The library as released.** `@qi/chart` is taken by its tag and used as its README says; the drawing is all the
-   library's; nothing of it is changed or copied into this repository.
+4. **The library as released.** `@qi/chart` is taken by the tag of a release that holds nothing of the structure
+   contract older than its current release, 3.1.0, and used as its README says; the drawing is all the library's;
+   nothing of it is changed or copied into this repository.
 5. **An update's cost bounded.** A page holds at most twice the window's K-lines; at that, it is drawn whole again from
    the last window.
 6. **Nothing left running.** Ctrl-C or SIGTERM reaches the program, which leaves its group and ends every page's feed;
@@ -136,10 +138,12 @@ design runs the online component in the caller's page, bundled with the caller's
   the page and on the console, the chart left as it was, and nothing more is stepped until the next `start`. The
   K-lines' texts the page has taken are kept, for the checks to read.
 - **The palette.** The tv engine reads `PALETTE`, a colour, light and dark, of each palette name its chart uses, and
-  stops, naming it, at a name missing (`engine/shared.ts`, `colours`). The package holds none (the chart app's
+  stops, naming it, at a name missing (`engine/shared.ts`, `colours`). 2.0.1 holds none (the chart app's
   `palette.json` is the app's, no product), and its README names none of the names a chart's defaults and the engine
-  use (`cl-up`, `cl-down`, `cl-bg`, `cl-ink`, `cl-muted` among them, in its source): the page's palette holds those of a
-  chart of K-lines and volume, held to the library by the browser check, where a missing one is a fault.
+  use (`cl-up`, `cl-down`, `cl-bg`, `cl-ink`, `cl-muted` among them, in its source): the palette is asked of
+  visualization's next release (What the library lacks), and the page's palette, of the names a chart of K-lines and
+  volume uses, is made from what that release gives, held to the library by the browser check, where a missing one is a
+  fault.
 
 **Its build.** A package of the flake, `chart-page`, built by Nix from the page's sources and visualization's packages,
 with Bun and TypeScript from the flake's nixpkgs (the nixpkgs visualization builds its engines' scripts with): `main.ts`
@@ -209,41 +213,48 @@ clean topic (What is left).
 
 What this gives up: while the chart runs, its series' damage past its tolerance is not mended, neither its clean topic
 nor the stores' clean series, and once it is stopped the reset waits for acquisition's next run, a session day later
-under `make start`, or a run by hand. A chart that runs through a reset is milestone 4's step on a clean topic's readers
-stopped and started again by their process manager.
+under `make start`, or a run by hand. A chart that runs through a reset is a step of its own: a reader that stops and
+starts itself at a reset (What is left).
 
 ## What the platform takes
 
-**`@qi/chart` 2.0.1**, `qi-v2-visualization` at the tag `qi-chart-2.0.1` (its commit `351531cf…`), a flake input read
-over HTTPS with no login. Of it the consumer uses:
+**`@qi/chart` at visualization's next release**, `qi-v2-visualization` at that release's tag, a flake input read over
+HTTPS with no login; not 2.0.1, which takes the structure contract at 1.1.0 into the lock and the page, where that
+contract's release is 3.1.0. The release is asked to hold nothing of the structure contract older than 3.1.0, and a
+palette (What the library lacks). The build waits for it: its brief names the tag once the release is out, and the
+build's first step holds to the release each part of 2.0.1 this design uses (below; the K-line's bar, `located`; the
+engine's handles and `REDRAW`'s view; the update's cost); a part not kept brings the design back. Of it the consumer
+uses, as 2.0.1 has them:
 
 - of the package `qi-chart`: `@qi/chart`'s batch (`tvChart`) and online component (`online`, `complete`, `tvTail`), its
   tv engine's script (`engine/tv.js`) and its handles (`UPDATE`, `REDRAW`); `@qi/market`'s `decodeAs` and
   `klineSchema`; and in the bundle what they import: `@qi/base`, `@qi/core`, `zod`, `@qi/indicator` (which the
-  library's price distribution and its schemas import), and the schemas of the structure contract's TypeScript form, a
-  module of the package, which the library's x-axis takes beside market's K-line;
-- the package `lightweight-charts`, 5.2.1, its standalone build (Apache-2.0, its licence served with it).
+  library's price distribution and its schemas import), and what the library's x-axis takes of the structure
+  contract's TypeScript form beside market's K-line, at no version older than 3.1.0 (in 2.0.1, its schemas at 1.1.0);
+- the package `lightweight-charts`, its standalone build (in 2.0.1, 5.2.1; Apache-2.0, its licence served with it).
 
 Not used: `forming`, the d3fc engine and the package `d3fc`, `tikzChart`, marks, add-ons, the price distribution, the
 structure input, the chart app.
 
-**What it brings into `flake.lock`.** Of the input's own inputs, `qi-v2` and `kit` follow this flake's, the same commit
-(`d49a2a87…`), and with them `nixpkgs` (`fa137313…`); `market` follows this flake's `contracts`, the same commit
-(`3354d2b1…`, `market-1.1.0`). New in the lock, three nodes, by their inputs' names: `visualization`,
-`qi-v2-visualization` (`351531cf…`); a second node of `contracts`, `qi-v2-contracts` at the structure contract's tag of
-1.1.0 (`c4842562…`), from which the package takes that contract's TypeScript form; `qi-v2-ts`, at `qi-v2-ts-0.1.0`
-(`3c55f72e…`), `@qi/base` and `@qi/core`. So the structure contract at 1.1.0 is in the lock, its tag's name among the
-lock's text, and its schemas in the page's bundle, though no structure is drawn, where that contract's release is 3.1.0
-(which the tree of this flake's `contracts` pin holds, unused); whether it is kept is open (`docs/decisions.md`, Open). Chromium, for the
-browser check, and Bun and TypeScript, for the page's build, are nixpkgs' at this flake's pin: nothing more in the lock.
+**What it brings into `flake.lock`.** It is known from the release's own `flake.lock`, and the build's brief names it.
+What stands: a node `visualization`, `qi-v2-visualization` at the release's tag; each of its inputs at the commit of
+this flake's same input follows this flake's, and each other is a node of its own, named by the brief. In 2.0.1,
+`qi-v2` and `kit` follow this flake's (`d49a2a87…`), and with them `nixpkgs` (`fa137313…`); `market` follows this
+flake's `contracts` (`3354d2b1…`, `market-1.1.0`); `qi-v2-ts`, at `qi-v2-ts-0.1.0` (`3c55f72e…`), `@qi/base` and
+`@qi/core`, is a node of its own. No node of `qi-v2-contracts` at the structure contract's tag of 1.1.0 (2.0.1's,
+`c4842562…`) comes in, nor anything of that contract older than 3.1.0: a release taking it from the commit this flake's
+`contracts` pins, whose tree holds 3.1.0, follows this flake's and adds no node; one taking it at a tag of its own adds
+a node whose `original` names that tag, a name the public gate's search of the tracked files looks for. Chromium, for the
+browser check, and Bun and TypeScript, for the page's build, are nixpkgs' at this flake's pin: nothing more in the
+lock.
 
 **What changes:**
 
 | File | Change |
 |---|---|
-| `flake.nix` | the input `visualization`, `github:zhifengzhang-sz/qi-v2-visualization?ref=qi-chart-2.0.1`, its `qi-v2` and `kit` following this flake's and its `market` this flake's `contracts`; the output `packages.x86_64-linux.chart-page` (Its build); the shell unchanged |
-| `flake.lock` | the three nodes above; nothing else changed |
-| `PRODUCTS.md` | Takes: `visualization`, from `qi-v2-visualization`, its packages `qi-chart` (`@qi/chart` 2.0.1) and `lightweight-charts`, pinned by `flake.lock`; Products unchanged |
+| `flake.nix` | the input `visualization`, `github:zhifengzhang-sz/qi-v2-visualization?ref=` the release's tag, each of its inputs at the commit of this flake's same input following this flake's; the output `packages.x86_64-linux.chart-page` (Its build); the shell unchanged |
+| `flake.lock` | the nodes above; nothing else changed |
+| `PRODUCTS.md` | Takes: `visualization`, from `qi-v2-visualization`, its packages `qi-chart` (`@qi/chart` at the release's version) and `lightweight-charts`, pinned by `flake.lock`; Products unchanged |
 | `Makefile` | `consumers/chart` in `CORE`; `build` links the page's build at `bin/chart-page` (`nix build .#chart-page`); `check-chart`, in `check` (How it is checked) |
 | `dev/scripts/verify.py` | `check-chart` for a change of `consumers/chart/`, `flake.nix` or `flake.lock` |
 | the shell | unchanged: no Bun, TypeScript or Chromium in it |
@@ -251,7 +262,9 @@ browser check, and Bun and TypeScript, for the page's build, are nixpkgs' at thi
 With the build, the documents that state what stands are brought to it: `README.md` (the contract's programs, the
 operations on the stream, the dependencies), `dev.environment.md` (the tools, the chart's address), `go.toolchain.md`
 (4, the browser check's variables), `plugins.md` (3, a clean topic's readers); and `agents/rules.md`'s lines on the
-dependencies and on a browser page, once restated (`docs/decisions.md`, Open).
+dependencies and on a browser page, restated: the dependencies three, `qi-v2-visualization` the third, its packages
+`qi-chart` and `lightweight-charts` pinned by `flake.lock`, for the charting consumer's page; what runs in a browser a
+consumer's page, the charting consumer's among them, its drawing the library's (`docs/decisions.md`, 2026-11-09).
 
 ## How it is checked
 
@@ -296,13 +309,14 @@ Every input is public, read with no login; the Massive key is read by the librar
 
 ## What the library lacks for the path
 
-Nothing the path needs is missing from the package. Two things it carries or leaves unsaid are for visualization:
+Nothing the path needs is missing from 2.0.1. Two things it carries or leaves unsaid are asked of visualization, in
+its next release, the one the platform takes; no other release is asked for:
 
-- **The palette.** The package holds no palette, and its README names no palette name that a chart's defaults or its
-  engines use: the page's palette is written from the library's source and held to it by the browser check.
-- **The structure contract at 1.1.0.** A chart of market's K-lines alone takes the structure contract at 1.1.0 into the
-  lock and the bundle, the x-axis's schema taking that contract's K-line too, where its release is 3.1.0: a release
-  whose market path takes none of it, or takes its current release, would keep the older version out.
+- **The palette.** 2.0.1 holds no palette, and its README names no palette name that a chart's defaults or its engines
+  use: the release to give it, and the page's palette made from what it gives.
+- **The structure contract older than 3.1.0.** In 2.0.1 a chart of market's K-lines alone takes the structure contract
+  at 1.1.0 into the lock and the bundle, the x-axis's schema taking that contract's K-line too, where its release is
+  3.1.0: the release to hold nothing of it older than 3.1.0.
 
 Not needed by the path: an update in O(1), which the library's online design leaves to a later version (What an update
 costs), would lift the window's bound.
@@ -315,8 +329,9 @@ Each a step of its own:
   `market.corrections`.
 - **A forming K-line**, once a source gives one: a source plugin's live stream (`plugins.md`, 5) and a topic of ongoing
   K-lines, which the core has not.
-- **A reset with the chart running**: a clean topic's readers stopped and started again by their process manager
-  (milestone 4), or a mark of a reset that a reader running can read; then the chart under `make start`.
+- **A reader that stops and starts itself at a reset**, the chart among them: a reset with the chart running, then the
+  chart under `make start`; or a clean topic's readers stopped and started again by their process manager, or a mark
+  of a reset that a reader running can read (milestone 4).
 - **Acquisition's first reset after one that failed** checking the groups of the topic it makes, as a reset of a topic
   that is there does (At a reset, the one way), for every reader of a clean topic.
 - **The rest of milestone 4's live feed**, a gateway on the core: any of the core's topics, its protocol in the platform

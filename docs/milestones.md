@@ -97,16 +97,18 @@ reset held off by a reader running and made once it is stopped. The platform con
 the stores.
 
 **Left.**
-- The charting consumer, the next step: one series' chart in a browser, drawn by visualization's `@qi/chart` 2.0.1,
-  taken by lock, and updated as the series' K-lines come, of the K-lines and their volume alone; designed
-  (`docs/designs/design-chart-consumer-2026-11-09.md`), its build to come.
+- The charting consumer, the next step: one series' chart in a browser, drawn by visualization's `@qi/chart` at its
+  next release, taken by lock, and updated as the series' K-lines come, of the K-lines and their volume alone; designed
+  (`docs/designs/design-chart-consumer-2026-11-09.md`), its build to come once that release is out, holding nothing of
+  the structure contract older than 3.1.0, and a palette.
 - A live feed of the core's topics for browser clients, a gateway on the core: what of it the charting consumer leaves
   (its design, What is left).
 - The other sources as plugins (Binance's, a CSV file's), and a source plugin's live stream (`plugins.md`, 5).
 - Runs in the session: Massive's free plan gives no bar of the current trading day (`lib/README.md`); acquisition on
   `massive-spy-1m` first reads a minute 20 h after its end (`delay`).
-- A clean topic's readers stopped and started again by their process manager at a reset (none exists yet; a reader
-  running stops it), and a reset cut short by a crash made whole (`docs/decisions.md`, 2026-11-08, step 8.8).
+- A clean topic's readers stopped and started again at a reset, a reader that stops and starts itself (the charting
+  consumer among them) or one stopped and started by its process manager (none exists yet; a reader running holds the
+  reset off), and a reset cut short by a crash made whole (`docs/decisions.md`, 2026-11-08, step 8.8, and 2026-11-09).
 - CI, none today, for the core, the library, the additions and the tutorial's programs (`docs/decisions.md`, Open, CI
   in the flake's shell).
 - The library taken outside this repository: a version, and market's Go form without `go.work` (milestone 2).
