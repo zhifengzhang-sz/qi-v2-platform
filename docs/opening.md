@@ -1,4 +1,4 @@
-Opening for the next session, written 2026-11-08 by the session before (`docs/process.md`). It says where the work
+Opening for the next session, written 2026-11-09 by the session before (`docs/process.md`). It says where the work
 stands, the one next task, and what to read.
 
 A commit this opening names from before 2026-11-08's new start is of the platform's earlier history, kept by the owner and not in this repository (`docs/decisions.md`, 2026-11-08, the history begun anew); each hash is left as it was.
@@ -8,61 +8,40 @@ A commit this opening names from before 2026-11-08's new start is of the platfor
 - The platform (`README.md`) is the core and its additions alone (`core/README.md`; the platform's library,
   `lib/README.md`; acquisition, the printer, `query`, the stores, Massive's reader, the validation; the tutorial,
   `docs/tutorial/`), every program Go.
-- **This round** (this repository's two commits; `docs/decisions.md`, 2026-11-08: the history begun anew, the rules
-  restated with `go/`'s removal approved, `make modules` accepted, the branch `main`): the platform's history begun
-  anew, this repository public from its start. Its first commit, on GitHub's `dcb8ef9` (its `LICENSE` alone), is the
-  tree of the earlier history's last commit, `b1c325b`, as it is (the tree `fc174e58`), its `LICENSE` the platform's.
-  Its second: the decisions; Open's entries on the restated rules and on the branch closed; the branch `main` in
-  `agents/rules.md`'s repository line (the files `make agents` writes from it ignored, written again) and in
-  `PRODUCTS.md`'s Release; a
-  line in `docs/decisions.md`, `docs/milestones.md` and this opening on the earlier history's commits; this opening.
-  No code, no pin, no rule's wording but the branch's changed. The earlier history, with its tag and its stash, is
-  kept by the owner, private.
-- **The round before** (`fd6f547`, `b1c325b`; `docs/decisions.md`, 2026-11-08, the owner's entries on the project
-  public, `go/` removed, the engine worker and the Ctrl-C rule, and the session's on how it is built): the project
-  made ready to be public. The old platform, `go/`, removed ahead of the path's end, with everything only it used or
-  that existed for it: `deps.lock` and the executable it named, CI's one job and its token (no CI is left),
-  `examples/plugins/bar-returns`, `scripts/`, `test/conformance/`, `config/development.yaml` and `production.yaml`,
-  `dev/scripts/locks-check.py`, `docs/owner-setup.md` (the owner's notes on private projects; in the earlier
-  history), `docs/designs/flow.md`, the old platform's engineering documents; the Makefile without `check-go`,
-  `generate`, `generate-check`, `e2e`, `backup`, and with `make modules` (the modules the workspace's packages and
-  tests need, from the public Go module proxy, run first by every target that runs Go, the checks and builds keeping
-  `GOPROXY=off`); the flake's shell without sqlc, PostgreSQL's clients and the host's engine executable, its inputs
-  unchanged; `config/catalog.yaml` without the Binance datasets and `store`. No private project named in any tracked
-  file: the documents restated, the past decisions keeping what was decided and why, the core's comments that cited
-  `go/` stating the rule where it stands, two tests' derived-topic names generic (`engine.…`). The engine worker, and
-  what it makes, are not the platform's (`core/README.md`, The topics' names). `agents/rules.md`: the repository
-  public; the Ctrl-C rule; the rules that named `go/` or a private project restated, approved this round.
-  `PRODUCTS.md`: the engine executable's row out; the contract the core's topics, the programs and their flags, the
-  plugin protocols, a user reads the topics, not the stores. `consumers/query/README.md`'s output of `query topics`
-  on the stack leaves out the old platform's two empty topics whose names abbreviate the private engine's API. Its
-  checks, role `checker`, from a fresh shell: `make modules` from an empty module cache, `make check` on the test
-  stack PASS (95 top-level tests passed, 0 skipped, 0 failed, 13 packages), `make products-check` valid.
-- **The gate of this round.** The trees: the first commit's tree `b1c325b`'s; the second's diff against
-  it the files of the second commit above and nothing else. The search: the round before's, a case-ignored `git grep
-  -I -P` of every tracked file for each of its 28 patterns (each private project's name, each short name standing
-  for one, each of their paths and products the tree named before) and one of this round's, and the same over every
-  message of this repository's history; the patterns are in `.reports/public.patterns.txt` while it lasts, never in
-  a tracked file, where they would name what they search for. Empty in the first commit's message, the second's
-  searched before the push; in the tracked files empty but
-  for one pattern's line in `agents/roles/reviewer.md`, the kit's class of AI model, the generated agent files the
-  same, and `deps.lock` and `owner-setup` in `docs/decisions.md` and this opening, as the earlier history's own
-  removed files. The checks, role `checker`, after the last change: `make verify`, in the second commit's message.
-  The push, once every line of the gate before it has passed: `main` alone to `origin` (no tag, no other branch).
+- **This round** (one commit after `0d22bc0`; `docs/decisions.md`, 2026-11-08 and 2026-11-09 on the charting consumer,
+  and Open): the charting consumer designed, no code, `docs/designs/design-chart-consumer-2026-11-09.md`: one series'
+  chart in a browser, drawn by `@qi/chart` 2.0.1 (`qi-v2-visualization` at the tag `qi-chart-2.0.1`, read over HTTPS
+  with no login) and updated as the series' K-lines come, of the K-lines and their volume alone. The owner's: the
+  decision of 2026-11-08 on `@qi/chart`, recorded; the design's brief; the page the consumer's, asked in the session.
+  The session's: how it is designed, a proposal; two entries under Open. Its review, role `reviewer`, once, its findings
+  settled before the commit. `docs/milestones.md` (4, Left: the consumer, the next step), `docs/designs/README.md`. No
+  code, no lock, no flake change; the stack and the test stack not touched.
+- **The round before** (`71a6391`, `0d22bc0`): the platform's history begun anew, this repository public from its start,
+  its first commit the tree of the earlier history's last (`b1c325b`), as it is; the decisions of 2026-11-08 on it, the
+  restated rules, `make modules` and the branch `main`.
 - The stack at `stack-0.3.0`, up, not touched, as step 8.8 left it (then: `market.raw` 389,370 messages (p7),
   `market.corrections` 417, `market.clean.validation.v0-1-0.massive.SPY.M1` 194,880; the old platform's topics as
   they were); no component of the platform's running there. The test stack down, not used this round.
 - The locks: `make locks-check` not run (it calls `gh api`); `flake.lock` unchanged.
-- `main`: this repository's two commits, pushed to `origin` once the gate has passed; `.env` in place, ignored;
-  `make install` run; the owner's local file: `todo.md`.
+- `main`: pushed to `origin`; `.env` in place, ignored; `make install` run; the owner's local file: `todo.md`.
 
 ## The next task
 
-Milestone 4's Left (`docs/milestones.md`): a live feed of the core's topics, a gateway on the core; the other
+The charting consumer's build, by a brief to come from its design (`docs/designs/design-chart-consumer-2026-11-09.md`),
+once the owner has decided its two Open entries (`@qi/chart` 2.0.1's structure contract, at 1.1.0 in the lock and the
+page; the rules' lines on the dependencies and on a browser page) and the session's proposal on how it is designed
+(the reset held off while the chart runs, the owner's to judge). The build's first check: the module's test on the
+test stack holding that a reader stops when its topic is made again under it (the design, At a reset, the one way);
+if Redpanda gives no topic IDs, the build stops and the design comes back. What the design leaves for visualization, the
+owner's to take there: the palette (the package holds none and its README names none of the names a chart uses); the
+structure contract at 1.1.0 in a chart of market's K-lines alone.
+
+Then milestone 4's other Left (`docs/milestones.md`): the rest of the live feed, a gateway on the core; the other
 sources as plugins and a source plugin's live stream; the runs in the session (Massive's free plan, `delay`); a clean
-topic's readers stopped and started again at a reset, and a reset cut short made whole; CI, none today, in the
-flake's shell; the library taken outside this repository. Or the sessions' findings, each a step of its own. Of the
-round before: `plugins.md`'s sections are 1, 3 and 5, their numbers kept since many files cite §3;
+topic's readers stopped and started again at a reset, and a reset cut short made whole; CI, none today, in the flake's
+shell; the library taken outside this repository. The sessions' findings, each a step of its own. Of the charting
+consumer's design: acquisition's first reset after one that failed checks no group of the topic it makes, so a reader
+started between the two has its topic made again under it. Of `go/`'s removal: `plugins.md`'s sections are 1, 3 and 5, their numbers kept since many files cite §3;
 `dev.environment.md`'s Known gaps holds no gap, and its test stack's line still names acquisition's `-state`, which
 it no longer has; acquisition's test catalog keeps a Binance dataset and `store` (test data, unchanged). Of step
 8.9: the tutorial's programs have no tests of their own, the gate's run their test; the pages' outputs hold the
@@ -77,8 +56,10 @@ writers for good; `make help` printing `Makefile` for each target; Massive's fir
 known; Massive's pages kept without end; a real deployment's password in a writer's `-url`; ClickHouse's window in a
 rebalance. The rounds before: `nixpkgs` through `qi-v2-nix`.
 
-Read: `README.md`; `core/README.md`; `docs/milestones.md` (4); `docs/decisions.md`, 2026-11-08 and Open;
-`agents/rules.md`.
+Read: the design; `core/README.md`; `docs/tutorial/medium/README.md` and `docs/tutorial/advanced/README.md` (4);
+`publishers/acquisition/clean.go` (`reset`); `core/stream/stream.go`; `docs/decisions.md`, 2026-11-08 and 2026-11-09,
+and Open; `agents/rules.md`; `@qi/chart`'s README, the package's `README.md` (`dev/ts/lib/chart/README.md` at the tag,
+over HTTPS).
 
 ## Standing rules learnt (until the owner approves them for `agents/rules.md`)
 
@@ -100,7 +81,8 @@ Read: `README.md`; `core/README.md`; `docs/milestones.md` (4); `docs/decisions.m
 
 ## Open, for the owner
 
-In `docs/decisions.md`, Open: CI in the flake's shell; `carrier.md`'s form. Decided, proposals until the owner
+In `docs/decisions.md`, Open: CI in the flake's shell; `carrier.md`'s form; `@qi/chart` 2.0.1's structure contract;
+the rules on the dependencies and on a browser page. Decided, proposals until the owner
 decides: the session's entries of 2026-11-06 (no check of the flake; the state's status and health and the stops of
 `make check`; `TestMigrations`' race fixed in the test, the test gone with `go/`; how steps 8.1 to 8.4 are built
 where their briefs leave the choice), of 2026-11-07 (how step 8.5 is built) and of 2026-11-08 (how steps 8.6 to 8.9
@@ -113,4 +95,5 @@ failed reset deleting its topic; of 8.9, the tutorial's programs a list of their
 `clean-reader`'s whole-value check; the follower's file as what it has done; `despike`'s 2% and the tolerance 3;
 `correct-high`; acquisition run by hand on the advanced level; how `go/`'s removal is built, but `make modules`,
 accepted: CI removed whole, the documents removed and restated, the catalog's and the flake's changes; and, the
-owner's to judge, of 8.8, a reader running not stopped, a crash mid-reset).
+owner's to judge, of 8.8, a reader running not stopped, a crash mid-reset), and of 2026-11-09 (how the charting
+consumer is designed; the owner's to judge, its reset held off while it runs).

@@ -97,7 +97,11 @@ reset held off by a reader running and made once it is stopped. The platform con
 the stores.
 
 **Left.**
-- A live feed of the core's topics for browser clients, a gateway on the core.
+- The charting consumer, the next step: one series' chart in a browser, drawn by visualization's `@qi/chart` 2.0.1,
+  taken by lock, and updated as the series' K-lines come, of the K-lines and their volume alone; designed
+  (`docs/designs/design-chart-consumer-2026-11-09.md`), its build to come.
+- A live feed of the core's topics for browser clients, a gateway on the core: what of it the charting consumer leaves
+  (its design, What is left).
 - The other sources as plugins (Binance's, a CSV file's), and a source plugin's live stream (`plugins.md`, 5).
 - Runs in the session: Massive's free plan gives no bar of the current trading day (`lib/README.md`); acquisition on
   `massive-spy-1m` first reads a minute 20 h after its end (`delay`).
