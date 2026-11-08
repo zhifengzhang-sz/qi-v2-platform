@@ -7,7 +7,7 @@ The work they record from before this repository's start was done in the platfor
 | # | Milestone | Stands |
 |---|---|---|
 | 1 | The stream and the warehouse in Go | closed: every program Go; the old platform, `go/`, removed, the core in its place (4) |
-| 2 | The platform as a product | not started |
+| 2 | The platform as a product | designed, not built: the first path's programs as a flake package and one image on GHCR, run by Docker alone beside the test stack (`docs/designs/design-platform-image-2026-11-09.md`); nothing published |
 | 3 | The tooling to the practices of every qi-v2 project | the flake, the kit, the Makefile and the state documents in place; every input public, read with no login; no CI |
 | 4 | The lean core and its additions | the core, naming no source, its first path and its first stores: every minute of SPY's session from Massive on `market.raw`, each first version, and Massive's revisions on `market.corrections`, both kept forever, read by a consumer and kept by two stores, TimescaleDB's and ClickHouse's, four series each; the first cleaning, the validation, SPY's clean topic kept as the record changes and made again past its tolerance, the stores' clean series written from it; `query`, the topics read in no group; the platform's library, Massive's reader and Massive's K-line in it; acquisition re-reading 30 days, each page kept once; `make start`, run on the stack; `make check`'s tests on the test stack; the tutorial on the core, three levels, every example run on the test stack; a user reads the topics, not the stores |
 
@@ -25,9 +25,23 @@ of milestone 4's end, since it took a private project's executable; the core and
 
 The programs published as a flake package and as an image, taken by a taker without this folder.
 
-**Stands.** Nothing published; the contract stated (`README.md`, The platform contract).
+**Stands.** Nothing published; the contract stated (`README.md`, The platform contract). Designed, not built
+(`docs/designs/design-platform-image-2026-11-09.md`): the first path's five programs as the flake package `platform`,
+which another qi-v2 project takes by its lock, and as one image by qi-v2's `releaseImage`,
+`ghcr.io/zhifengzhang-sz/qi-v2-platform`, pinned by digest, a container's program its command; a Compose file of the
+platform's running it beside the test stack; an external user with Docker alone, the stack from `qi-v2-services`'
+Compose files at its pinned tag, a component built by a Dockerfile, the tutorial's reader showing it; the release
+0.1.0, the tags `platform-0.1.0` and `qi-v2-platform-0.1.0`, its digest in its commit, its push the owner's.
 
-**Left.** The core's programs as a flake package and as one image by qi-v2's `releaseImage`.
+**Left.**
+- The design's build, by a brief to come from the design; then the release 0.1.0, its push to GHCR the owner's, and
+  the check after it with no login.
+- What the design leaves (its What is left), each a step of its own: the image beside the stack, and `make start` by
+  it; the ClickHouse writer, the printer and `query` in the package and the image; a user's cleaning in an image on the
+  platform's; a guard in acquisition against two runs on one stack; `qi-v2-services`' Compose files as a product
+  (`docs/decisions.md`, Open); the Compose file published otherwise; the Dockerfile's digest in `make locks-check`;
+  other systems; CI; the package's programs as apps; a host whose user is not 1000.
+- The library taken outside this repository: a version, and market's Go form without `go.work` (milestone 4, Left).
 
 ## 3 The tooling to the practices of every qi-v2 project
 

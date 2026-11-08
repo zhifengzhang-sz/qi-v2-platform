@@ -1,5 +1,5 @@
 Opening for the next session, written 2026-11-09 by the session before (`docs/process.md`). It says where the work
-stands, the one next task, and what to read.
+stands, the next tasks, and what to read.
 
 A commit this opening names from before 2026-11-08's new start is of the platform's earlier history, kept by the owner and not in this repository (`docs/decisions.md`, 2026-11-08, the history begun anew); each hash is left as it was.
 
@@ -8,8 +8,25 @@ A commit this opening names from before 2026-11-08's new start is of the platfor
 - The platform (`README.md`) is the core and its additions alone (`core/README.md`; the platform's library,
   `lib/README.md`; acquisition, the printer, `query`, the stores, Massive's reader, the validation; the tutorial,
   `docs/tutorial/`), every program Go.
-- **This round** (two commits after `0d22bc0`, `3546680` and the one after; `docs/decisions.md`, 2026-11-08 and
-  2026-11-09 on the charting consumer): the charting consumer designed, no code,
+- **This round** (one commit after `7e4d7ba`; `docs/decisions.md`, 2026-11-09 on the platform as images, and Open):
+  the platform as an image designed, no code, `docs/designs/design-platform-image-2026-11-09.md`: the first path's
+  five programs (`provision`, `acquisition`, `massive-reader`, `validation`, `timescaledb-writer`) as the flake package
+  `platform`, which another qi-v2 project takes by its lock, and as one image by qi-v2's `releaseImage`,
+  `ghcr.io/zhifengzhang-sz/qi-v2-platform`, pinned by digest, a container's program its command; the platform's
+  Compose file, `deploy/compose.yaml`, the project `platform-test` on the test stack's network; an external user with
+  Docker alone, the stack from `qi-v2-services`' Compose files at `stack-0.3.0`, the image from GHCR, a component
+  built by a Dockerfile, the tutorial's reader showing it; the release 0.1.0, its digest computed before the push from
+  an OCI layout made by skopeo in Nix, the tags `platform-0.1.0` and `qi-v2-platform-0.1.0`, the push the owner's
+  (`make release-push`), `make release-check` after it with no login. The owner's: the brief; in the session, one image
+  holding every program of the path, not one for each; a Dockerfile for external use and the flake for use between
+  projects, its two products, the tutorial's reader by a Dockerfile (the session's proposal, the reader built by the
+  flake, declined); Nix no prerequisite of the image's use, the stack from the services' Compose files. The session's:
+  how it is designed, a proposal; two entries under Open. Its review, role `reviewer`, once: twelve findings and two
+  smaller, each settled in the design or the record before the commit, not rechecked. No code, no lock, no flake
+  change; the stack and the test stack not touched (Docker read only: its containers, networks, version); nothing
+  pushed to a registry.
+- **The round before** (`3546680`, `7e4d7ba`; `docs/decisions.md`, 2026-11-08 and 2026-11-09 on the charting
+  consumer): the charting consumer designed, no code,
   `docs/designs/design-chart-consumer-2026-11-09.md`: one series' chart in a browser, drawn by `@qi/chart` (made from
   2.0.1, `qi-v2-visualization` at the tag `qi-chart-2.0.1`, read over HTTPS with no login) and updated as the series'
   K-lines come, of the K-lines and their volume alone. The owner's: the decision of 2026-11-08 on `@qi/chart`,
@@ -21,18 +38,20 @@ A commit this opening names from before 2026-11-08's new start is of the platfor
   `reviewer`, once, its findings settled before the first commit; the second, the owner's answers recorded and the
   design, `docs/milestones.md` (4, Left) and this opening brought to them, not reviewed. No code, no lock, no flake
   change; the stack and the test stack not touched.
-- **The round before** (`71a6391`, `0d22bc0`): the platform's history begun anew, this repository public from its start,
+- **The round before those** (`71a6391`, `0d22bc0`): the platform's history begun anew, this repository public from its start,
   its first commit the tree of the earlier history's last (`b1c325b`), as it is; the decisions of 2026-11-08 on it, the
   restated rules, `make modules` and the branch `main`.
 - The stack at `stack-0.3.0`, up, not touched, as step 8.8 left it (then: `market.raw` 389,370 messages (p7),
   `market.corrections` 417, `market.clean.validation.v0-1-0.massive.SPY.M1` 194,880; the old platform's topics as
-  they were); no component of the platform's running there. The test stack down, not used this round.
+  they were); no component of the platform's running there. The test stack down, not used these two rounds.
 - The locks: `make locks-check` not run (it calls `gh api`); `flake.lock` unchanged.
 - `main`: pushed to `origin`; `.env` in place, ignored; `make install` run; the owner's local file: `todo.md`.
 
-## The next task
+## The next tasks
 
-The charting consumer's build, by a brief to come from its design (`docs/designs/design-chart-consumer-2026-11-09.md`),
+Two, each by a brief to come; which goes first is the owner's to say, and the chart's build waits on visualization.
+
+**The charting consumer's build**, by a brief to come from its design (`docs/designs/design-chart-consumer-2026-11-09.md`),
 once visualization's next release is out: the build waits for it. That release, asked of visualization, holds nothing
 of the structure contract older than 3.1.0 (2.0.1 takes it at 1.1.0 into the lock and the page) and gives the palette
 (2.0.1 holds none and its README names none of the names a chart uses). The brief names its tag and what it brings
@@ -42,13 +61,24 @@ holding that a reader stops when its topic is made again under it (the design, A
 Redpanda gives no topic IDs, the build stops and the design comes back. With the build, `agents/rules.md`'s lines on
 the dependencies and on a browser page restated as decided (`docs/decisions.md`, 2026-11-09).
 
+**The image's build**, by a brief to come from its design (`docs/designs/design-platform-image-2026-11-09.md`). The
+brief names what it allows: the Massive key's use by `make image-test`, as `make start STACK=test` uses it; the first
+build of its session asked of the owner. Its first steps hold what the design rests on but could not see run, one not
+holding bringing the design back: `buildGoModule` building the workspace, and the package's closure the package alone
+(`nix path-info -r`); skopeo's layout built again to the same bytes (`nix build --rebuild`); Docker Hub's
+`golang:1.26.10`; BuildKit's `ADD` of a Git URL at a commit. With the build, `agents/rules.md` on the tools and the
+dependencies restated as the owner decides (`docs/decisions.md`, Open). Then the release 0.1.0, by a brief of its own:
+its commit and tags pushed by the session, its push to GHCR the owner's, nothing pushed to a registry by a session.
+
 Then milestone 4's other Left (`docs/milestones.md`): the rest of the live feed, a gateway on the core; the other
 sources as plugins and a source plugin's live stream; the runs in the session (Massive's free plan, `delay`); a clean
 topic's readers stopped and started again at a reset, a reader that stops and starts itself among them, and a reset cut
 short made whole; CI, none today, in the flake's
 shell; the library taken outside this repository. The sessions' findings, each a step of its own. Of the charting
 consumer's design: acquisition's first reset after one that failed checks no group of the topic it makes, so a reader
-started between the two has its topic made again under it. Of `go/`'s removal: `plugins.md`'s sections are 1, 3 and 5, their numbers kept since many files cite §3;
+started between the two has its topic made again under it. Of the image's design: the catalog's dataset, its
+session's calendar among it, copied once more in `deploy/catalog.yaml`, as in the tutorial's two catalogs, no check
+holding the copies to `config/catalog.yaml`. Of `go/`'s removal: `plugins.md`'s sections are 1, 3 and 5, their numbers kept since many files cite §3;
 `dev.environment.md`'s Known gaps holds no gap, and its test stack's line still names acquisition's `-state`, which
 it no longer has; acquisition's test catalog keeps a Binance dataset and `store` (test data, unchanged). Of step
 8.9: the tutorial's programs have no tests of their own, the gate's run their test; the pages' outputs hold the
@@ -63,10 +93,15 @@ writers for good; `make help` printing `Makefile` for each target; Massive's fir
 known; Massive's pages kept without end; a real deployment's password in a writer's `-url`; ClickHouse's window in a
 rebalance. The rounds before: `nixpkgs` through `qi-v2-nix`.
 
-Read: the design; `core/README.md`; `docs/tutorial/medium/README.md` and `docs/tutorial/advanced/README.md` (4);
+Read, for the chart: the design; `core/README.md`; `docs/tutorial/medium/README.md` and `docs/tutorial/advanced/README.md` (4);
 `publishers/acquisition/clean.go` (`reset`); `core/stream/stream.go`; `docs/decisions.md`, 2026-11-08 and 2026-11-09,
 and Open; `agents/rules.md`; `@qi/chart`'s README, the package's `README.md` (`dev/ts/lib/chart/README.md` at the next
 release's tag, over HTTPS), and its `flake.lock`.
+
+Read, for the image: its design; `docs/decisions.md`, 2026-11-09 and Open; `agents/rules.md`; `flake.nix`,
+`flake.lock`, `Makefile`, `dev/scripts/run.py`, `dev/scripts/verify.py`, `PRODUCTS.md`; qi-v2's `qi-v2/flake.nix`
+(`releaseImage`) and the package `stack`'s Compose files, at the store paths `flake.lock` pins;
+`docs/tutorial/basic/README.md` and `clean-reader/`; nixpkgs' `pkgs/build-support/go/module.nix`.
 
 ## Standing rules learnt (until the owner approves them for `agents/rules.md`)
 
@@ -85,11 +120,14 @@ release's tag, over HTTPS), and its `flake.lock`.
   of `origin` among them, the GitHub tools of an MCP server), whatever the reason, a rate limit included; GitHub's
   public repositories are read over HTTPS; `make locks-check` calls `gh api`, so it is asked before it runs. The Massive
   key is read only by the library's fetcher, never printed or logged; a refused fetch stops the run.
+- **Nothing pushed to a registry but by the owner**, from the owner: a push to GHCR, or any registry, is the owner's,
+  with a login of its own, asked each time; a session builds and checks, and logs in to no registry.
 
 ## Open, for the owner
 
-In `docs/decisions.md`, Open: CI in the flake's shell; `carrier.md`'s form. Decided, proposals until the owner
-decides: the session's entries of 2026-11-06 (no check of the flake; the state's status and health and the stops of
+In `docs/decisions.md`, Open: CI in the flake's shell; `carrier.md`'s form; the rules on the dependencies and the
+tools, for the Dockerfile; `qi-v2-services`' Compose files as a product of their own, to be asked of it. Decided,
+proposals until the owner decides: the session's entries of 2026-11-06 (no check of the flake; the state's status and health and the stops of
 `make check`; `TestMigrations`' race fixed in the test, the test gone with `go/`; how steps 8.1 to 8.4 are built
 where their briefs leave the choice), of 2026-11-07 (how step 8.5 is built) and of 2026-11-08 (how steps 8.6 to 8.9
 are built; of 8.8, the cleaning named by the catalog and naming itself, the protocol's `--after`, the validation
@@ -102,4 +140,4 @@ failed reset deleting its topic; of 8.9, the tutorial's programs a list of their
 `correct-high`; acquisition run by hand on the advanced level; how `go/`'s removal is built, but `make modules`,
 accepted: CI removed whole, the documents removed and restated, the catalog's and the flake's changes; and, the
 owner's to judge, of 8.8, a reader running not stopped, a crash mid-reset), and of 2026-11-09 (how the charting
-consumer is designed, but its reset held off while it runs, decided).
+consumer is designed, but its reset held off while it runs, decided; how the platform as an image is designed).
