@@ -2,6 +2,8 @@
 
 The project's milestones and where each stands now. Where the last session stopped: `docs/opening.md`.
 
+The work they record from before this repository's start was done in the platform's earlier history, kept by the owner and not in this repository, which starts from that history's last tree (`docs/decisions.md`, the history begun anew); a commit a document names from before that start is of that history.
+
 | # | Milestone | Stands |
 |---|---|---|
 | 1 | The stream and the warehouse in Go | closed: every program Go; the old platform, `go/`, removed, the core in its place (4) |

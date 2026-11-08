@@ -16,7 +16,7 @@ Read the others only when the task touches them: `README.md` (the system context
 **The rules.**
 
 - **The owner's local file**: `todo.md`, never committed.
-- **The repository.** This folder is on `master`; its remote is `origin`, `zhifengzhang-sz/qi-v2-platform` on GitHub, public; pushed after a commit. Being public, it takes nothing that cannot be read with no login, and names no private project in any file: what anyone reads here is all there is.
+- **The repository.** This folder is on `main`; its remote is `origin`, `zhifengzhang-sz/qi-v2-platform` on GitHub, public; pushed after a commit. Being public, it takes nothing that cannot be read with no login, and names no private project in any file: what anyone reads here is all there is.
 - **The dependencies are two, and known** (`README.md`, Dependencies and layout), each public: `qi-v2-services`, the stack, its published package `stack` pinned by `flake.lock` and run by `make stack-up` and `make stack-down`, never from a checkout; `qi-v2-contracts`, the market data contract, its package `market-go` and market's vectors pinned by `flake.lock`. The tools are `qi-v2-nix`'s, the inputs of `flake.nix`, and its `practices.md` is the standard the tooling follows. Nothing of who consumes the platform: no consumer named in code, documents or tests; no document cited outside this repository, its dependencies and `qi-v2-nix`.
 
 ## Every role

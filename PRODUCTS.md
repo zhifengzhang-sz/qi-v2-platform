@@ -13,8 +13,8 @@ and what it makes, or any consumer's code.
 
 | Product | What | Form | Version | Release | Doc |
 |---|---|---|---|---|---|
-| the platform contract | the core's topics and their schemas, the programs and their flags, the plugin protocols; a user reads the topics, not the stores | `file` | `none` | `master` | `README.md` |
-| the platform's library | Go packages any app can use, on market's Go form and the standard library alone: Massive's reader | `library` | `none` | `master` | `lib/README.md` |
+| the platform contract | the core's topics and their schemas, the programs and their flags, the plugin protocols; a user reads the topics, not the stores | `file` | `none` | `main` | `README.md` |
+| the platform's library | Go packages any app can use, on market's Go form and the standard library alone: Massive's reader | `library` | `none` | `main` | `lib/README.md` |
 
 ## Takes
 
