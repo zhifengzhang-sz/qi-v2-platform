@@ -1,0 +1,26 @@
+.env
+.gstack/
+todo.md
+# the long reports of the agents and what the targets write (docs/process.md, The files, by kind)
+.reports/
+# direnv: nix-direnv's cache of the flake's environment, and each author's own choice of shell
+.direnv/
+.envrc.local
+# a session's own settings for this machine: never published
+.claude/settings.local.json
+# the kit, linked by make install, and what it writes from agents/ (make agents): built output, never edited
+/dev/agents
+/agents.generated
+/agents.local.json
+/agents.run/
+/AGENTS.md
+/CLAUDE.md
+/.claude/agents/
+/.claude/workflows/
+/.github/agents/
+/.github/hooks/kit.json
+# the Go workspace, written by make go.work and the shell from flake.lock's market-go, and what Go writes beside it
+/go.work
+/go.work.sum
+# the core's and its additions' programs, built by make build
+/bin/

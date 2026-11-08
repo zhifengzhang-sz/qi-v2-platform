@@ -1,0 +1,11 @@
+#!/bin/sh
+# What a commit requires is the project's (dev/scripts/verify.py): the checks of the staged paths, for a commit
+# by any kind of agent or by hand. Installed by make install (git config core.hooksPath dev/hooks); run in this
+# project's own shell (PLATFORM_SHELL, set by its flake), which gives every tool the targets call.
+if [ -n "$PLATFORM_SHELL" ]; then exec make verify; fi
+command -v nix >/dev/null 2>&1 || {
+  echo "pre-commit: nix is not on PATH, so the project's checks cannot run (dev/scripts/verify.py)."
+  echo "pre-commit: commit from nix develop, or a shell with nix; git commit --no-verify skips them."
+  exit 1
+}
+exec nix develop -c make verify

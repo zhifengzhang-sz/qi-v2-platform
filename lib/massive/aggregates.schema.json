@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/zhifengzhang-sz/qi-v2-platform/lib/massive/aggregates.schema.json",
+  "title": "Massive's aggregates: a page of Custom Bars (OHLC)",
+  "description": "A page of Massive's answer to GET /v2/aggs/ticker/{stocksTicker}/range/{multiplier}/{timespan}/{from}/{to}.",
+  "$comment": "Checked against Massive's published spec, its OpenAPI document (https://api.massive.com/openapi, read without a key): the operation GetStocksAggregates (GET /v2/aggs/ticker/{stocksTicker}/range/{multiplier}/{timespan}/{from}/{to}), its answer 200's application/json schema, an allOf of four objects, which this schema holds as one object. What it keeps of the spec: each property of the four a property here, under its name, of the spec's type, its description the spec's, word for word; required, the spec's ticker, status, adjusted, queryCount and resultsCount, but not its request_id, which the platform saves no page with (lib/massive's fetcher takes it out); results not required, as in the spec, Massive leaving it off a page of no row; a row's required the spec's, o, h, l, c, v and t, so that vw and n may be missing, and otc 'left off if false'. Not kept: the spec's format double of a row's prices and volume, a number here being read exactly from its digits, never as a double. Attributes the spec does not name are allowed, as JSON Schema and the spec have it (Massive's pages carry count). Its descriptions are those of Massive's documentation of Custom Bars too, its Response Attributes (https://massive.com/docs/rest/stocks/aggregates/custom-bars.md), from which it was first written.",
+  "type": "object",
+  "required": ["ticker", "adjusted", "queryCount", "resultsCount", "status"],
+  "properties": {
+    "ticker": {
+      "type": "string",
+      "description": "The exchange symbol that this item is traded under."
+    },
+    "adjusted": {
+      "type": "boolean",
+      "description": "Whether or not this response was adjusted for splits."
+    },
+    "queryCount": {
+      "type": "integer",
+      "description": "The number of aggregates (minute or day) used to generate the response."
+    },
+    "request_id": {
+      "type": "string",
+      "description": "A request id assigned by the server."
+    },
+    "resultsCount": {
+      "type": "integer",
+      "description": "The total number of results for this request."
+    },
+    "status": {
+      "type": "string",
+      "description": "The status of this request's response."
+    },
+    "results": {
+      "type": "array",
+      "description": "An array of results containing the requested data.",
+      "items": {
+        "type": "object",
+        "required": ["c", "h", "l", "o", "t", "v"],
+        "properties": {
+          "c": {
+            "type": "number",
+            "description": "The close price for the symbol in the given time period."
+          },
+          "h": {
+            "type": "number",
+            "description": "The highest price for the symbol in the given time period."
+          },
+          "l": {
+            "type": "number",
+            "description": "The lowest price for the symbol in the given time period."
+          },
+          "n": {
+            "type": "integer",
+            "description": "The number of transactions in the aggregate window."
+          },
+          "o": {
+            "type": "number",
+            "description": "The open price for the symbol in the given time period."
+          },
+          "otc": {
+            "type": "boolean",
+            "description": "Whether or not this aggregate is for an OTC ticker. This field will be left off if false."
+          },
+          "t": {
+            "type": "integer",
+            "description": "The Unix millisecond timestamp for the start of the aggregate window."
+          },
+          "v": {
+            "type": "number",
+            "description": "The trading volume of the symbol in the given time period."
+          },
+          "vw": {
+            "type": "number",
+            "description": "The volume weighted average price."
+          }
+        }
+      }
+    },
+    "next_url": {
+      "type": "string",
+      "description": "If present, this value can be used to fetch the next page of data."
+    }
+  }
+}

@@ -1,0 +1,25 @@
+/* Hide the built-in pre/code block that remains after mermaid renders */
+pre:has(.mermaid-wrapper),
+pre:has([data-mermaid]),
+pre:has(svg),
+pre.vscode-mermaid-preview,
+pre:empty {
+  border: none !important;
+  background: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Also target the code element inside */
+pre:has(.mermaid-wrapper) code,
+pre:has(svg) code:empty {
+  border: none !important;
+  background: none !important;
+  padding: 0 !important;
+}
+
+/* Center mermaid diagrams */
+pre:has(.mermaid-wrapper) {
+  display: flex !important;
+  justify-content: center !important;
+}
