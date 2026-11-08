@@ -7,7 +7,7 @@ The work they record from before this repository's start was done in the platfor
 | # | Milestone | Stands |
 |---|---|---|
 | 1 | The stream and the warehouse in Go | closed: every program Go; the old platform, `go/`, removed, the core in its place (4) |
-| 2 | The platform as a product | designed, not built: the first path's programs as a flake package and one image on GHCR, run by Docker alone beside the test stack (`docs/designs/design-platform-image-2026-11-09.md`); nothing published |
+| 2 | The platform as a product | designed, not built: the platform as an app, one Compose app on GHCR running the first path's programs from one image with the Redpanda and TimescaleDB they need, by Docker alone; the programs as a flake package (`docs/designs/design-platform-image-2026-11-09.md`); nothing published |
 | 3 | The tooling to the practices of every qi-v2 project | the flake, the kit, the Makefile and the state documents in place; every input public, read with no login; no CI |
 | 4 | The lean core and its additions | the core, naming no source, its first path and its first stores: every minute of SPY's session from Massive on `market.raw`, each first version, and Massive's revisions on `market.corrections`, both kept forever, read by a consumer and kept by two stores, TimescaleDB's and ClickHouse's, four series each; the first cleaning, the validation, SPY's clean topic kept as the record changes and made again past its tolerance, the stores' clean series written from it; `query`, the topics read in no group; the platform's library, Massive's reader and Massive's K-line in it; acquisition re-reading 30 days, each page kept once; `make start`, run on the stack; `make check`'s tests on the test stack; the tutorial on the core, three levels, every example run on the test stack; a user reads the topics, not the stores |
 
@@ -26,21 +26,22 @@ of milestone 4's end, since it took a private project's executable; the core and
 The programs published as a flake package and as an image, taken by a taker without this folder.
 
 **Stands.** Nothing published; the contract stated (`README.md`, The platform contract). Designed, not built
-(`docs/designs/design-platform-image-2026-11-09.md`): the first path's five programs as the flake package `platform`,
-which another qi-v2 project takes by its lock, and as one image by qi-v2's `releaseImage`,
-`ghcr.io/zhifengzhang-sz/qi-v2-platform`, pinned by digest, a container's program its command; a Compose file of the
-platform's running it beside the test stack; an external user with Docker alone, the stack from `qi-v2-services`'
-Compose files at its pinned tag, a component built by a Dockerfile, the tutorial's reader showing it; the release
-0.1.0, the tags `platform-0.1.0` and `qi-v2-platform-0.1.0`, its digest in its commit, its push the owner's.
+(`docs/designs/design-platform-image-2026-11-09.md`): the platform as an app, `ghcr.io/zhifengzhang-sz/qi-v2-platform`,
+one Compose app published on GHCR, which runs the first path's five programs from one image,
+`ghcr.io/zhifengzhang-sz/qi-v2-platform-programs`, with the Redpanda and TimescaleDB they need, on its own network and
+volumes, no host port; a user runs it by one reference with Docker and a Massive key of their own, and reads its
+document alone; a component of the user's a container on its network, built by a Dockerfile, the tutorial's reader
+showing it; the programs as the flake package `platform` for another qi-v2 project; the release 0.1.0, a tag for each
+of the three products, the digests in its commit, its push the owner's.
 
 **Left.**
 - The design's build, by a brief to come from the design; then the release 0.1.0, its push to GHCR the owner's, and
   the check after it with no login.
-- What the design leaves (its What is left), each a step of its own: the image beside the stack, and `make start` by
-  it; the ClickHouse writer, the printer and `query` in the package and the image; a user's cleaning in an image on the
-  platform's; a guard in acquisition against two runs on one stack; `qi-v2-services`' Compose files as a product
-  (`docs/decisions.md`, Open); the Compose file published otherwise; the Dockerfile's digest in `make locks-check`;
-  other systems; CI; the package's programs as apps; a host whose user is not 1000.
+- What the design leaves (its What is left), each a step of its own: `query` in the app, with a flag naming the
+  brokers, and a host port of the app's broker; the ClickHouse writer, the printer, ClickHouse and Console in the app;
+  a catalog of the user's own, a cleaning or source plugin in an image on the platform's, the tutorial's other levels
+  as an app; the dev side's stack run by the image; a password of the user's own; the app's images in
+  `make locks-check`; other systems; CI; the package's programs as apps; a host whose user is not 1000.
 - The library taken outside this repository: a version, and market's Go form without `go.work` (milestone 4, Left).
 
 ## 3 The tooling to the practices of every qi-v2 project
