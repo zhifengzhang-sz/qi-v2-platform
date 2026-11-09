@@ -9,7 +9,7 @@ The work they record from before this repository's start was done in the platfor
 | 1 | The stream and the warehouse in Go | closed: every program Go; the old platform, `go/`, removed, the core in its place (4) |
 | 2 | The platform as a product | designed, not built: the platform as an app, one Compose app on GHCR running the first path's programs from one image with the Redpanda and TimescaleDB they need, by Docker alone; the programs as a flake package (`docs/designs/design-platform-image-2026-11-09.md`); nothing published |
 | 3 | The tooling to the practices of every qi-v2 project | the flake, the kit, the Makefile and the state documents in place; every input public, read with no login; no CI |
-| 4 | The lean core and its additions | the core, naming no source, its first path and its first stores: every minute of SPY's session from Massive on `market.raw`, each first version, and Massive's revisions on `market.corrections`, both kept forever, read by a consumer and kept by two stores, TimescaleDB's and ClickHouse's, four series each; the first cleaning, the validation, SPY's clean topic kept as the record changes and made again past its tolerance, the stores' clean series written from it; `query`, the topics read in no group; the platform's library, Massive's reader and Massive's K-line in it; acquisition re-reading 30 days, each page kept once; `make start`, run on the stack; `make check`'s tests on the test stack; the tutorial on the core, three levels, every example run on the test stack; a user reads the topics, not the stores |
+| 4 | The lean core and its additions | the core, naming no source, its first path and its first stores: every minute of SPY's session from Massive on `market.raw`, each first version, and Massive's revisions on `market.corrections`, both kept forever, read by a consumer and kept by two stores, TimescaleDB's and ClickHouse's, four series each; the first cleaning, the validation, SPY's clean topic kept as the record changes and made again past its tolerance, the stores' clean series written from it; `query`, the topics read in no group; the platform's library, Massive's reader and Massive's K-line in it; acquisition re-reading 30 days, each page kept once; `make start`, run on the stack; `make check`'s tests on the test stack; the tutorial on the core, three levels, every example run on the test stack; the charting consumer, one series' chart in a browser by `@qi/chart` 3.0.0, updated as its K-lines come; a user reads the topics, not the stores |
 
 ## 1 The stream and the warehouse in Go
 
@@ -56,7 +56,9 @@ no login; the `Makefile` at the root (`install`, `agents`, `verify`, `locks-chec
 `stack` (`make stack-up`), and its test stack, for `make check`'s tests and trial runs (`make stack-test-up`, wiped by
 `make stack-test-down`); `make start`, the platform's components kept running on a stack (`dev/scripts/run.py`), run
 on both stacks; `make check` running each step once, the modules' work decided by Go's caches, the tests that reach a
-stack keyed by the test stack's state (`go.toolchain.md`, 4), the modules they need fetched by `make modules`.
+stack keyed by the test stack's state (`go.toolchain.md`, 4), the modules they need fetched by `make modules`; the
+charting consumer's page a package of the flake (`chart-page`, from `qi-v2-visualization`'s packages, with Bun and
+TypeScript from the flake's nixpkgs), checked in headless Chromium by `make check-chart`, in `make check`.
 
 **Left.** CI in the flake's shell, none today (`docs/decisions.md`, Open).
 
@@ -108,16 +110,20 @@ STACK=test` with the tutorial's catalog, the topics by `query`, `clean-reader` r
 franz-go and market alone); a consumer on the core's stream in the group of its name (`clean-follower`, committing
 after what it has done, a copy dropped); a cleaning of one's own (`despike` 0.1.0), its clean topic made by
 acquisition, corrections of one's own up to its tolerance and past it (`correct-high`, on the test stack alone), the
-reset held off by a reader running and made once it is stopped. The platform contract: a user reads the topics, not
+reset held off by a reader running and made once it is stopped. The charting consumer (`consumers/chart`;
+`docs/designs/design-chart-consumer-2026-11-09.md`): one series' clean topic read in the group `chart` from its start,
+each K-line checked (the offset, the index, the date; a copy dropped), served to a browser page by server-sent events, a
+`start` of the last window (3,900 K-lines by default) and each K-line after; the page, built by the flake from
+`@qi/chart` 3.0.0 (`qi-v2-visualization` at `qi-chart-3.0.0`), draws the K-lines and their volume by the library's tv
+engine and steps each one by its online component; a page holding twice the window drawn whole again; while it runs its
+series' reset is held off, and stopped and started again it serves the topic made again; on the test stack on the real
+data, SPY's last 3,900 minutes drawn, a run's 1,170 minutes stepped one by one at 9 to 27 ms each, and the page drawn
+whole again after a reset, the corrected `high`s among its K-lines. The platform contract: a user reads the topics, not
 the stores.
 
 **Left.**
-- The charting consumer, the next step: one series' chart in a browser, drawn by visualization's `@qi/chart` at its
-  next release, taken by lock, and updated as the series' K-lines come, of the K-lines and their volume alone; designed
-  (`docs/designs/design-chart-consumer-2026-11-09.md`), its build to come once that release is out, holding nothing of
-  the structure contract older than 3.1.0, and a palette.
-- A live feed of the core's topics for browser clients, a gateway on the core: what of it the charting consumer leaves
-  (its design, What is left).
+- What the charting consumer leaves (its design, What is left): more series, a forming K-line, the rest of a chart,
+  the page as a product; and a live feed of the core's topics for browser clients, a gateway on the core.
 - The other sources as plugins (Binance's, a CSV file's), and a source plugin's live stream (`plugins.md`, 5).
 - Runs in the session: Massive's free plan gives no bar of the current trading day (`lib/README.md`); acquisition on
   `massive-spy-1m` first reads a minute 20 h after its end (`delay`).

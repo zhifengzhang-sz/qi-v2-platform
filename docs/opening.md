@@ -6,62 +6,41 @@ A commit this opening names from before 2026-11-08's new start is of the platfor
 ## Where the work stands
 
 - The platform (`README.md`) is the core and its additions alone (`core/README.md`; the platform's library,
-  `lib/README.md`; acquisition, the printer, `query`, the stores, Massive's reader, the validation; the tutorial,
-  `docs/tutorial/`), every program Go.
-- **This round** (two commits after `7e4d7ba`, `040e610` and the one after; `docs/decisions.md`, 2026-11-09 on the
-  platform as images, and Open): the platform as an app designed, no code,
-  `docs/designs/design-platform-image-2026-11-09.md`, with a researcher's sourced notes beside it
-  (`notes-compose-publish-2026-11-09.md`): one Compose app on GHCR, `ghcr.io/zhifengzhang-sz/qi-v2-platform`, running
-  the first path's five programs from one image, `ghcr.io/zhifengzhang-sz/qi-v2-platform-programs`, with the Redpanda
-  and TimescaleDB they need, its own network and volumes, no host port; a user needs Docker and a Massive key and
-  reads the app's document alone, nothing of the dev side; a component of the user's a container on its network, built
-  by a Dockerfile, the tutorial's reader showing it; the programs as the flake package `platform` for another qi-v2
-  project; the release 0.1.0, a tag for each product, the digests computed before the push from OCI layouts built in
-  Nix, the push the owner's by oras (`make release-push`), `make release-check` after it with no login. The owner's:
-  the brief; in the session, one image, not one for each program; a Dockerfile for external use and the flake for use
-  between projects (the session's proposal declined); Nix no prerequisite of the image's use; GHCR, not Docker Hub; the
-  app and the dev side apart, the app holding the stack's two services it needs (superseding the stack taken from
-  `qi-v2-services`' Compose files, the first commit's). The session's: how it is designed, a proposal; Open's entry on
-  the rules for the Dockerfile and the app's images. Two reviews, role `reviewer`: the first commit's (twelve
-  findings and two smaller), the second for what the first design gives that the revised one does not (thirteen and
-  three smaller), each settled before its commit, not rechecked; one researcher's run. No code, no lock, no flake
-  change; the stack and the test stack not touched (Docker read only: its containers, networks, version, plugins);
-  nothing pushed to a registry.
-- **The round before** (`3546680`, `7e4d7ba`; `docs/decisions.md`, 2026-11-08 and 2026-11-09 on the charting
-  consumer): the charting consumer designed, no code,
-  `docs/designs/design-chart-consumer-2026-11-09.md`: one series' chart in a browser, drawn by `@qi/chart` (made from
-  2.0.1, `qi-v2-visualization` at the tag `qi-chart-2.0.1`, read over HTTPS with no login) and updated as the series'
-  K-lines come, of the K-lines and their volume alone. The owner's: the decision of 2026-11-08 on `@qi/chart`,
-  recorded; the design's brief; the page the consumer's, asked in the session; then its answers on the design: the
-  platform takes visualization's next release, not 2.0.1, nothing of the structure contract older than 3.1.0 in it,
-  the build waiting for it; the palette asked of visualization in that release, no other; a running chart holding its
-  series' reset off, a reader that stops and starts itself at a reset a step of its own; the rules restated at the
-  build as proposed. The session's: how it is designed, a proposal, its reset part decided. Its review, role
-  `reviewer`, once, its findings settled before the first commit; the second, the owner's answers recorded and the
-  design, `docs/milestones.md` (4, Left) and this opening brought to them, not reviewed. No code, no lock, no flake
-  change; the stack and the test stack not touched.
+  `lib/README.md`; acquisition, the printer, `query`, the stores, Massive's reader, the validation, the charting
+  consumer; the tutorial, `docs/tutorial/`), every program Go, the charting consumer's page drawn by `@qi/chart`.
+- **This round** (`ab928cd` and the one after; `docs/decisions.md`, 2026-11-09 on the charting consumer's build): the
+  charting consumer built as designed (`consumers/chart`; `docs/designs/design-chart-consumer-2026-11-09.md`), on
+  `@qi/chart` 3.0.0, `qi-v2-visualization` at `qi-chart-3.0.0`, its page the flake's package `chart-page`, checked in
+  headless Chromium by `make check-chart`, in `make check`. 3.0.0 held to each part of 2.0.1 the design uses and to the
+  two things asked of it; Redpanda gives topic IDs, a chart whose topic is made again under it stopping with
+  `UNKNOWN_TOPIC_ID` about 47 s after (`TestStackRemade`). The gate on the test stack, on the real data, in a folder of
+  its own: SPY's clean topic of 192,540 K-lines, the page's 3,900 its last; a run by hand's 1,170 stepped one by one,
+  9.1 to 26.7 ms each (median 12.3); the reset's run failing, naming the group `chart`; the chart stopped, the reset
+  made, the chart started again with a window of 8,580, the page drawn whole again, the 11 corrected `high`s among its
+  K-lines; its outputs in `.reports/chart-gate/` (ignored). The owner's: the brief, the session's design proposal taken
+  with `qi-chart-3.0.0` in place of the next release; TypeScript 5.9.3 fetched from a binary cache. The session's: the
+  build's choices, a proposal (the page's palette every name of the README's table, its TypeScript at ES2023 among
+  them); `agents/rules.md` restated as decided, `make agents`. One review, role `reviewer`, two findings and a point,
+  settled before the commit, not rechecked; `make check` twice, role `checker`, each passing. Every Nix command offline; the test
+  stack used and wiped; the stack not touched.
+- **The rounds before** (`040e610`, `259d04a`, `ae30fed`; `3546680`, `7e4d7ba`; `docs/decisions.md`, 2026-11-08 and 2026-11-09):
+  the platform as an app designed, no code (`docs/designs/design-platform-image-2026-11-09.md`, a researcher's notes
+  beside it): one Compose app on GHCR, `ghcr.io/zhifengzhang-sz/qi-v2-platform`, running the first path's five programs
+  from one image with the Redpanda and TimescaleDB they need, the programs as the flake package `platform`, the release
+  0.1.0, its push the owner's; and the charting consumer designed, the design the one this round built.
 - **The round before those** (`71a6391`, `0d22bc0`): the platform's history begun anew, this repository public from its start,
   its first commit the tree of the earlier history's last (`b1c325b`), as it is; the decisions of 2026-11-08 on it, the
   restated rules, `make modules` and the branch `main`.
 - The stack at `stack-0.3.0`, up, not touched, as step 8.8 left it (then: `market.raw` 389,370 messages (p7),
   `market.corrections` 417, `market.clean.validation.v0-1-0.massive.SPY.M1` 194,880; the old platform's topics as
-  they were); no component of the platform's running there. The test stack down, not used these two rounds.
-- The locks: `make locks-check` not run (it calls `gh api`); `flake.lock` unchanged.
+  they were); no component of the platform's running there. The test stack down, wiped after this round's runs.
+- The locks: `make locks-check` not run (it calls `gh api`); `flake.lock` gained the nodes `visualization`
+  (`qi-chart-3.0.0`, `be948953…`) and `qi-v2-ts` (`qi-v2-ts-0.1.0`, `3c55f72e…`) and the root's input, nothing else.
 - `main`: pushed to `origin`; `.env` in place, ignored; `make install` run; the owner's local file: `todo.md`.
 
 ## The next tasks
 
-Two, each by a brief to come. The app's build is the next: the charting consumer's waits on visualization's release.
-
-**The charting consumer's build**, by a brief to come from its design (`docs/designs/design-chart-consumer-2026-11-09.md`),
-once visualization's next release is out: the build waits for it. That release, asked of visualization, holds nothing
-of the structure contract older than 3.1.0 (2.0.1 takes it at 1.1.0 into the lock and the page) and gives the palette
-(2.0.1 holds none and its README names none of the names a chart uses). The brief names its tag and what it brings
-into `flake.lock`, from the release's own; the build's first step holds to it each part of 2.0.1 the design uses (the
-design, What the platform takes), a part not kept bringing the design back; then the module's test on the test stack
-holding that a reader stops when its topic is made again under it (the design, At a reset, the one way), and if
-Redpanda gives no topic IDs, the build stops and the design comes back. With the build, `agents/rules.md`'s lines on
-the dependencies and on a browser page restated as decided (`docs/decisions.md`, 2026-11-09).
+One, by a brief to come: the app's build.
 
 **The app's build**, by a brief to come from its design (`docs/designs/design-platform-image-2026-11-09.md`). The
 brief names what it allows: the Massive key's use by `make app-test`, as `make start STACK=test` uses it; the first
@@ -78,11 +57,20 @@ Then milestone 4's other Left (`docs/milestones.md`): the rest of the live feed,
 sources as plugins and a source plugin's live stream; the runs in the session (Massive's free plan, `delay`); a clean
 topic's readers stopped and started again at a reset, a reader that stops and starts itself among them, and a reset cut
 short made whole; CI, none today, in the flake's
-shell; the library taken outside this repository. The sessions' findings, each a step of its own. Of the charting
-consumer's design: acquisition's first reset after one that failed checks no group of the topic it makes, so a reader
-started between the two has its topic made again under it. Of the app's design: the catalog's dataset, its
+shell; the library taken outside this repository; what the charting consumer leaves (its design, What is left). The
+sessions' findings, each a step of its own. Of the charting consumer's build: `@qi/chart`'s README names no TypeScript
+level, and its sources need ES2023 (`toSorted`), a line the owner may take to visualization; the page's first drawing
+opens on every K-line of its window (the engine's `all`, the address naming none), 3,900 at about a third of a pixel
+each, and a `start` again on the newest 400 (`latest`); the Makefile's `nix` commands run with no `--offline`, so an
+offline session runs them through a wrapper first on the path inside the shell, never on the path the shell is entered
+from, whose first `nix` the shell's hook links as its host tool (`~/.cache/platform/host-tools/nix`; once linked to the
+wrapper, a loop, set right by entering the shell again from the host's path); `TestLive` counts Chromium's console
+lines as faults, a feed refused while the chart is stopped among them. Of the charting consumer's design: acquisition's
+first reset after one that failed checks no group of the topic it makes, so a reader started between the two has its
+topic made again under it. Of the app's design: the catalog's dataset, its
 session's calendar among it, copied once more inline in `app/compose.yaml`, as in the tutorial's two catalogs, no
-check holding the copies to `config/catalog.yaml`. Of `go/`'s removal: `plugins.md`'s sections are 1, 3 and 5, their numbers kept since many files cite §3;
+check holding the copies to `config/catalog.yaml`; the workspace now holds `consumers/chart`, a module the app's
+image does not run, and the flake the input `visualization`, which the package `platform` does not take. Of `go/`'s removal: `plugins.md`'s sections are 1, 3 and 5, their numbers kept since many files cite §3;
 `dev.environment.md`'s Known gaps holds no gap, and its test stack's line still names acquisition's `-state`, which
 it no longer has; acquisition's test catalog keeps a Binance dataset and `store` (test data, unchanged). Of step
 8.9: the tutorial's programs have no tests of their own, the gate's run their test; the pages' outputs hold the
@@ -96,11 +84,6 @@ part way leaving corrections older than `reread` lost; a line of `massive` not M
 writers for good; `make help` printing `Makefile` for each target; Massive's first row of a fetch by a rule not
 known; Massive's pages kept without end; a real deployment's password in a writer's `-url`; ClickHouse's window in a
 rebalance. The rounds before: `nixpkgs` through `qi-v2-nix`.
-
-Read, for the chart: the design; `core/README.md`; `docs/tutorial/medium/README.md` and `docs/tutorial/advanced/README.md` (4);
-`publishers/acquisition/clean.go` (`reset`); `core/stream/stream.go`; `docs/decisions.md`, 2026-11-08 and 2026-11-09,
-and Open; `agents/rules.md`; `@qi/chart`'s README, the package's `README.md` (`dev/ts/lib/chart/README.md` at the next
-release's tag, over HTTPS), and its `flake.lock`.
 
 Read, for the app: its design and the notes beside it; `docs/decisions.md`, 2026-11-09 and Open; `agents/rules.md`;
 `flake.nix`, `flake.lock`, `Makefile`, `dev/scripts/run.py`, `dev/scripts/verify.py`, `PRODUCTS.md`; qi-v2's
@@ -143,4 +126,5 @@ failed reset deleting its topic; of 8.9, the tutorial's programs a list of their
 `correct-high`; acquisition run by hand on the advanced level; how `go/`'s removal is built, but `make modules`,
 accepted: CI removed whole, the documents removed and restated, the catalog's and the flake's changes; and, the
 owner's to judge, of 8.8, a reader running not stopped, a crash mid-reset), and of 2026-11-09 (how the charting
-consumer is designed, but its reset held off while it runs, decided; how the platform as an app is designed).
+consumer is built where its brief and its design leave the choice; how the platform as an app is designed). The
+owner took the session's proposal of how the charting consumer is designed (2026-11-09).
