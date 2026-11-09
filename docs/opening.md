@@ -51,7 +51,7 @@ A commit this opening names from before 2026-11-08's new start is of the platfor
 
 ## The next tasks
 
-Two, each by a brief to come; which goes first is the owner's to say, and the chart's build waits on visualization.
+Two, each by a brief to come. The app's build is the next: the charting consumer's waits on visualization's release.
 
 **The charting consumer's build**, by a brief to come from its design (`docs/designs/design-chart-consumer-2026-11-09.md`),
 once visualization's next release is out: the build waits for it. That release, asked of visualization, holds nothing
