@@ -15,7 +15,8 @@ questions of both topics (their topics and series, a series' bars, a minute's ev
 each consumer group stands), read only, in no group; the charting consumer, `chart` (`consumers/chart`), draws one
 series' clean topic in a browser by visualization's `@qi/chart`, updated as its K-lines come; `dataset`
 (`consumers/dataset`) makes a K-line data set of a clean topic's sessions, published as an image on GHCR and pinned by its
-lock in `datasets/` ([`datasets/README.md`](datasets/README.md)). The stores on it are consumers too, each a module under
+lock in `datasets/` ([`datasets/README.md`](datasets/README.md)), which a Nix taker takes by the flake's `datasets` and
+`lib.dataset`, each file by its hash. The stores on it are consumers too, each a module under
 `consumers/` keeping the two topics' K-lines in a database of its own, four series (its README). `make start` runs
 them, acquisition and both stores, while the stack is up.
 
@@ -124,7 +125,7 @@ What applications may depend on, and nothing else:
 | `market.corrections` | market corrections 0.1.0, as `market.raw` is keyed and partitioned, each a later version of a bar there and the fields that differ | [`core/README.md`](core/README.md) |
 | `market.clean.<cleaning>.<version>.<source>.<instrument>.<timeframe>` | clean market data 0.1.0, one series' and one cleaning's, one partition, its K-lines the cleaning gave, each its place in the clean series, made again under its name | [`core/README.md`](core/README.md) |
 | programs and their flags | `provision`, `acquisition`, `printer`, `query` ([`consumers/query/README.md`](consumers/query/README.md)), `chart` ([its design](docs/designs/design-chart-consumer-2026-11-09.md); its page and its feed are its own, no part of the contract), `dataset` ([its design](docs/designs/design-klines-dataset-2026-11-09.md)), `massive-reader`, `validation`, and each store's |
-| the K-line data sets | each a version fixed once released, an image on GHCR pinned by its lock, read with no login once the owner has set it public | [`datasets/README.md`](datasets/README.md) |
+| the K-line data sets | each a version fixed once released, an image on GHCR pinned by its lock, public, read with no login; taken by a Nix taker by the flake's `datasets` and `lib.dataset`, each file by its hash | [`datasets/README.md`](datasets/README.md) |
 | the plugin protocols | [`plugins.md`](docs/impl/engineering/plugins.md) §3: a source plugin's and a cleaning's, what a plugin may rely on and must honour |
 
 **A user reads the topics, not the stores.** `market.raw`, `market.corrections` and each clean topic keep every
@@ -191,7 +192,7 @@ docs/impl/engineering/     the plugins and the catalog, the toolchain, the dev e
 core/                      the core, a Go module: the stream, the core's topics and their schemas
 lib/                       the platform's library, a Go module on market and the standard library alone: Massive's reader
 publishers/, consumers/    additions to the core, a Go module each: acquisition; the printer, the query, the chart and its page, the data sets' maker, the stores
-datasets/                  the K-line data sets: each one's lock, its image's tag and digest and every file's sha256; the files in the image alone
+datasets/                  the K-line data sets: each one's lock, its image's tag and digest and every file's sha256; the files in the image alone; install.py, the install a Nix taker runs (the flake's datasets)
 plugins/                   source plugins and cleanings, a Go module each: Massive's reader, a thin program over lib/; the validation
 go.work, bin/              the Go workspace (make go.work) and the core's programs and the chart's page (make build; the tutorial's, its pages), neither in git
 docs/tutorial/             the tutorial on the core: basic/, medium/, advanced/, each its page and its programs, a Go module each

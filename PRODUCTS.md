@@ -16,7 +16,8 @@ which are `qi-v2-nix`'s, an engine that reads its topics and what it makes, or a
 |---|---|---|---|---|---|
 | the platform contract | the core's topics and their schemas, the programs and their flags, the plugin protocols; a user reads the topics, not the stores | `file` | `none` | `main` | `README.md` |
 | the platform's library | Go packages any app can use, on market's Go form and the standard library alone: Massive's reader | `library` | `none` | `main` | `lib/README.md` |
-| `qi-v2-platform-klines-massive-spy-1m` | a K-line data set: SPY's clean minutes of the validation 0.1.0, the sessions 2024-11-06 to 2026-11-06, a file a month of market 1.1.0's K-lines, an image on GHCR, one layer a file, pinned by `datasets/qi-v2-platform-klines-massive-spy-1m.lock` | `image` | `1.0.0` | `qi-v2-platform-klines-massive-spy-1m-1.0.0` | `datasets/README.md` |
+| `qi-v2-platform-klines-massive-spy-1m` | a K-line data set: SPY's clean minutes of the validation 0.1.0, the sessions 2024-11-06 to 2026-11-06, a file a month of market 1.1.0's K-lines, an image on GHCR, public, one layer a file, pinned by `datasets/qi-v2-platform-klines-massive-spy-1m.lock` | `image` | `1.0.0` | `qi-v2-platform-klines-massive-spy-1m-1.0.0` | `datasets/README.md` |
+| `datasets` | the K-line data sets taken by a Nix taker: the flake's package `datasets`, whose `datasets-install` installs a version's files into the Nix store from GHCR with no login, a file the store holds not fetched again, and the flake's function `lib.dataset`, which gives a package each file by its hash; the data sets of the commit a taker pins | `flake package` | `1.0.0` | `datasets-1.0.0` | `datasets/README.md` |
 
 ## Takes
 

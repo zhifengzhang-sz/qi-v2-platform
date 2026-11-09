@@ -17,7 +17,7 @@ S  := dev/scripts
 PY := python3
 AGENT_KIND ?= all
 
-.PHONY: help install agents agents-check run-start run-check verify locks-check products-check check check-core check-tutorial check-chart check-datasets go.work modules build start stack-up stack-down stack-test-up stack-test-stop stack-test-down dataset dataset-check dataset-push dataset-remote-check
+.PHONY: help install agents agents-check run-start run-check verify locks-check products-check check check-core check-tutorial check-chart check-datasets go.work modules build start stack-up stack-down stack-test-up stack-test-stop stack-test-down dataset dataset-check dataset-push dataset-remote-check dataset-take-check
 
 help: ## the targets
 	@grep -E '^[a-z.-]+:.*##' $(MAKEFILE_LIST) | sed 's/:.*## /\t/' | expand -t 18
@@ -166,6 +166,12 @@ dataset-push: ## the owner's: a released version's image pushed to GHCR by crane
 dataset-remote-check: ## after the push, the image public, with no login: its tag on GHCR the lock's digest, the image read by its digest, every file the lock's
 	crane=$$(nix build --inputs-from . nixpkgs#crane --no-link --print-out-paths) && \
 	  QI_CRANE=$$crane/bin/crane $(PY) $(S)/dataset.py remote-check $(LOCK)
+
+# The version taken as a Nix taker takes it (the design, How a Nix taker takes a version), by a taker's flake of its own
+# in a temporary folder, pinning this work tree: the install by its own line, nix run --inputs-from . platform#datasets,
+# and its package taking every file by lib.dataset.
+dataset-take-check: ## after the push, the image public, none of its files in the store: the version installed as a taker installs it (nix run --inputs-from . platform#datasets), every file from GHCR with no login; a taker's package, a flake of its own pinning this work tree, built from every file by lib.dataset, each the lock's; installed again with the network cut, nothing fetched
+	$(PY) $(S)/dataset.py take-check $(LOCK)
 
 # ---------------------------------------------------------------- the services stack (docs/impl/engineering/dev.environment.md, 3)
 

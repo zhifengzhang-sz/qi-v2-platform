@@ -5,7 +5,9 @@
 # stack, by make stack-test-up and make stack-test-down; market's Go form, the package market-go of qi-v2-contracts,
 # which the Go workspace (go.work) takes, and market's vectors, which the library's tests read; @qi/chart, the
 # packages qi-chart and lightweight-charts of qi-v2-visualization, from which the charting consumer's page is built
-# (the package chart-page). Every input is a public repository, read with no login.
+# (the package chart-page). Every input is a public repository, read with no login. It gives a Nix taker the K-line
+# data sets of datasets/ (the product datasets): the package datasets, which installs a version's files into the Nix
+# store from GHCR, and lib.dataset, which gives a package each file by its hash.
 {
   description = "qi-v2-platform: the streaming architecture and the operations that run on the stream; its tools";
 
@@ -90,6 +92,28 @@
       packages = forAll (pkgs:
         let v = visualization.packages.${pkgs.stdenv.hostPlatform.system};
         in {
+          # The install of the K-line data sets, the product datasets, of its number
+          # (docs/designs/design-klines-dataset-2026-11-09.md, How a Nix taker takes a version): datasets-install
+          # DATASET VERSION, datasets/install.py run by this nixpkgs' python3 (-I), given this commit's locks
+          # (datasets/*.lock alone) and crane, nixpkgs'; each file the store lacks fetched from GHCR with no login, and
+          # added by the taker's own nix-store once it is the lock's sha256 and size.
+          datasets =
+            let
+              version = "1.0.0";
+              locks = builtins.path {
+                name = "datasets-locks";
+                path = ./datasets;
+                filter = p: t: t == "regular" && pkgs.lib.hasSuffix ".lock" p;
+              };
+            in
+            pkgs.runCommand "datasets-${version}" { inherit version; meta.mainProgram = "datasets-install"; } ''
+              mkdir -p $out/bin
+              cat > $out/bin/datasets-install <<'EOF'
+              #!${pkgs.runtimeShell}
+              exec ${pkgs.python3}/bin/python3 -I ${./datasets/install.py} ${locks} ${pkgs.crane}/bin/crane "$@"
+              EOF
+              chmod +x $out/bin/datasets-install
+            '';
           chart-page = pkgs.runCommand "chart-page" { nativeBuildInputs = [ pkgs.bun pkgs.typescript ]; } ''
             export HOME=$TMPDIR
             cp ${./consumers/chart/page/main.ts} main.ts
@@ -104,5 +128,42 @@
             cp ${v.lightweight-charts}/LICENSE $out/LICENSE.lightweight-charts
           '';
         });
+      # A data set's version for a taker's package, of the product datasets (the same design): the lock of `dataset` at
+      # this commit, its version `version`, else the evaluation stops, named; each file by requireFile in the taker's
+      # nixpkgs, its store path the one its name (its path in the lock) and its sha256 fix, whatever that nixpkgs,
+      # filled by the install alone; folder, one folder linking every file by its path; the lock's dataset, version,
+      # image and digest, which anything made from it names.
+      lib.dataset = { pkgs, dataset, version }:
+        let
+          l = pkgs.lib;
+          have = map (l.removeSuffix ".lock") (builtins.filter (l.hasSuffix ".lock") (builtins.attrNames (builtins.readDir ./datasets)));
+          lock =
+            if builtins.match "[a-z0-9]+([._-][a-z0-9]+)*" dataset == null then
+              throw "lib.dataset: \"${dataset}\": not a data set's name (lower-case letters and digits, a '.', '_' or '-' between them)"
+            else if !(builtins.elem dataset have) then
+              throw "lib.dataset: no data set ${dataset} in the platform at this commit; its data sets: ${l.concatStringsSep ", " have}"
+            else
+              builtins.fromJSON (builtins.readFile (./datasets + "/${dataset}.lock"));
+          files = builtins.listToAttrs (map (f: {
+            name = f.path;
+            value = pkgs.requireFile {
+              name = f.path;
+              sha256 = f.sha256;
+              message = ''
+                ${dataset} ${version}: ${f.path} (sha256 ${f.sha256}) is not in the Nix store. The version is installed
+                from GHCR, with no login, by the platform's flake at the commit this flake's lock pins:
+                  nix run --inputs-from . platform#datasets -- ${dataset} ${version}
+                (platform: this flake's name of the platform's input)
+              '';
+            };
+          }) lock.files);
+        in
+        if lock.version != version then
+          throw "lib.dataset: ${dataset} at this commit is ${lock.version}, not ${version}: a version is taken at a tag of the platform whose lock is that version"
+        else {
+          inherit (lock) dataset version image digest;
+          inherit files;
+          folder = pkgs.linkFarm "${dataset}-${version}" (map (f: { name = f.path; path = files.${f.path}; }) lock.files);
+        };
     };
 }

@@ -5,13 +5,14 @@ making, checking or publishing, of one lock in datasets/.
     python3 dev/scripts/dataset.py check LOCK          # make dataset-check: the image read back from a registry of crane's own
     python3 dev/scripts/dataset.py push LOCK           # make dataset-push: the owner's push to GHCR, a login of its own
     python3 dev/scripts/dataset.py remote-check LOCK   # make dataset-remote-check: GHCR read with no login
+    python3 dev/scripts/dataset.py take-check LOCK     # make dataset-take-check: the version taken as a Nix taker takes it
     python3 dev/scripts/dataset.py locks               # make check-datasets: every lock well formed, a released one its tag's
 
 A version's folder, its files, its image's layout and its lock as made, is ~/.local/share/qi/datasets/PRODUCT/VERSION/,
 not in git. crane is QI_CRANE (the Makefile's, the flake's nixpkgs'); every crane command runs with a Docker
-configuration of its own, so that no login of the machine's is used but the push's own. Each program runs in the
-foreground, so Ctrl-C reaches it; the check's registry is stopped at the end, however it ends, and found gone. Standard
-library only.
+configuration of its own, so that no login of the machine's is used but the push's own. take-check runs the flake's
+datasets as a Nix taker does, by nix run from a taker's flake of its own. Each program runs in the foreground, so
+Ctrl-C reaches it; the check's registry is stopped at the end, however it ends, and found gone. Standard library only.
 """
 import getpass
 import hashlib
@@ -328,6 +329,113 @@ def remote_check(args):
           f"every file ({n}) the lock's sha256 and size and no other")
 
 
+# A taker's flake, as the design's taker writes one (How a Nix taker takes a version), pinning this repository's work
+# tree and following its nixpkgs: its package takes every file of the version by lib.dataset, a line each: the file's
+# path, its store path, its sha256, its K-lines (its lines) and its link in folder.
+TAKER = """{
+  inputs.platform.url = "git+file://%(repo)s";
+  inputs.nixpkgs.follows = "platform/nixpkgs";
+  outputs = { self, platform, nixpkgs }:
+    let
+      pkgs = nixpkgs.legacyPackages.x86_64-linux;
+      set = platform.lib.dataset { inherit pkgs; dataset = "%(dataset)s"; version = "%(version)s"; };
+      line = p: ''
+        echo "${p} ${set.files.${p}} $(sha256sum < ${set.files.${p}} | cut -d' ' -f1) $(wc -l < ${set.files.${p}}) $(readlink ${set.folder}/${p})" >> $out
+      '';
+    in {
+      packages.x86_64-linux.default =
+        pkgs.runCommand "taken" { } (": > $out\\n" + pkgs.lib.concatMapStrings line (builtins.attrNames set.files));
+    };
+}
+"""
+INSTALLED = re.compile(r"^datasets-install: ([^:]+): (fetched from GHCR|in the store), (/nix/store/\S+)$")
+
+
+def installed(work, lock, env, what):
+    """The install run in the taker's folder by its own line (nix run --inputs-from . platform#datasets), its lines
+    shown; each file's state and store path, every file of the lock."""
+    cmd = ["nix", "run", "--inputs-from", ".", "platform#datasets", "--", lock["dataset"], lock["version"]]
+    r = subprocess.run(cmd, cwd=work, env=env, capture_output=True, text=True)
+    sys.stdout.write(r.stdout)
+    sys.stderr.write(r.stderr)
+    if r.returncode:
+        stop(f"{what}: {' '.join(cmd)}: exit {r.returncode}")
+    got = {}
+    for line in r.stdout.splitlines():
+        m = INSTALLED.match(line)
+        if m:
+            got[m.group(1)] = (m.group(2), m.group(3))
+    want = [e["path"] for e in lock["files"]]
+    if sorted(got) != sorted(want):
+        stop(f"{what}: the install's files {sorted(got)}, not the lock's {want}")
+    return got
+
+
+def take_check(args):
+    path = one(args)
+    lock = load(path)
+    was = released(path, lock)
+    with open(path) as f:
+        now = f.read()
+    if was is None or now != was:
+        stop(f"{path}: not the lock of a released version as its tag {tag(lock)} holds it; GHCR is held to that alone")
+    for tool in ("nix", "nix-store"):
+        if shutil.which(tool) is None:
+            stop(f"no {tool} on PATH")
+    fixed = {e["path"]: subprocess.run(["nix-store", "--print-fixed-path", "sha256", e["sha256"], e["path"]],
+                                       capture_output=True, text=True, check=True).stdout.strip()
+             for e in lock["files"]}
+    there = set(fixed.values()) - set(subprocess.run(["nix-store", "--check-validity", "--print-invalid",
+                                                      *fixed.values()], capture_output=True, text=True,
+                                                     check=True).stdout.split())
+    if there:
+        stop(f"{len(there)} of the version's files in the store already, which the install would not fetch from GHCR; "
+             f"removed first, so that every file comes from GHCR: nix-store --delete {' '.join(sorted(there))}")
+    repo = subprocess.run(["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True, check=True)
+    work = tempfile.mkdtemp(prefix="dataset-take-")
+    try:
+        with open(os.path.join(work, "flake.nix"), "w") as f:
+            f.write(TAKER % {"repo": repo.stdout.strip(), "dataset": lock["dataset"], "version": lock["version"]})
+        first = installed(work, lock, os.environ, "installed")
+        if any(s != "fetched from GHCR" or first[p][1] != fixed[p] for p, (s, _) in first.items()):
+            stop("installed: a file not fetched from GHCR to its fixed store path")
+        r = subprocess.run(["nix", "build", f"path:{work}#default", "--no-link", "--print-out-paths",
+                            "--no-write-lock-file"], capture_output=True, text=True)
+        if r.returncode:
+            stop(f"the taker's package: nix build: exit {r.returncode}: {r.stderr.strip()}")
+        with open(r.stdout.strip()) as f:
+            rows = [x.split() for x in f.read().splitlines()]
+        want = {e["path"]: e for e in lock["files"]}
+        faults = []
+        if sorted(x[0] for x in rows if x) != sorted(want):
+            faults.append(f"its files {[x[0] for x in rows if x]}, not the lock's")
+        for x in rows:
+            if len(x) != 5 or x[0] not in want:
+                faults.append(f"a line not of a file of the lock: {x}")
+                continue
+            p, store, sha, lines, link = x
+            e = want[p]
+            if store != fixed[p] or link != store or sha != e["sha256"] or lines != str(e["klines"]):
+                faults.append(f"{p}: {store}, linked {link}, sha256 {sha}, {lines} K-lines; its fixed path "
+                              f"{fixed[p]}, the lock's {e['sha256']}, {e['klines']}")
+        if faults:
+            stop("the taker's package: not the lock's files:\n  " + "\n  ".join(faults))
+        port = free_port()
+        proxy = f"http://127.0.0.1:{port}"
+        cut = dict(os.environ, HTTPS_PROXY=proxy, https_proxy=proxy, HTTP_PROXY=proxy, http_proxy=proxy,
+                   ALL_PROXY=proxy, all_proxy=proxy, NO_PROXY="", no_proxy="")
+        again = installed(work, lock, cut, "installed again, the network cut")
+        if again != {p: ("in the store", fixed[p]) for p in want}:
+            stop("installed again: a file not in the store as the first install left it")
+    finally:
+        shutil.rmtree(work, ignore_errors=True)
+    print(f"dataset-take-check: {lock['dataset']} {lock['version']}: none of its files in the store before; installed "
+          f"by the taker's own line (nix run --inputs-from . platform#datasets), every file ({len(want)}) fetched from "
+          f"GHCR with no login, the lock's sha256; a taker's package built from every file by lib.dataset, each its "
+          f"fixed store path, the lock's sha256 and K-lines, linked in folder; installed again with the network cut "
+          f"({proxy}), nothing fetched")
+
+
 def faults_of(path, text):
     try:
         lock = json.loads(text)
@@ -398,7 +506,8 @@ def ended(signum, _frame):
 
 
 def main():
-    steps = {"make": make, "check": check, "push": push, "remote-check": remote_check, "locks": locks}
+    steps = {"make": make, "check": check, "push": push, "remote-check": remote_check, "take-check": take_check,
+             "locks": locks}
     if len(sys.argv) < 2 or sys.argv[1] not in steps:
         sys.exit(__doc__)
     for s in (signal.SIGTERM, signal.SIGHUP):

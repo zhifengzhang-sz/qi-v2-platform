@@ -8,27 +8,39 @@ A commit this opening names from before 2026-11-08's new start is of the platfor
 - The platform (`README.md`) is the core and its additions alone (`core/README.md`; the platform's library,
   `lib/README.md`; acquisition, the printer, `query`, the stores, Massive's reader, the validation, the charting
   consumer, the data sets' maker; the tutorial, `docs/tutorial/`), every program Go, the charting consumer's page drawn
-  by `@qi/chart`; its products the contract, the library and the K-line data sets (`PRODUCTS.md`).
-- **This round** (the commit tagged `qi-v2-platform-klines-massive-spy-1m-1.0.0`; `docs/decisions.md`, 2026-11-09 on
-  the K-line data set, and Open): the K-line data sets designed and built
-  (`docs/designs/design-klines-dataset-2026-11-09.md`, `datasets/README.md`), and the first released,
-  `qi-v2-platform-klines-massive-spy-1m` 1.0.0: SPY's clean topic, `market.clean.validation.v0-1-0.massive.SPY.M1`,
-  whole as the stack holds it, the sessions 2024-11-06 to 2026-11-06 in New York, 502, every one whole (497 of 390
-  minutes, 5 early closes of 210, as the catalog's calendar has them), 194,880 K-lines, 25 files a month each of market
-  1.1.0's K-lines, 21,837,727 bytes, the image's layers 3.9 MB, its digest `sha256:5741bcb8…` in its lock,
-  `datasets/qi-v2-platform-klines-massive-spy-1m.lock`. The program `dataset` (`consumers/dataset`, in `CORE`), the core's
-  `raw.FromBase`; `make dataset`, `dataset-check`, `dataset-push` (the owner's), `dataset-remote-check`, and
-  `check-datasets` in `make check` (`dev/scripts/dataset.py`); crane 0.21.6 the flake's nixpkgs', not in the shell. The
-  checks: the data set made twice from the stack to the same bytes, every file and the layout; read back from its
-  image through a registry of crane's own on 127.0.0.1, its digest the lock's and every file the lock's, the registry
-  stopped after; `make check`, role `checker`, passing, and `make products-check`. One review, role `reviewer`, four
-  findings settled before the commit, not rechecked: the range's reason added to the proposal; the push's login and the
-  check's registry removed at SIGTERM or SIGHUP too; `README.md`'s contract row saying "once the owner has set it
-  public"; `dataset-remote-check` held to the tag's lock. The owner's: the brief (the data set ahead of the app's build);
-  the session's first build, asked and allowed. The session's: the design's choices, a proposal; Massive's terms on
-  redistribution found, Open. Every Nix command offline; the stack read only, its clean topic in no group; the test
-  stack not used; no credential used, no registry logged in to; nothing on GHCR yet.
-- **The round before** (`ab928cd`, `55c1e18`; `docs/decisions.md`, 2026-11-09 on the charting consumer's build): the
+  by `@qi/chart`; its products the contract, the library, the K-line data sets and `datasets`, which gives a Nix taker
+  a data set's version (`PRODUCTS.md`).
+- **This round** (the commit tagged `datasets-1.0.0`; `docs/decisions.md`, 2026-11-09: of Open on Massive's terms, the
+  brief of the data sets taken by Nix, and the session's entry on how a Nix taker takes a version):
+  `qi-v2-platform-klines-massive-spy-1m` 1.0.0 on GHCR, pushed and set public by the owner, `make dataset-remote-check`
+  the owner's, passing, its result in `datasets/README.md` (Changes, 1.0.0), and Open's entry on Massive's terms
+  settled; the data sets taken by a Nix taker designed (`docs/designs/design-klines-dataset-2026-11-09.md`, How a Nix
+  taker takes a version, and its guarantee 8), built and released: the product `datasets` 1.0.0, the flake's package
+  `datasets`, its program `datasets-install DATASET VERSION` (`datasets/install.py`, Python's standard library over
+  crane, run by the flake's python3), and the flake's `lib.dataset { pkgs, dataset, version }`, each file by
+  `requireFile`, a `folder` by `linkFarm`; a version taken at a tag whose lock is that version, SPY's 1.0.0 at
+  `datasets-1.0.0`; `make dataset-take-check` (`dev/scripts/dataset.py take-check`). The checks: `make
+  dataset-take-check`, role `checker`, by a taker's flake of its own pinning the work tree: none of the 25 files in the
+  store before; every file (25) installed by the taker's own line, `nix run --inputs-from . platform#datasets`, from
+  GHCR with no login, each the lock's sha256; the taker's package built from all 25 by their hashes; installed again
+  with the network cut, nothing fetched; `make check` and `make products-check`, role `checker`, passing. One review,
+  role `reviewer`, six findings and four points, settled before the commit, not rechecked: the remote check's result
+  whole; `dataset-take-check` stopping when a file is in the store before, and running the install by the taker's
+  own line; no claim of a check after the tag; the design's reason for crane without a login, and the function of
+  the product though no package; the taker's `nix flake lock` in `datasets/README.md`. The owner's: the brief; the image pushed and set public; the
+  session's first build, asked and allowed. The session's: the design's choices, a proposal. Every Nix command
+  offline, through a wrapper on the shell's path; no credential used, no registry logged in to; neither stack touched.
+  The 25 files are in this machine's Nix store, held by nothing, so a garbage collection removes them.
+- **The round before** (`d14180e`, tagged `qi-v2-platform-klines-massive-spy-1m-1.0.0`; `docs/decisions.md`, 2026-11-09
+  on the K-line data set): the K-line data sets designed and built (`docs/designs/design-klines-dataset-2026-11-09.md`,
+  `datasets/README.md`; the program `dataset`, `consumers/dataset`, in `CORE`; `make dataset`, `dataset-check`,
+  `dataset-push`, `dataset-remote-check`, `check-datasets` in `make check`, `dev/scripts/dataset.py`; crane 0.21.6 the
+  flake's nixpkgs', not in the shell), and the first released, SPY's clean topic,
+  `market.clean.validation.v0-1-0.massive.SPY.M1`, whole as the stack holds it, the sessions 2024-11-06 to 2026-11-06,
+  502, every one whole, 194,880 K-lines, 25 files a month each of market 1.1.0's K-lines, its digest `sha256:5741bcb8…`
+  in its lock; made twice from the stack to the same bytes and read back from its image by crane through a registry of
+  its own; one review, four findings settled.
+- **The rounds before** (`ab928cd`, `55c1e18`; `docs/decisions.md`, 2026-11-09 on the charting consumer's build): the
   charting consumer built as designed (`consumers/chart`; `docs/designs/design-chart-consumer-2026-11-09.md`), on
   `@qi/chart` 3.0.0, `qi-v2-visualization` at `qi-chart-3.0.0`, its page the flake's package `chart-page`, checked in
   headless Chromium by `make check-chart`, in `make check`. 3.0.0 held to each part of 2.0.1 the design uses and to the
@@ -43,30 +55,27 @@ A commit this opening names from before 2026-11-08's new start is of the platfor
   them); `agents/rules.md` restated as decided, `make agents`. One review, role `reviewer`, two findings and a point,
   settled before the commit, not rechecked; `make check` twice, role `checker`, each passing. Every Nix command offline; the test
   stack used and wiped; the stack not touched.
-- **The rounds before** (`040e610`, `259d04a`, `ae30fed`; `3546680`, `7e4d7ba`; `docs/decisions.md`, 2026-11-08 and 2026-11-09):
+- **Before those** (`040e610`, `259d04a`, `ae30fed`; `3546680`, `7e4d7ba`; `docs/decisions.md`, 2026-11-08 and 2026-11-09):
   the platform as an app designed, no code (`docs/designs/design-platform-image-2026-11-09.md`, a researcher's notes
   beside it): one Compose app on GHCR, `ghcr.io/zhifengzhang-sz/qi-v2-platform`, running the first path's five programs
   from one image with the Redpanda and TimescaleDB they need, the programs as the flake package `platform`, the release
   0.1.0, its push the owner's; and the charting consumer designed, the design the one the round after built.
-- **The round before those** (`71a6391`, `0d22bc0`): the platform's history begun anew, this repository public from its start,
+- **Earlier** (`71a6391`, `0d22bc0`): the platform's history begun anew, this repository public from its start,
   its first commit the tree of the earlier history's last (`b1c325b`), as it is; the decisions of 2026-11-08 on it, the
   restated rules, `make modules` and the branch `main`.
 - The stack at `stack-0.3.0`, up, written by nothing since step 8.8 (`market.raw` 389,370 messages (p7),
-  `market.corrections` 417, `market.clean.validation.v0-1-0.massive.SPY.M1` 194,880, as this round read them; the old
-  platform's topics as they were); no component of the platform's running there; this round read its clean topic in
-  no group. The test stack down, not used by this round.
+  `market.corrections` 417, `market.clean.validation.v0-1-0.massive.SPY.M1` 194,880, and the old platform's topics as
+  they were, as the round before read them); no component of the platform's running there; not
+  touched by this round. The test stack down, not used by this round.
 - The locks: `make locks-check` not run (it calls `gh api`); `flake.lock` unchanged by this round. The data set's
   folder, `~/.local/share/qi/datasets/qi-v2-platform-klines-massive-spy-1m/1.0.0/` (its files, its image's layout, its
-  lock as made), which `make dataset-push` pushes.
-- `main`: pushed to `origin`, with the tag; `.env` in place, ignored; `make install` run; the owner's local file:
+  lock as made), which the owner's `make dataset-push` pushed.
+- `main`: pushed to `origin`, with its tags; `.env` in place, ignored; `make install` run; the owner's local file:
   `todo.md`.
 
 ## The next tasks
 
-First the owner's: the data set's image pushed to GHCR (`make dataset-push`, at the tag, the token asked for and its
-login removed after), and set public on its package's page once the owner has judged Massive's terms for it
-(`docs/decisions.md`, Open); then, by a brief, `make dataset-remote-check`, with no login, and its result recorded, in
-work of its own. Then, by a brief to come: the app's build.
+By a brief to come: the app's build.
 
 **The app's build**, by a brief to come from its design (`docs/designs/design-platform-image-2026-11-09.md`). The
 brief names what it allows: the Massive key's use by `make app-test`, as `make start STACK=test` uses it; the first
@@ -84,8 +93,12 @@ sources as plugins and a source plugin's live stream; the runs in the session (M
 topic's readers stopped and started again at a reset, a reader that stops and starts itself among them, and a reset cut
 short made whole; CI, none today, in the flake's
 shell; the library taken outside this repository; what the charting consumer leaves (its design, What is left); what
-the data sets' design leaves (its What is left). The sessions' findings, each a step of its own. Of the K-line data
-set's build: whether a range's ends are whole sessions is held by the release against the catalog's calendar, not by
+the data sets' design leaves (its What is left). The sessions' findings, each a step of its own. Of the Nix taker's
+build: `make verify` holds `flake.nix` to `check-chart` alone, so no target builds `datasets` at a commit; the install
+runs crane once for each file it lacks, each its own token request; `dataset-take-check`'s taker pins the work tree,
+a new file seen by it only once git tracks it, and needs the version's files out of the store first; no taker has
+pinned the platform by `github:` and a tag yet, the checks reading this clone, offline; the installed files held by
+nothing. Of the K-line data set's build: whether a range's ends are whole sessions is held by the release against the catalog's calendar, not by
 the program, which knows no calendar; the read back is by crane alone, no Docker pull of the image tried; the image's
 digest depends on the flake's Go (its gzip), so a newer Go gives the same files under another digest, and a released
 version is pushed from its built folder, never made again on another Go; a GHCR limit on anonymous pulls is not known
@@ -143,10 +156,11 @@ Read, for the app: its design and the notes beside it; `docs/decisions.md`, 2026
 
 ## Open, for the owner
 
-In `docs/decisions.md`, Open: Massive's market data terms and a public data set (its knowledge base: redistributing its
-market data needs one of its business products; the image is not to be set public until the owner has judged it); CI
-in the flake's shell; `carrier.md`'s form; the rules on the dependencies and the tools, for the Dockerfile and the app.
-Decided, proposals until the owner decides: the session's entry of 2026-11-09 on how the K-line data sets are designed
+In `docs/decisions.md`, Open: CI in the flake's shell; `carrier.md`'s form; the rules on the dependencies and the tools, for the Dockerfile and the app.
+Decided, proposals until the owner decides: the session's entry of 2026-11-09 on how a Nix taker takes a version (the
+product `datasets` 1.0.0, its tag; one version a commit; `requireFile` by the file's path; the install fetching only the
+layers the store lacks, Python over crane, not Go; no root against the garbage collection; `make dataset-take-check`);
+the session's entry of 2026-11-09 on how the K-line data sets are designed
 and built (the clean series, the range, a file a month of market's K-lines, the versions, the names, the image as a
 layout, the lock's place, the program and the targets); the session's entries of 2026-11-06 (no check of the flake; the state's status and health and the stops of
 `make check`; `TestMigrations`' race fixed in the test, the test gone with `go/`; how steps 8.1 to 8.4 are built

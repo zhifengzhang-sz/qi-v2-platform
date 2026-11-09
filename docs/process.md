@@ -75,8 +75,9 @@ tracked file or the opening comes to rely on moves to `docs/designs/`.
 
 ## Another project
 
-It takes this project's products through what is published, never by a path into this folder. Today the platform
-publishes no flake package; its images are the K-line data sets, each pinned by its lock in `datasets/` at its
-version's tag (`datasets/README.md`), the first released, its push to GHCR the owner's (`docs/milestones.md`, 2); its
+It takes this project's products through what is published, never by a path into this folder. Its images are the
+K-line data sets, each pinned by its lock in `datasets/` at its version's tag (`datasets/README.md`), the first released
+and public on GHCR; its flake package `datasets`, with the function `lib.dataset`, gives a Nix taker a data set's
+version, each file by its hash, the flake pinned at a tag whose lock is that version (`datasets/README.md`); its
 contract, the core's topics and their schemas, the programs and their flags, the plugin protocols, is `README.md`, The
 platform contract.

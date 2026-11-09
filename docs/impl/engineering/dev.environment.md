@@ -28,7 +28,8 @@ flake's nixpkgs' too but not in the shell: the targets that need them take them 
 | Bun | 1.3.13 | not in the shell: it bundles the charting consumer's page in the flake's `chart-page` (`make build`) |
 | TypeScript | 5.9.3 | not in the shell: it type-checks the page's script in that build |
 | Chromium | 156.0.8078.79 | not in the shell: headless, the page's browser check (`make check-chart`, `go.toolchain.md`, 4) |
-| crane | 0.21.6 | not in the shell: go-containerregistry's, a data set's image pushed and read back (`make dataset-check`, `dataset-push`, `dataset-remote-check`; `datasets/README.md`) |
+| crane | 0.21.6 | not in the shell: go-containerregistry's, a data set's image pushed and read back (`make dataset-check`, `dataset-push`, `dataset-remote-check`; `datasets/README.md`), and a version's files fetched by the flake's `datasets`, the install a Nix taker runs (`make dataset-take-check`) |
+| Python | 3.13.17 | the shell's, its standard library alone: the Makefile's scripts (`dev/scripts/`); and the flake's `datasets`, which runs `datasets/install.py` by the same python3 |
 | Docker + Compose | 29.9.3 / 5.7.0 | the host's, not pinned: the versions the stack was last started on (section 3); the stack's program runs `docker compose` with the `docker` on the path |
 
 ## 3. Infrastructure
