@@ -1,0 +1,165 @@
+{
+  "dataset": "qi-v2-platform-klines-massive-spy-1m",
+  "version": "1.0.0",
+  "image": "ghcr.io/zhifengzhang-sz/qi-v2-platform-klines-massive-spy-1m",
+  "tag": "1.0.0",
+  "digest": "sha256:5741bcb828b8ef8482c72b2edf4c3116bb89bbcf135f86c4c80eca0e8d1e121e",
+  "made": {
+    "topic": "market.clean.validation.v0-1-0.massive.SPY.M1",
+    "zone": "America/New_York",
+    "from": "2024-11-06",
+    "to": "2026-11-06"
+  },
+  "files": [
+    {
+      "path": "2024-11.jsonl",
+      "sha256": "3ef1a5e975c4ea301903d8ba5ce8b87c4856794780a816d7c5a02eb2c09fe216",
+      "size": 697210,
+      "klines": 6450
+    },
+    {
+      "path": "2024-12.jsonl",
+      "sha256": "adabd583bf45c0132f1a35429a3dbcc41500a2c1e5fd06cbd2f8995f720185fb",
+      "size": 870482,
+      "klines": 8010
+    },
+    {
+      "path": "2025-01.jsonl",
+      "sha256": "503519521f555a417a71d508ba68850a39de16b278f99aa1d1efbbcf5ca7e3e2",
+      "size": 850296,
+      "klines": 7800
+    },
+    {
+      "path": "2025-02.jsonl",
+      "sha256": "0a70c63a25ae87294cb0c0bcd52a83ea1f8cc5ecfc57156d5d39cb927108bc99",
+      "size": 807992,
+      "klines": 7410
+    },
+    {
+      "path": "2025-03.jsonl",
+      "sha256": "c605da764b57043363b8566a14ac3cda61c4aec2fe288b3c6eb56d1d8c75831d",
+      "size": 894123,
+      "klines": 8190
+    },
+    {
+      "path": "2025-04.jsonl",
+      "sha256": "ce91aaefd8be475a1722fe272dcbc630d480f9993e396ee090a9f98dc0d0be41",
+      "size": 895074,
+      "klines": 8190
+    },
+    {
+      "path": "2025-05.jsonl",
+      "sha256": "997c834ec5b74e3347471bd5f8786c564b4aca67e59ba52b237e81156432fe2b",
+      "size": 895705,
+      "klines": 8190
+    },
+    {
+      "path": "2025-06.jsonl",
+      "sha256": "d902cd39878789fadfb5d086c6f8d45621509158e8ce9047056e99334c1bee35",
+      "size": 853270,
+      "klines": 7800
+    },
+    {
+      "path": "2025-07.jsonl",
+      "sha256": "03f47531d8e1d85a66c6c8d7a194b8f84e4bd75302ea7b7b95bc4df8fbb06abf",
+      "size": 920983,
+      "klines": 8400
+    },
+    {
+      "path": "2025-08.jsonl",
+      "sha256": "56a662224f5b5c7ec67cc6d3f342c8d9f342706ac26ce367af68025bcf862302",
+      "size": 896921,
+      "klines": 8190
+    },
+    {
+      "path": "2025-09.jsonl",
+      "sha256": "1774c92a5bfc8a16eedba068a66e823f32355176ba953aabf57e1d0ce1f9d671",
+      "size": 897666,
+      "klines": 8190
+    },
+    {
+      "path": "2025-10.jsonl",
+      "sha256": "371e92fa8c0d3c17d7df5a487c7ee9692c0494a109c1db5ebf96460ec6b70c22",
+      "size": 980644,
+      "klines": 8970
+    },
+    {
+      "path": "2025-11.jsonl",
+      "sha256": "6fd43317d3eee22e451b85b886c208f54332483637c5f126ac7b82ba0e877ebe",
+      "size": 793341,
+      "klines": 7230
+    },
+    {
+      "path": "2025-12.jsonl",
+      "sha256": "78257cb71456aceec791afe175650fc7707d2e0410f3c1ae86c10cdf72225a98",
+      "size": 927859,
+      "klines": 8400
+    },
+    {
+      "path": "2026-01.jsonl",
+      "sha256": "9f1f63e5d56f1ee5f33efd41610c141c0ee2b0816b778ca5aec6d8a88f75777c",
+      "size": 861368,
+      "klines": 7800
+    },
+    {
+      "path": "2026-02.jsonl",
+      "sha256": "fdf60ade09840fa5e947aa0d67a9ab20a01835b98754623cc4a0672343866959",
+      "size": 829846,
+      "klines": 7410
+    },
+    {
+      "path": "2026-03.jsonl",
+      "sha256": "9303160cf6c4a03f8d43b2bb42cb2603b8528fecf2bad28f9bd173b689de3957",
+      "size": 1003710,
+      "klines": 8580
+    },
+    {
+      "path": "2026-04.jsonl",
+      "sha256": "876dabd82f63a9467960f0448df3c0d86c2b5237f242a06adc28f9e3b9f10e96",
+      "size": 957229,
+      "klines": 8190
+    },
+    {
+      "path": "2026-05.jsonl",
+      "sha256": "e337be65a2356aaeb935b4e3a5c80879e4764c70fc9bbaca3a7180b1b33ae02e",
+      "size": 909418,
+      "klines": 7800
+    },
+    {
+      "path": "2026-06.jsonl",
+      "sha256": "677330e3d81f863f0425d78e10772f82b914823dcdbf7fab8f2b5b2c8e227ffc",
+      "size": 955024,
+      "klines": 8190
+    },
+    {
+      "path": "2026-07.jsonl",
+      "sha256": "e4753ff7a736d599e481adb2086d06d8e910833e505ff8117b923dee24eb46f7",
+      "size": 999888,
+      "klines": 8580
+    },
+    {
+      "path": "2026-08.jsonl",
+      "sha256": "2c3367f9c5a5c18f5a5e2b22ad6e29422f7e631d745fcc8d6493a0fec7867b21",
+      "size": 955847,
+      "klines": 8190
+    },
+    {
+      "path": "2026-09.jsonl",
+      "sha256": "7096356ec2999feaece85f71a142198fbe2987e79c49a96eef727b8b43ed6df6",
+      "size": 955535,
+      "klines": 8190
+    },
+    {
+      "path": "2026-10.jsonl",
+      "sha256": "5a14954f76495bcc059fa7d7250731837fab0ed400b5d56abf11ef597c7562cc",
+      "size": 1000866,
+      "klines": 8580
+    },
+    {
+      "path": "2026-11.jsonl",
+      "sha256": "fb1c37d62b9bb3c612fcda75cf71a69cc1301f7d9be3463a463a0baf336b67ab",
+      "size": 227430,
+      "klines": 1950
+    }
+  ]
+}

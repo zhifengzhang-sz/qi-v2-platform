@@ -74,6 +74,18 @@ func TestKLineText(t *testing.T) {
 	if _, err := WithIndex(kline(t, baseText), market.Bound+1); err == nil {
 		t.Errorf("an index past market's bound: given")
 	}
+	// The base alone: market's K-line's text, of a K-line read with fields of its own too; a broken base refused.
+	for _, text := range []string{baseText, ownText} {
+		if k, err := FromBase(kline(t, text).Base()); err != nil || k.Text() != baseText || k.Base() != base(t) ||
+			k != kline(t, baseText) {
+			t.Fatalf("from the base of %s: %+v, %v", text, k, err)
+		}
+	}
+	broken := base(t)
+	broken.Low = dec(t, "765")
+	if k, err := FromBase(broken); err == nil || k != (KLine{}) {
+		t.Errorf("a low above the high: %+v, %v", k, err)
+	}
 	// Other fields of any name and number, in the order of their names.
 	for _, text := range []string{
 		`{"a":1,` + baseText[1:],

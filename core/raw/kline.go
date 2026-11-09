@@ -93,6 +93,18 @@ func DecodeKLine(text []byte) (KLine, error) {
 	return k, nil
 }
 
+// FromBase is the K-line of market's base alone, no field of a source's own: its canonical text is market 1.1.0's
+// K-line in market's canonical text, its seven fields in the order of their names, which a reader of market's K-line
+// (@qi/market's klineSchema, strict) takes. A base that breaks market's rules is refused.
+func FromBase(b market.KLine) (KLine, error) {
+	if err := b.Check(); err != nil {
+		return KLine{}, fmt.Errorf("kline: %w", err)
+	}
+	return assemble([]member{{"close", b.Close.AppendTo(nil)}, {"date", strconv.AppendUint(nil, b.Date, 10)},
+		{"high", b.High.AppendTo(nil)}, {"index", strconv.AppendUint(nil, b.Index, 10)}, {"low", b.Low.AppendTo(nil)},
+		{"open", b.Open.AppendTo(nil)}, {"volume", b.Volume.AppendTo(nil)}})
+}
+
 // WithIndex is the K-line at another place in its series: its index set, every other field as it is.
 func WithIndex(k KLine, index uint64) (KLine, error) {
 	if err := k.Check(); err != nil {

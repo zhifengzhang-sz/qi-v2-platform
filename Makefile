@@ -17,7 +17,7 @@ S  := dev/scripts
 PY := python3
 AGENT_KIND ?= all
 
-.PHONY: help install agents agents-check run-start run-check verify locks-check products-check check check-core check-tutorial check-chart go.work modules build start stack-up stack-down stack-test-up stack-test-stop stack-test-down
+.PHONY: help install agents agents-check run-start run-check verify locks-check products-check check check-core check-tutorial check-chart check-datasets go.work modules build start stack-up stack-down stack-test-up stack-test-stop stack-test-down dataset dataset-check dataset-push dataset-remote-check
 
 help: ## the targets
 	@grep -E '^[a-z.-]+:.*##' $(MAKEFILE_LIST) | sed 's/:.*## /\t/' | expand -t 18
@@ -73,7 +73,7 @@ products-check: ## whether PRODUCTS.md states what the project has (the kit's ki
 # target that runs Go on them, and never committed. Their targets run Go with GOPROXY=off, so that Go fetches nothing
 # while it vets, tests or builds: market's Go form is the flake's, and every other module they take is in Go's module
 # cache already, put there by make modules, which each of them runs first.
-CORE := core lib publishers/acquisition consumers/printer consumers/timescaledb-writer consumers/clickhouse-writer consumers/query consumers/chart plugins/massive-reader plugins/validation
+CORE := core lib publishers/acquisition consumers/printer consumers/timescaledb-writer consumers/clickhouse-writer consumers/query consumers/chart consumers/dataset plugins/massive-reader plugins/validation
 CORE_PKGS := $(addprefix ./,$(addsuffix /...,$(CORE)))
 # The tutorial's programs (docs/tutorial/README.md), each a module of its own folder under its level's, found by its
 # go.mod, so that removing its folder removes it; built by the pages' own commands, not by make build.
@@ -96,7 +96,7 @@ modules: go.work ## the modules the workspace's packages and their tests need, b
 # Each part once, and what it reads decides its work (go.toolchain.md, 4): gofmt and the kit's check run every time,
 # each in under a tenth of a second, less than asking Nix for a check of the flake takes; go vet and the tests are
 # keyed by Go's caches, the tests that reach the test stack by its state too (QI_STACK_STATE, dev/stack-state.mk).
-check: check-core check-tutorial check-chart agents-check ## every check: the core, the library and the additions, the tutorial's programs, the charting consumer's page in a browser, the agents' spec; FULL=1, every vet and every test afresh, none from Go's caches
+check: check-core check-tutorial check-chart check-datasets agents-check ## every check: the core, the library and the additions, the tutorial's programs, the charting consumer's page in a browser, the data sets' locks, the agents' spec; FULL=1, every vet and every test afresh, none from Go's caches
 
 # The stack's state, QI_STACK_STATE, for the tests that reach the test stack (dev/stack-state.mk).
 STATE_GOALS := check check-core
@@ -134,9 +134,38 @@ check-chart: modules ## the charting consumer's page in headless Chromium (consu
 	QI_CHROMIUM=$$chromium/bin/chromium QI_CHART_PAGE=$$page QI_CHART_OUT=$(CURDIR)/.reports/chart-check \
 	  GOPROXY=off go test -vet=off $(if $(filter 1,$(FULL)),-count=1) -run '^TestPage$$' ./consumers/chart/
 
+# Each data set's lock (docs/designs/design-klines-dataset-2026-11-09.md): its form, and a released version's held to
+# its tag's, so that a version once released never changes; it reads no network (dev/scripts/dataset.py locks).
+check-datasets: ## every lock in datasets/ well formed, and a released version's the same as its tag's; no network
+	$(PY) $(S)/dataset.py locks
+
 build: modules ## the core's and its additions' programs built into bin/ (ignored by git): provision, and each addition of CORE, a program by its folder's name (the library none); the charting consumer's page, the flake's chart-page, linked at bin/chart-page
 	GOPROXY=off go build -o bin/ ./core/cmd/provision $(addprefix ./,$(filter-out core lib,$(CORE)))
 	nix build .#chart-page -o bin/chart-page
+
+# ---------------------------------------------------------------- the K-line data sets (docs/designs/design-klines-dataset-2026-11-09.md)
+
+# A data set is made from the stack's clean topic, read only and in no group, by bin/dataset; its image is a layout,
+# pushed and read by crane, nixpkgs' at flake.lock's pin and not in the shell. Each target is of the one lock in
+# datasets/, or LOCK= one of them; its version's folder is ~/.local/share/qi/datasets/PRODUCT/VERSION/ (its steps:
+# dev/scripts/dataset.py).
+LOCK ?= $(wildcard datasets/*.lock)
+
+dataset: modules ## a data set made from the stack's clean topic twice, the same bytes or it stops; its lock written (a version not released) or held to its tag's; its files and image layout at ~/.local/share/qi/datasets/PRODUCT/VERSION/; LOCK=datasets/PRODUCT.lock
+	GOPROXY=off go build -o bin/ ./consumers/dataset
+	$(PY) $(S)/dataset.py make $(LOCK)
+
+dataset-check: ## the data set read back from its image: pushed to a registry of crane's own on 127.0.0.1, its digest the lock's, read by its digest as a taker reads it, every file the lock's; the registry stopped
+	crane=$$(nix build --inputs-from . nixpkgs#crane --no-link --print-out-paths) && \
+	  QI_CRANE=$$crane/bin/crane $(PY) $(S)/dataset.py check $(LOCK)
+
+dataset-push: ## the owner's: a released version's image pushed to GHCR by crane, the owner's token asked for and its login kept in a temporary folder removed after; the digest GHCR gives back the lock's
+	crane=$$(nix build --inputs-from . nixpkgs#crane --no-link --print-out-paths) && \
+	  QI_CRANE=$$crane/bin/crane $(PY) $(S)/dataset.py push $(LOCK)
+
+dataset-remote-check: ## after the push, the image public, with no login: its tag on GHCR the lock's digest, the image read by its digest, every file the lock's
+	crane=$$(nix build --inputs-from . nixpkgs#crane --no-link --print-out-paths) && \
+	  QI_CRANE=$$crane/bin/crane $(PY) $(S)/dataset.py remote-check $(LOCK)
 
 # ---------------------------------------------------------------- the services stack (docs/impl/engineering/dev.environment.md, 3)
 

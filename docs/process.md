@@ -7,7 +7,8 @@ each rule lives, and how a session starts and ends. Each fact keeps its one home
 
 Once a machine: Nix with flakes; a Docker engine (on WSL, Docker Desktop with its WSL integration turned on for the
 distribution); for a push and `make locks-check`, GitHub's access (one browser login with `gh`, an SSH key added to
-the account), a clone over HTTPS needing none. Then the clone,
+the account), a clone over HTTPS needing none; for a data set's push to GHCR, the owner's, a token that can write
+packages, which `make dataset-push` asks for and keeps for the push alone. Then the clone,
 `nix develop`, `make install`. The shell gives every tool the targets call (`flake.nix`; the tools and their
 versions: `docs/impl/engineering/dev.environment.md`, 2). The services stack, `qi-v2-services`' Redpanda, TimescaleDB
 and ClickHouse, is an input, its package `stack` pinned by `flake.lock`, and it holds two stacks
@@ -30,6 +31,8 @@ with no login.
 | the tools | `/nix/store`, pinned by `flake.nix` and `flake.lock`; the common flakes in the public `qi-v2-nix` | the pins | `nix develop` | `nix develop` |
 | the kit | `dev/agents` → `/nix/store`, pinned by `flake.lock` | the pin | `make install` | `make install` |
 | what the project owns, gives and takes | `PRODUCTS.md` (`make products-check`) | yes | the sessions, in the commit of the change it describes | the clone |
+| the K-line data sets' locks: each one's image tag and digest and every file's sha256 | `datasets/` (`datasets/README.md`; `make check-datasets`) | yes | `make dataset`, from what the session sets of a new version | the clone |
+| a data set's version: its files, its image's layout and its lock as made | `~/.local/share/qi/datasets/<product>/<version>/` | no | `make dataset`, from the stack's clean topic | made again from the stack, or read from GHCR (`datasets/README.md`) |
 | the dependencies' versions | each module's `go.mod` and `go.sum` (the Go modules) | yes | the sessions; `go mod` | the clone |
 | build output | `bin/`; Go's caches under `~/.cache/platform/`, its module cache filled by `make modules` | no | the builds | the first build |
 | acquisition's state | none of its own: the record, `market.raw` and `market.corrections` on the stack, read from their start at each run, a bar's index its place in the series' grid (`plugins.md`, 3); `~/.local/state/qi/acquisition/`, the dates of the state it kept before, is no longer read | the topics, on the stack's volumes | `acquisition` | not carried: a new machine's stack starts each series anew, its index from 0 |
@@ -73,5 +76,7 @@ tracked file or the opening comes to rely on moves to `docs/designs/`.
 ## Another project
 
 It takes this project's products through what is published, never by a path into this folder. Today the platform
-publishes no flake package and no image (`docs/milestones.md`, 2); its contract, the core's topics and their schemas,
-the programs and their flags, the plugin protocols, is `README.md`, The platform contract.
+publishes no flake package; its images are the K-line data sets, each pinned by its lock in `datasets/` at its
+version's tag (`datasets/README.md`), the first released, its push to GHCR the owner's (`docs/milestones.md`, 2); its
+contract, the core's topics and their schemas, the programs and their flags, the plugin protocols, is `README.md`, The
+platform contract.

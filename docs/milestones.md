@@ -7,7 +7,7 @@ The work they record from before this repository's start was done in the platfor
 | # | Milestone | Stands |
 |---|---|---|
 | 1 | The stream and the warehouse in Go | closed: every program Go; the old platform, `go/`, removed, the core in its place (4) |
-| 2 | The platform as a product | designed, not built: the platform as an app, one Compose app on GHCR running the first path's programs from one image with the Redpanda and TimescaleDB they need, by Docker alone; the programs as a flake package (`docs/designs/design-platform-image-2026-11-09.md`); nothing published |
+| 2 | The platform as a product | the K-line data sets, a version each, fixed once released (`docs/designs/design-klines-dataset-2026-11-09.md`): the first, SPY's minutes, `qi-v2-platform-klines-massive-spy-1m` 1.0.0, released, its image built and checked, its push to GHCR the owner's; designed, not built: the platform as an app, one Compose app on GHCR running the first path's programs from one image with the Redpanda and TimescaleDB they need, by Docker alone; the programs as a flake package (`docs/designs/design-platform-image-2026-11-09.md`) |
 | 3 | The tooling to the practices of every qi-v2 project | the flake, the kit, the Makefile and the state documents in place; every input public, read with no login; no CI |
 | 4 | The lean core and its additions | the core, naming no source, its first path and its first stores: every minute of SPY's session from Massive on `market.raw`, each first version, and Massive's revisions on `market.corrections`, both kept forever, read by a consumer and kept by two stores, TimescaleDB's and ClickHouse's, four series each; the first cleaning, the validation, SPY's clean topic kept as the record changes and made again past its tolerance, the stores' clean series written from it; `query`, the topics read in no group; the platform's library, Massive's reader and Massive's K-line in it; acquisition re-reading 30 days, each page kept once; `make start`, run on the stack; `make check`'s tests on the test stack; the tutorial on the core, three levels, every example run on the test stack; the charting consumer, one series' chart in a browser by `@qi/chart` 3.0.0, updated as its K-lines come; a user reads the topics, not the stores |
 
@@ -23,9 +23,15 @@ of milestone 4's end, since it took a private project's executable; the core and
 
 ## 2 The platform as a product
 
-The programs published as a flake package and as an image, taken by a taker without this folder.
+The programs and the data published as a flake package and as images, taken by a taker without this folder.
 
-**Stands.** Nothing published; the contract stated (`README.md`, The platform contract). Designed, not built
+**Stands.** The contract stated (`README.md`, The platform contract). The K-line data sets
+(`docs/designs/design-klines-dataset-2026-11-09.md`, `datasets/README.md`): each a fixed set of a clean series' K-lines
+over a range of its sessions, a version fixed once released, a file a month of market 1.1.0's K-lines, an image on
+GHCR one layer a file, pinned by its lock in `datasets/`, made by `dataset` from the stack's clean topic, read only and
+in no group, twice to the same bytes, and read back from its image by crane; the first,
+`qi-v2-platform-klines-massive-spy-1m` 1.0.0, SPY's clean minutes of 2024-11-06 to 2026-11-06, 502 whole sessions,
+194,880 K-lines, 25 files, released at its tag, its image not yet on GHCR, its push the owner's. Designed, not built
 (`docs/designs/design-platform-image-2026-11-09.md`): the platform as an app, `ghcr.io/zhifengzhang-sz/qi-v2-platform`,
 one Compose app published on GHCR, which runs the first path's five programs from one image,
 `ghcr.io/zhifengzhang-sz/qi-v2-platform-programs`, with the Redpanda and TimescaleDB they need, on its own network and
@@ -35,8 +41,13 @@ showing it; the programs as the flake package `platform` for another qi-v2 proje
 of the three products, the digests in its commit, its push the owner's.
 
 **Left.**
-- The design's build, by a brief to come from the design; then the release 0.1.0, its push to GHCR the owner's, and
-  the check after it with no login.
+- The data set's push to GHCR, the owner's (`make dataset-push`); the image set public once the owner has judged
+  Massive's terms for it (`docs/decisions.md`, Open); then `make dataset-remote-check`, with no login.
+- What the data sets' design leaves (its What is left), each a step of its own: a function of the flake giving a Nix
+  taker each file by its hash; a version made as the record grows; a data set of another series; the image's digest
+  in `make locks-check`; the charting consumer's K-line text taken from the core.
+- The app's design's build, by a brief to come from the design; then the release 0.1.0, its push to GHCR the owner's,
+  and the check after it with no login.
 - What the design leaves (its What is left), each a step of its own: `query` in the app, with a flag naming the
   brokers, and a host port of the app's broker; the ClickHouse writer, the printer, ClickHouse and Console in the app;
   a catalog of the user's own, a cleaning or source plugin in an image on the platform's, the tutorial's other levels

@@ -32,6 +32,9 @@ TABLE = [
     ("dev/stack-state.mk", ["check-core"]),
     # the programs read config/ (acquisition and query the catalog)
     ("config/", ["check-core"]),
+    # the data sets' locks, each held to its form and, released, to its tag's (dev/scripts/dataset.py locks)
+    ("datasets/", ["check-datasets"]),
+    ("dev/scripts/dataset.py", ["check-datasets"]),
     ("agents/", ["agents-check"]),
     # what PRODUCTS.md states against what the project has, read from these files
     ("PRODUCTS.md", ["products-check"]),

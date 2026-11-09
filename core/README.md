@@ -34,7 +34,8 @@ speaking only through the stream by the schema below.
   and then letters and digits, its value a number market's JSON reads, in the one text market writes for it (a decimal
   of market's precision, or a whole number from 0 to market's bound), carried as it is written, its meaning the
   source's: the source's reader reads it (each in the platform's library, `../lib/README.md`). Not a K-line: `asOf`, the
-  ongoing K-line's.
+  ongoing K-line's. The K-line of a base alone (`raw.FromBase`) is market 1.1.0's K-line in its canonical text, its
+  seven fields, as a K-line data set writes each (`../datasets/README.md`).
 - **Every bar of a series' grid** is on `market.raw`, from the series' first: its publisher's grid, every bar of the
   series' session (acquisition's, its catalog dataset's, `../docs/impl/engineering/plugins.md`, 3). A bar its source
   gives none for, a minute without an eligible trade, is the **zero K-line** (`raw.Zero`): the base's fields alone,
