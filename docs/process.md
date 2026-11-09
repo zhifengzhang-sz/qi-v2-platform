@@ -63,7 +63,7 @@ tracked file or the opening comes to rely on moves to `docs/designs/`.
    something newer than what it names (an input's branch past `flake.lock`'s commit). The session reports each outdated lock to the owner with what updates it, and updates
    none without the owner's say.
 2. **Work.** The opening's one task. Before the first build of the session, the owner is asked. Checks run in the
-   role `checker` (`make check`: `check-core`, `check-tutorial`, `agents-check`), its
+   role `checker` (`make check`: `check-core`, `check-tutorial`, `check-chart`, `agents-check`), its
    stack tests on the test stack; every test and trial run is on the test stack, the stack written only by the
    platform's own runs. No fallbacks: a missing tool or input stops the run with its name.
 3. **End.** `docs/opening.md` rewritten for the next session (where it stopped, the one task, the standing rules

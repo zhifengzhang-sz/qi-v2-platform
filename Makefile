@@ -17,7 +17,7 @@ S  := dev/scripts
 PY := python3
 AGENT_KIND ?= all
 
-.PHONY: help install agents agents-check run-start run-check verify locks-check products-check check check-core check-tutorial go.work modules build start stack-up stack-down stack-test-up stack-test-stop stack-test-down
+.PHONY: help install agents agents-check run-start run-check verify locks-check products-check check check-core check-tutorial check-chart go.work modules build start stack-up stack-down stack-test-up stack-test-stop stack-test-down
 
 help: ## the targets
 	@grep -E '^[a-z.-]+:.*##' $(MAKEFILE_LIST) | sed 's/:.*## /\t/' | expand -t 18
@@ -73,7 +73,7 @@ products-check: ## whether PRODUCTS.md states what the project has (the kit's ki
 # target that runs Go on them, and never committed. Their targets run Go with GOPROXY=off, so that Go fetches nothing
 # while it vets, tests or builds: market's Go form is the flake's, and every other module they take is in Go's module
 # cache already, put there by make modules, which each of them runs first.
-CORE := core lib publishers/acquisition consumers/printer consumers/timescaledb-writer consumers/clickhouse-writer consumers/query plugins/massive-reader plugins/validation
+CORE := core lib publishers/acquisition consumers/printer consumers/timescaledb-writer consumers/clickhouse-writer consumers/query consumers/chart plugins/massive-reader plugins/validation
 CORE_PKGS := $(addprefix ./,$(addsuffix /...,$(CORE)))
 # The tutorial's programs (docs/tutorial/README.md), each a module of its own folder under its level's, found by its
 # go.mod, so that removing its folder removes it; built by the pages' own commands, not by make build.
@@ -96,7 +96,7 @@ modules: go.work ## the modules the workspace's packages and their tests need, b
 # Each part once, and what it reads decides its work (go.toolchain.md, 4): gofmt and the kit's check run every time,
 # each in under a tenth of a second, less than asking Nix for a check of the flake takes; go vet and the tests are
 # keyed by Go's caches, the tests that reach the test stack by its state too (QI_STACK_STATE, dev/stack-state.mk).
-check: check-core check-tutorial agents-check ## every check: the core, the library and the additions, the tutorial's programs, the agents' spec; FULL=1, every vet and every test afresh, none from Go's caches
+check: check-core check-tutorial check-chart agents-check ## every check: the core, the library and the additions, the tutorial's programs, the charting consumer's page in a browser, the agents' spec; FULL=1, every vet and every test afresh, none from Go's caches
 
 # The stack's state, QI_STACK_STATE, for the tests that reach the test stack (dev/stack-state.mk).
 STATE_GOALS := check check-core
@@ -124,8 +124,19 @@ else
 	GOPROXY=off go test -vet=off $(TUTORIAL_PKGS)
 endif
 
-build: modules ## the core's and its additions' programs built into bin/ (ignored by git): provision, and each addition of CORE, a program by its folder's name (the library none)
+# The charting consumer's page in headless Chromium (docs/designs/design-chart-consumer-2026-11-09.md, How it is
+# checked): its test TestPage, given Chromium, nixpkgs' at flake.lock's pin (as visualization's checks take it), and the
+# page, the flake's chart-page, by their store paths, which key its result in Go's cache with the rest; its screenshots
+# in .reports/chart-check/. Neither is in the shell; without them the test skips, as in check-core.
+check-chart: modules ## the charting consumer's page in headless Chromium (consumers/chart, TestPage): Chromium (nixpkgs#chromium at flake.lock's pin) and the flake's chart-page given to it (QI_CHROMIUM, QI_CHART_PAGE), its screenshots in .reports/chart-check/; GOPROXY=off
+	chromium=$$(nix build --inputs-from . nixpkgs#chromium --no-link --print-out-paths) && \
+	page=$$(nix build .#chart-page --no-link --print-out-paths) && \
+	QI_CHROMIUM=$$chromium/bin/chromium QI_CHART_PAGE=$$page QI_CHART_OUT=$(CURDIR)/.reports/chart-check \
+	  GOPROXY=off go test -vet=off $(if $(filter 1,$(FULL)),-count=1) -run '^TestPage$$' ./consumers/chart/
+
+build: modules ## the core's and its additions' programs built into bin/ (ignored by git): provision, and each addition of CORE, a program by its folder's name (the library none); the charting consumer's page, the flake's chart-page, linked at bin/chart-page
 	GOPROXY=off go build -o bin/ ./core/cmd/provision $(addprefix ./,$(filter-out core lib,$(CORE)))
+	nix build .#chart-page -o bin/chart-page
 
 # ---------------------------------------------------------------- the services stack (docs/impl/engineering/dev.environment.md, 3)
 

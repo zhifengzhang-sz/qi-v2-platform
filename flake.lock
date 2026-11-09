@@ -92,6 +92,38 @@
         "type": "github"
       }
     },
+    "qi-v2-ts": {
+      "inputs": {
+        "kit": [
+          "visualization",
+          "kit"
+        ],
+        "nixpkgs": [
+          "visualization",
+          "qi-v2-ts",
+          "qi-v2",
+          "nixpkgs"
+        ],
+        "qi-v2": [
+          "visualization",
+          "qi-v2"
+        ]
+      },
+      "locked": {
+        "lastModified": 1794139408,
+        "narHash": "sha256-3bGvF0lNcn36U+Pq06NQF5tWMvKV6NHpwy+mVgcmhEU=",
+        "owner": "zhifengzhang-sz",
+        "repo": "qi-v2-ts",
+        "rev": "3c55f72e5c1dfa235d98089bac19e1ee85bfeb05",
+        "type": "github"
+      },
+      "original": {
+        "owner": "zhifengzhang-sz",
+        "ref": "qi-v2-ts-0.1.0",
+        "repo": "qi-v2-ts",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "contracts": "contracts",
@@ -101,7 +133,8 @@
           "nixpkgs"
         ],
         "qi-v2": "qi-v2",
-        "services": "services"
+        "services": "services",
+        "visualization": "visualization"
       }
     },
     "services": {
@@ -127,6 +160,42 @@
         "owner": "zhifengzhang-sz",
         "ref": "stack-0.3.0",
         "repo": "qi-v2-services",
+        "type": "github"
+      }
+    },
+    "visualization": {
+      "inputs": {
+        "contracts": [
+          "contracts"
+        ],
+        "kit": [
+          "kit"
+        ],
+        "market": [
+          "contracts"
+        ],
+        "nixpkgs": [
+          "visualization",
+          "qi-v2",
+          "nixpkgs"
+        ],
+        "qi-v2": [
+          "qi-v2"
+        ],
+        "qi-v2-ts": "qi-v2-ts"
+      },
+      "locked": {
+        "lastModified": 1794177070,
+        "narHash": "sha256-eAPmf3jXAQVmpyygHYx6omPyuQlkPc3y8O9/5B7X22w=",
+        "owner": "zhifengzhang-sz",
+        "repo": "qi-v2-visualization",
+        "rev": "be9489531e0c47781e7cfb1185364c1e3e07757a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "zhifengzhang-sz",
+        "ref": "qi-chart-3.0.0",
+        "repo": "qi-v2-visualization",
         "type": "github"
       }
     }

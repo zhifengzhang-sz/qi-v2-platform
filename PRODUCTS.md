@@ -6,8 +6,8 @@ The platform owns the streaming architecture and the operations that run on the 
 their schemas, and the additions on it, a publisher or a consumer each, among them acquisition, which reads a source
 through its plugin, and the cleanings it runs. It owns the market data: its acquisition, its record on the core's
 topics, kept forever, and its cleaning. It does not own the infrastructure, which `qi-v2-services` publishes, the market
-data contract, which is `qi-v2-contracts`', the common tools, which are `qi-v2-nix`'s, an engine that reads its topics
-and what it makes, or any consumer's code.
+data contract, which is `qi-v2-contracts`', the chart library, which is `qi-v2-visualization`'s, the common tools,
+which are `qi-v2-nix`'s, an engine that reads its topics and what it makes, or any consumer's code.
 
 ## Products
 
@@ -25,3 +25,4 @@ and what it makes, or any consumer's code.
 | `kit` | `qi-v2-nix` | `flake.lock` |
 | `services` | `qi-v2-services` | `flake.lock` |
 | `contracts` | `qi-v2-contracts`, its package `market-go` (market 1.1.0's Go form) and market's vectors | `flake.lock` |
+| `visualization` | `qi-v2-visualization`, its packages `qi-chart` (`@qi/chart` 3.0.0) and `lightweight-charts` (Lightweight Charts 5.2.1), from which the charting consumer's page is built | `flake.lock` |

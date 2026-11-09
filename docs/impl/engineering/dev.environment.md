@@ -19,11 +19,15 @@ commands, see [go.toolchain.md](go.toolchain.md).
 
 The tools come from the flake (`flake.nix`, pinned by `flake.lock`): `nix develop` gives them, and `make` runs only
 in that shell (`make help` lists the targets). This table is the one home of the tools and their versions, as
-nixpkgs gives them at `flake.lock`'s pin; the last row is not the flake's.
+nixpkgs gives them at `flake.lock`'s pin; the last row is not the flake's. Bun, TypeScript and Chromium are the flake's
+nixpkgs' too but not in the shell: the targets that need them take them by `nix build`.
 
 | Tool | Version | Note |
 |---|---|---|
 | Go | 1.26.10 | the flake's, with gopls; its caches under `~/.cache/platform/`; `GOTOOLCHAIN=local`, so go never fetches another toolchain; every `go.mod` says `go 1.26.0` |
+| Bun | 1.3.13 | not in the shell: it bundles the charting consumer's page in the flake's `chart-page` (`make build`) |
+| TypeScript | 5.9.3 | not in the shell: it type-checks the page's script in that build |
+| Chromium | 156.0.8078.79 | not in the shell: headless, the page's browser check (`make check-chart`, `go.toolchain.md`, 4) |
 | Docker + Compose | 29.9.3 / 5.7.0 | the host's, not pinned: the versions the stack was last started on (section 3); the stack's program runs `docker compose` with the `docker` on the path |
 
 ## 3. Infrastructure
@@ -95,6 +99,7 @@ its log, and the next start starts it again.
 | Redpanda Console | `http://localhost:8080` | browsing topics and schemas |
 | TimescaleDB | `localhost:5432`, `postgres`/`password` | a store on the core, in a database of its own |
 | ClickHouse | `http://localhost:8123` (HTTP), `localhost:9000` (native), `default`/`password` | a store on the core, in a database of its own |
+| the charting consumer | `http://localhost:8090` (`chart`'s `-listen`); on the test stack, `http://localhost:18090` | a series' chart in a browser, its page and its feed (`bin/chart`, run by hand: Ctrl-C stops it) |
 
 The stack makes none of the platform's schema: TimescaleDB starts with the database
 `cryptodb` and no table of the platform's in it, ClickHouse with only the server's
@@ -110,7 +115,7 @@ then starts from the local images. The images and their tags:
 ## 4. Platform setup
 
 ```sh
-make build                            # bin/: the core's programs (make help, build)
+make build                            # bin/: the core's programs, and the chart's page at bin/chart-page (make help, build)
 bin/provision                         # the core's topics, market.raw and market.corrections (core/README.md)
 ```
 
@@ -131,7 +136,7 @@ QI_CLICKHOUSE_TEST_URL=http://default:password@localhost:18123 GOPROXY=off go te
 ## 6. Verification checklist
 
 ```sh
-make check                                      # gofmt, vet, tests; the agents' spec
+make check                                      # gofmt, vet, tests; the chart's page in a browser; the agents' spec
 docker exec qicore-redpanda rpk topic list
 ```
 

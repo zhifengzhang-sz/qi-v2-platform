@@ -20,7 +20,7 @@ supplies only its computation.
 |---|---|---|---|
 | **Data source** (§3) — a reader of a source's bars | an executable a catalog dataset names (`command`), which prints a series' bars for its spans, one a line, the source's K-line (the base K-line of market 1.1.0 and the source's own fields) | acquisition (`publishers/acquisition`): the dataset's series and history, the spans of its session, each series' index, the publish on `market.raw` (`core/README.md`) | **works today** for `massive-spy-1m` (`plugins/massive-reader`, over the platform's library, `lib/`) |
 | **Cleaning** (§3) — a judge of a series' K-lines | an executable a catalog dataset names (`cleaning`), which answers each K-line given it, in order, with the K-line it gives or its refusal and the reason | acquisition: the series' clean topic, one series' (`core/README.md`, clean market data), its tail, its damage and its reset, each store's clean series | **works today** for `massive-spy-1m`: the validation, 0.1.0 (`plugins/validation`) |
-| **Stream reader** | any Kafka client | `market.raw`, `market.corrections` and a clean topic | **works today** (a plain consumer, in no group or in the group of its name: the tutorial, `../../tutorial/README.md`, and `consumers/printer`, `consumers/query`) |
+| **Stream reader** | any Kafka client | `market.raw`, `market.corrections` and a clean topic | **works today** (a plain consumer, in no group or in the group of its name: the tutorial, `../../tutorial/README.md`, and `consumers/printer`, `consumers/query`; a clean topic's chart in a browser, in the group of its name, `consumers/chart`) |
 
 A plugin never writes a platform-owned topic (`market.raw`,
 `market.corrections`, `market.clean.*`): the core's topics are written
@@ -195,7 +195,10 @@ the reader:
     minute's latest version, every field, the run stopping where one
     differs; the clean topic's readers, and those of each topic derived
     from it, stopped, a group with a member reading one stopping the
-    reset; the clean topic and each topic derived from it deleted, with
+    reset (the charting consumer's, `consumers/chart`, while it runs:
+    stopped, the next run makes the reset, and started again it reads
+    the topic made again from its start, each page drawn whole again);
+    the clean topic and each topic derived from it deleted, with
     every group's offsets on them, so that a reader started again reads
     from its start; the clean topic provisioned under its name; the
     corrected raw given to the cleaning, each K-line it gives published,
@@ -204,7 +207,13 @@ the reader:
     `consumers/`); the topic read again, the damage after it 0, else
     the run stops. A step that fails once the topic is made deletes it,
     the run failing, so that the next run makes it again whole, as the
-    series' first reset, every store's clean series with it; acquisition
+    series' first reset, every store's clean series with it; that first
+    reset checks no group of the topic it makes, only those of the
+    topics derived from it, so a reader started between the two has its
+    topic made again under it: on the core's Kafka stream it stops with
+    a fault, its client finding the topic's ID gone (franz-go's
+    `UNKNOWN_TOPIC_ID`, on its sixth fetch, about 50 s after), as the
+    charting consumer's test on the test stack holds; acquisition
     stopped in the middle of a reset (killed, the machine down) deletes
     nothing, and a topic it left made is taken as it is, each store's
     clean series as that reset left it. The stores' clean series is

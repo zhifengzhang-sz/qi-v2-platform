@@ -8,7 +8,7 @@ the staged paths, for a commit made by any kind of agent or by hand.
     python3 dev/scripts/verify.py --since REF
 
 It checks the work tree, not the index: a file staged in part is checked as it stands. A path no target checks
-(the documents, the Makefile, the flake, this script) is named and passes: a commit of only such paths runs no
+(the documents, the Makefile, this script) is named and passes: a commit of only such paths runs no
 target. Standard library only.
 """
 import subprocess
@@ -22,6 +22,11 @@ TABLE = [
     ("publishers/", ["check-core"]),
     ("consumers/", ["check-core"]),
     ("plugins/", ["check-core"]),
+    # the charting consumer's page in a browser: its program's and its page's sources, and the flake, which builds the
+    # page from visualization's packages (docs/designs/design-chart-consumer-2026-11-09.md, How it is checked)
+    ("consumers/chart/", ["check-chart"]),
+    ("flake.nix", ["check-chart"]),
+    ("flake.lock", ["check-chart"]),
     # the tutorial's pages and its programs, a Go module each (docs/tutorial/README.md)
     ("docs/tutorial/", ["check-tutorial"]),
     ("dev/stack-state.mk", ["check-core"]),

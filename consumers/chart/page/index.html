@@ -1,0 +1,24 @@
+<!doctype html>
+<!-- The charting consumer's page (docs/designs/design-chart-consumer-2026-11-09.md, The feed and the page): the chart's
+     element and a line for a fault; Lightweight Charts' standalone build, then the page's script, which draws the chart
+     by @qi/chart and loads its tv engine. Every file is the program's: the page loads nothing from anywhere else. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:,">
+<title>chart</title>
+<style>
+  html, body { margin: 0; height: 100%; }
+  body { display: flex; flex-direction: column; font: 13px system-ui, sans-serif; }
+  #fault { display: none; padding: 4px 8px; color: #ffffff; background: #b3261e; }
+  #chart { flex: 1; min-height: 0; }
+</style>
+</head>
+<body>
+<div id="fault" role="alert"></div>
+<div id="chart"></div>
+<script src="/lightweight-charts.js"></script>
+<script src="/chart.js"></script>
+</body>
+</html>

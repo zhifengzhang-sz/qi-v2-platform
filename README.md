@@ -12,7 +12,8 @@ over the platform's library, read by acquisition (`publishers/acquisition`), whi
 session on `market.raw`, each first version, and each minute Massive revises after on `market.corrections`; a consumer,
 the printer (`consumers/printer`), reads `market.raw`; another, `query` (`consumers/query`), answers the common
 questions of both topics (their topics and series, a series' bars, a minute's every version, the corrections, where
-each consumer group stands), read only, in no group. The stores on it are consumers too, each a module under
+each consumer group stands), read only, in no group; the charting consumer, `chart` (`consumers/chart`), draws one
+series' clean topic in a browser by visualization's `@qi/chart`, updated as its K-lines come. The stores on it are consumers too, each a module under
 `consumers/` keeping the two topics' K-lines in a database of its own, four series (its README). `make start` runs
 them, acquisition and both stores, while the stack is up.
 
@@ -25,7 +26,8 @@ package is Massive's reader: Massive's page schema, the fetcher that keeps every
 **Go, from 2026-09-25.** 
 Every program here moves data onto, along or off the stream, and its correctness under rebalance, restart and replay is the correctness of the whole chain, so the Kafka client's maturity decides the language: [franz-go](https://github.com/twmb/franz-go), pure Go, BSD, Redpanda's own choice; the stores are pgx over TimescaleDB and ClickHouse's HTTP interface.
 
-Every program is Go: the TypeScript apps were retired. A browser page is a consumer's, not the platform's.
+Every program is Go: the TypeScript apps were retired. What runs in a browser is a consumer's page, the charting
+consumer's among them, its drawing `@qi/chart`'s.
 
 No Confluent component anywhere: broker, schema registry and console are Redpanda's.
 
@@ -61,6 +63,7 @@ graph LR
         ACQ["acquisition<br/>runs the dataset's reader and cleaning"]
         ST[("the stores<br/>TimescaleDB · ClickHouse")]
         Q["query · printer"]
+        CH["chart<br/>a series' chart, its page in a browser"]
     end
 
     subgraph OUT["Offered: the contract"]
@@ -83,6 +86,7 @@ graph LR
     T_RAW --> Q
     T_COR --> Q
     T_CLN --> Q
+    T_CLN --> CH
 ```
 
 What holds across it:
@@ -99,6 +103,7 @@ What holds across it:
 |---|---|---|---|
 | **The core's first path** — a catalog dataset's source plugin read by acquisition, every bar of the series' grid published on `market.raw` as raw market data 0.3.0, each bar's index its place in the grid, each bar revised on `market.corrections`; a consumer that prints it | [`core/README.md`](core/README.md), [`plugins.md`](docs/impl/engineering/plugins.md) §3 | `core/`, `publishers/acquisition`, `consumers/printer`, `plugins/massive-reader` over `lib/` | working (Go); Massive, SPY M1 |
 | **Cleaning** — a catalog dataset's cleaning run by acquisition, the series' clean topic of clean market data 0.1.0, one series', its tail added as each new minute comes, made again under its name when more of its minutes than the dataset's tolerance are damaged, a `high` or a `low` changed by a correction | [`core/README.md`](core/README.md), [`plugins.md`](docs/impl/engineering/plugins.md) §3 | `core/clean`, `publishers/acquisition`, `plugins/validation` | working (Go); the validation 0.1.0, SPY M1 |
+| **The charting consumer** — one series' chart in a browser, of its clean topic's K-lines and their volume, read in the group of its name, drawn by `@qi/chart` and updated as the K-lines come; a running chart holds its series' reset off | [`design-chart-consumer-2026-11-09.md`](docs/designs/design-chart-consumer-2026-11-09.md) | `consumers/chart`, its page `consumers/chart/page` (the flake's `chart-page`) | working (Go, and its page); SPY M1 |
 | **The stores on the core** — consumers of `market.raw` and `market.corrections`, each keeping four series (the raw, the corrections, the corrected raw, the clean) in a database of its own, made again from the topics' start, the clean written from a clean topic each time it is made | each store's README under `consumers/` | `consumers/` | working (Go) |
 
 Full index: [`docs/impl/engineering/readme.md`](docs/impl/engineering/readme.md).
@@ -116,7 +121,7 @@ What applications may depend on, and nothing else:
 | `market.raw` | raw market data 0.3.0, keyed `source:instrument:timeframe`, partitioned by the instrument, each bar's first version, the source's K-line, its base market 1.1.0's | [`core/README.md`](core/README.md) |
 | `market.corrections` | market corrections 0.1.0, as `market.raw` is keyed and partitioned, each a later version of a bar there and the fields that differ | [`core/README.md`](core/README.md) |
 | `market.clean.<cleaning>.<version>.<source>.<instrument>.<timeframe>` | clean market data 0.1.0, one series' and one cleaning's, one partition, its K-lines the cleaning gave, each its place in the clean series, made again under its name | [`core/README.md`](core/README.md) |
-| programs and their flags | `provision`, `acquisition`, `printer`, `query` ([`consumers/query/README.md`](consumers/query/README.md)), `massive-reader`, `validation`, and each store's |
+| programs and their flags | `provision`, `acquisition`, `printer`, `query` ([`consumers/query/README.md`](consumers/query/README.md)), `chart` ([its design](docs/designs/design-chart-consumer-2026-11-09.md); its page and its feed are its own, no part of the contract), `massive-reader`, `validation`, and each store's |
 | the plugin protocols | [`plugins.md`](docs/impl/engineering/plugins.md) §3: a source plugin's and a cleaning's, what a plugin may rely on and must honour |
 
 **A user reads the topics, not the stores.** `market.raw`, `market.corrections` and each clean topic keep every
@@ -145,12 +150,13 @@ make stack-up                      # qi-v2-services' package `stack`, at flake.l
 make stack-test-up                 # the test stack beside it, for tests; make stack-test-down wipes it
 
 # this repo, inside the shell
-make build                         # the core's programs into bin/
+make build                         # the core's programs into bin/, the chart's page at bin/chart-page
 make start                         # the stack up, then acquisition and the stores, kept running (dev.environment.md, 3)
 bin/provision                      # the core's topics, market.raw and market.corrections (core/README.md)
 bin/acquisition -dataset massive-spy-1m   # one run: SPY's minutes from Massive onto market.raw, its revisions onto market.corrections
 bin/printer -to-end -dedup -out spy.jsonl # market.raw as it stands, each bar once, its first copy
 bin/query series                   # the series on market.raw; topics, bars, minute, corrections, groups (consumers/query)
+bin/chart -topic market.clean.validation.v0-1-0.massive.SPY.M1 -page bin/chart-page   # its chart at http://localhost:8090/; Ctrl-C stops it
 make check                         # gofmt, vet, tests; the agents' spec
 ```
 
@@ -166,7 +172,8 @@ What this repository needs, and nothing about who uses it; each is a public repo
 |---|---|---|
 | [`qi-v2-services`](https://github.com/zhifengzhang-sz/qi-v2-services) | the infrastructure: Redpanda (broker, registry, Console), TimescaleDB, ClickHouse; the stack's Redis is not used here | its published package `stack`, an input of `flake.nix` pinned by `flake.lock`: the stack, `make stack-up`, `make stack-down`, and the test stack, `make stack-test-up`, `make stack-test-down` |
 | [`qi-v2-contracts`](https://github.com/zhifengzhang-sz/qi-v2-contracts) | the market data contract, `market` 1.1.0: its Go form, the base K-line of every K-line the core's schema carries; its vectors, to which the library holds its K-lines' base | its package `market-go` and its source's `market/vectors`, an input of `flake.nix` at the tag `market-1.1.0` pinned by `flake.lock`, which `go.work` (written by `make go.work` and the shell) puts in place of the module every `go.mod` of the core and its additions requires at `v0.0.0` |
-| [`qi-v2-nix`](https://github.com/zhifengzhang-sz/qi-v2-nix) | the tools from one nixpkgs (Go), the pure shell, the kit for the agents' files | the inputs of `flake.nix`, pinned by `flake.lock`; `nix develop`; the tools and their versions: [`dev.environment.md`](docs/impl/engineering/dev.environment.md), 2 |
+| [`qi-v2-visualization`](https://github.com/zhifengzhang-sz/qi-v2-visualization) | the chart library, `@qi/chart` 3.0.0, for the charting consumer's page: its packages `qi-chart` (the library and what it takes, its tv engine's script) and `lightweight-charts` (Lightweight Charts 5.2.1's standalone build and its licence) | an input of `flake.nix` at the tag `qi-chart-3.0.0` pinned by `flake.lock`, its inputs following this flake's where they are the same commit, from which the flake's `chart-page` is built |
+| [`qi-v2-nix`](https://github.com/zhifengzhang-sz/qi-v2-nix) | the tools from one nixpkgs (Go in the shell; Bun and TypeScript for the chart's page, Chromium for its check, not in it), the pure shell, the kit for the agents' files | the inputs of `flake.nix`, pinned by `flake.lock`; `nix develop`; the tools and their versions: [`dev.environment.md`](docs/impl/engineering/dev.environment.md), 2 |
 | Go modules | franz-go (Kafka), pgx (Postgres), yaml.v3 | each module's `go.mod`, pinned by its `go.sum`, from the Go module proxy (`make modules`); the library's none |
 
 ```
@@ -179,9 +186,9 @@ config/                    the catalog: the datasets acquisition reads (plugins.
 docs/impl/engineering/     the plugins and the catalog, the toolchain, the dev environment, the carrier
 core/                      the core, a Go module: the stream, the core's topics and their schemas
 lib/                       the platform's library, a Go module on market and the standard library alone: Massive's reader
-publishers/, consumers/    additions to the core, a Go module each: acquisition; the printer, the query, the stores
+publishers/, consumers/    additions to the core, a Go module each: acquisition; the printer, the query, the chart and its page, the stores
 plugins/                   source plugins and cleanings, a Go module each: Massive's reader, a thin program over lib/; the validation
-go.work, bin/              the Go workspace (make go.work) and the core's programs (make build; the tutorial's, its pages), neither in git
+go.work, bin/              the Go workspace (make go.work) and the core's programs and the chart's page (make build; the tutorial's, its pages), neither in git
 docs/tutorial/             the tutorial on the core: basic/, medium/, advanced/, each its page and its programs, a Go module each
 ```
 

@@ -75,9 +75,11 @@ platform's data; it is wiped when they are done (`make stack-test-down`).
 | Variable | Tests | Value on the test stack |
 |---|---|---|
 | `QI_WAREHOUSE_TEST_URL` | the tests that reach TimescaleDB, the TimescaleDB store's: each creates and drops its own scratch database | `postgres://postgres:password@localhost:15432/postgres` |
-| `QI_KAFKA_BROKERS` | the stream contract test against Redpanda | `localhost:29092`, also its value when unset |
+| `QI_KAFKA_BROKERS` | the stream contract test against Redpanda; the charting consumer's stack tests (`consumers/chart`) | `localhost:29092`, also its value when unset |
 | `QI_CLICKHOUSE_TEST_URL` | the tests that reach ClickHouse, the ClickHouse store's: each creates and drops its own scratch database | `http://default:password@localhost:18123` |
 | `QI_MARKET_VECTORS` | the library's tests that hold its K-lines' base to market's vectors (`lib/README.md`) | the shell's, market's vectors in the input `contracts` |
+| `QI_CHROMIUM`, `QI_CHART_PAGE` | the charting consumer's browser check (`consumers/chart`, `TestPage`), which skips, saying so, without them: Chromium's `bin/chromium` and the page's folder | `make check-chart`'s: `nixpkgs#chromium` at `flake.lock`'s pin and the flake's `chart-page`, by their store paths |
+| `QI_CHART_OUT` | where the browser check keeps its screenshots; unset, a folder of the test's own, removed after it | `make check-chart`'s: `.reports/chart-check/` |
 
 ```sh
 QI_WAREHOUSE_TEST_URL=postgres://postgres:password@localhost:15432/postgres \
@@ -108,10 +110,12 @@ reach the stack run again; with the same state, Go's cache keeps their
 results. The rule: every way to the stack reads `QI_STACK_STATE`, and a
 test leaves nothing on a server that a later run could see. The ways:
 a store's test on the core, through its own scratch helper, in a database
-of its own on TimescaleDB or ClickHouse that it drops; and the stream
+of its own on TimescaleDB or ClickHouse that it drops; the stream
 contract test (`core/stream/kafka`), on a topic of its own that it
 deletes, failing if it cannot (Redpanda then keeps none of its consumer
-group). The state is computed by `dev/stack-state.mk`, which the root's
+group); and the charting consumer's (`consumers/chart`), on a clean topic
+of its own, under a series of its own, that it deletes, failing if it
+cannot, its group committing no offset. The state is computed by `dev/stack-state.mk`, which the root's
 `Makefile` includes. A test that reaches the stack another way, or leaves
 something there, is changed to go through these; none does. A run
 killed midway leaves its database or topic behind, under a name no later

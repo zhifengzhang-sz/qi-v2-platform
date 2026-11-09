@@ -3,8 +3,9 @@
 # shell and its Go preset; the kit, which writes the agents' files from agents/; the services stack, the package
 # `stack` of qi-v2-services, run by make stack-up and make stack-down on the machine's Docker engine, and its test
 # stack, by make stack-test-up and make stack-test-down; market's Go form, the package market-go of qi-v2-contracts,
-# which the Go workspace (go.work) takes, and market's vectors, which the library's tests read. Every input is a
-# public repository, read with no login.
+# which the Go workspace (go.work) takes, and market's vectors, which the library's tests read; @qi/chart, the
+# packages qi-chart and lightweight-charts of qi-v2-visualization, from which the charting consumer's page is built
+# (the package chart-page). Every input is a public repository, read with no login.
 {
   description = "qi-v2-platform: the streaming architecture and the operations that run on the stream; its tools";
 
@@ -25,8 +26,19 @@
   inputs.contracts.url = "github:zhifengzhang-sz/qi-v2-contracts?ref=market-1.1.0";
   inputs.contracts.inputs.qi-v2.follows = "qi-v2";
   inputs.contracts.inputs.kit.follows = "kit";
+  # @qi/chart, the chart library, published by qi-v2-visualization at its release's tag
+  # (docs/designs/design-chart-consumer-2026-11-09.md, What the platform takes): its packages qi-chart (@qi/chart and
+  # what it takes, as a node_modules, with its tv engine's script) and lightweight-charts (Lightweight Charts'
+  # standalone build and its licence), from which chart-page is built. Each of its inputs at the commit of this flake's
+  # same input follows this flake's: qi-v2 and kit; its contracts (chanlun-3.1.0) and market (market-1.1.0), both at the
+  # commit this flake's contracts pins; and so nixpkgs. Its qi-v2-ts, @qi/base and @qi/core, is a node of its own.
+  inputs.visualization.url = "github:zhifengzhang-sz/qi-v2-visualization?ref=qi-chart-3.0.0";
+  inputs.visualization.inputs.qi-v2.follows = "qi-v2";
+  inputs.visualization.inputs.kit.follows = "kit";
+  inputs.visualization.inputs.contracts.follows = "contracts";
+  inputs.visualization.inputs.market.follows = "contracts";
 
-  outputs = { self, nixpkgs, qi-v2, kit, services, contracts }:
+  outputs = { self, nixpkgs, qi-v2, kit, services, contracts, visualization }:
     let
       systems = [ "x86_64-linux" ];
       forAll = f: nixpkgs.lib.genAttrs systems (system: f (import nixpkgs { inherit system; }));
@@ -68,5 +80,29 @@
           closing = ''echo "platform: make help lists the targets; docs/opening.md says where the work stands"'';
         };
       });
+      # The charting consumer's page (docs/designs/design-chart-consumer-2026-11-09.md, Its build), served by bin/chart
+      # from bin/chart-page, where make build links it: its main.ts type-checked by TypeScript as @qi/chart's README
+      # says a taker's takes the sources (consumers/chart/page/tsconfig.json), against the package qi-chart's
+      # node_modules, then bundled by Bun for the browser into chart.js; beside it index.html, the package's tv engine
+      # (tv.js), and Lightweight Charts' standalone build and its licence. Bun and TypeScript are this flake's nixpkgs',
+      # the nixpkgs visualization builds its engines' scripts with; neither is in the shell. The program's page, no
+      # product.
+      packages = forAll (pkgs:
+        let v = visualization.packages.${pkgs.stdenv.hostPlatform.system};
+        in {
+          chart-page = pkgs.runCommand "chart-page" { nativeBuildInputs = [ pkgs.bun pkgs.typescript ]; } ''
+            export HOME=$TMPDIR
+            cp ${./consumers/chart/page/main.ts} main.ts
+            cp ${./consumers/chart/page/tsconfig.json} tsconfig.json
+            ln -s ${v.qi-chart}/node_modules node_modules
+            tsc -p tsconfig.json
+            mkdir -p $out
+            bun build main.ts --target=browser --format=iife --minify --outfile $out/chart.js
+            cp ${./consumers/chart/page/index.html} $out/index.html
+            cp ${v.qi-chart}/node_modules/@qi/chart/engine/tv.js $out/tv.js
+            cp ${v.lightweight-charts}/dist/lightweight-charts.standalone.production.js $out/lightweight-charts.js
+            cp ${v.lightweight-charts}/LICENSE $out/LICENSE.lightweight-charts
+          '';
+        });
     };
 }
