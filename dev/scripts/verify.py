@@ -16,25 +16,10 @@ import sys
 
 # a path's prefix and the targets that check it, in the order they run
 TABLE = [
-    # the core, the library and the additions (core/README.md, lib/README.md), and the stack's state their tests read
-    ("core/", ["check-core"]),
-    ("lib/", ["check-core"]),
-    ("publishers/", ["check-core"]),
-    ("consumers/", ["check-core"]),
-    ("plugins/", ["check-core"]),
-    # the charting consumer's page in a browser: its program's and its page's sources, and the flake, which builds the
-    # page from visualization's packages (docs/designs/design-chart-consumer-2026-11-09.md, How it is checked)
-    ("consumers/chart/", ["check-chart"]),
-    ("flake.nix", ["check-chart"]),
-    ("flake.lock", ["check-chart"]),
-    # the tutorial's pages and its programs, a Go module each (docs/tutorial/README.md)
-    ("docs/tutorial/", ["check-tutorial"]),
-    ("dev/stack-state.mk", ["check-core"]),
-    # the programs read config/ (acquisition and query the catalog)
-    ("config/", ["check-core"]),
-    # the data sets' locks, each held to its form and, released, to its tag's (dev/scripts/dataset.py locks)
-    ("datasets/", ["check-datasets"]),
-    ("dev/scripts/dataset.py", ["check-datasets"]),
+    # the library (lib/README.md), and the flake, which gives it market's Go form and vectors
+    ("lib/", ["check-lib"]),
+    ("flake.nix", ["check-lib"]),
+    ("flake.lock", ["check-lib"]),
     ("agents/", ["agents-check"]),
     # what PRODUCTS.md states against what the project has, read from these files
     ("PRODUCTS.md", ["products-check"]),

@@ -12,8 +12,7 @@ import (
 	"github.com/zhifengzhang-sz/qi-v2-contracts/market/go/market"
 )
 
-// Source is the source whose K-lines are Massive's: a message's source on the stream (core/README.md) whose K-line
-// this package reads.
+// Source is the name of the source whose K-lines are Massive's, which this package reads.
 const Source = "massive"
 
 // KLine is Massive's K-line: the base K-line of market 1.1.0, its fields and its rule (Base), and Massive's own two

@@ -15,7 +15,7 @@ and the standard library, and nothing else; `TestImports` checks it on every `ma
   market's SPEC.md, K-line): the base K-line's fields and rule, `Base` giving market's K-line, and Massive's own two,
   `vw` (the volume-weighted average price, a price) and `n` (the number of trades, a whole number from 0 to market's
   bound), each optional (`HasVw`, `HasN`; a field not set is 0), as Massive's spec has its row. `Source`, `massive`, is
-  the source whose messages on the stream carry it (`../core/README.md`). Its canonical text is the base's rules: its
+  the name of the source whose K-lines it is. Its canonical text is the base's rules: its
   fields in the order of their names, a field not set left out, no spaces, a number in its digits (`Text`, then a line
   break). Its JSON is read by `ReadKLine` under the rules of market's JSON: the base's seven fields once each, `vw` and
   `n` once if there, nothing else, a whole number in digits within the bound, a decimal by market's `ParseDecimal`, no
@@ -23,8 +23,7 @@ and the standard library, and nothing else; `TestImports` checks it on every `ma
   taker's own (`Base`, `Check`, `Decimal`, `ParseDecimal`, `AppendTo`), and its base is held to market's vectors
   (`TestVectors`, the vectors at `QI_MARKET_VECTORS`, the shell's): `kline.json`'s K-line read with neither `vw` nor
   `n` and written back as its text; every reject vector refused, but those that break only `asOf`, which a K-line has
-  not, each read as `kline.json`'s K-line once its `asOf` is taken out. The stores' writers read a message's K-line of
-  the source `massive` with it (`../consumers/`).
+  not, each read as `kline.json`'s K-line once its `asOf` is taken out.
 - **The schema.** `aggregates.schema.json`, JSON Schema 2020-12, checked against Massive's published spec, its OpenAPI
   document (https://api.massive.com/openapi, read without a key), the operation `GetStocksAggregates`, its answer 200's
   schema, an `allOf` of four objects held here as one: each of their properties a property, of the spec's type, its

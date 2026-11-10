@@ -1,150 +1,21 @@
 # The milestones
 
-The project's milestones and where each stands now. Where the last session stopped: `docs/opening.md`.
+What the work is for. `docs/opening.md` says where it stopped; `docs/decisions.md`, who decided what and why.
 
-The work they record from before this repository's start was done in the platform's earlier history, kept by the owner and not in this repository, which starts from that history's last tree (`docs/decisions.md`, the history begun anew); a commit a document names from before that start is of that history.
+## 1 The working space, built on the definition
 
-| # | Milestone | Stands |
-|---|---|---|
-| 1 | The stream and the warehouse in Go | closed: every program Go; the old platform, `go/`, removed, the core in its place (4) |
-| 2 | The platform as a product | the K-line data sets, a version each, fixed once released (`docs/designs/design-klines-dataset-2026-11-09.md`): the first, SPY's minutes, `qi-v2-platform-klines-massive-spy-1m` 1.0.0, released, public on GHCR, read with no login; taken by a Nix taker by the flake's `datasets` 1.0.0, each file by its hash; designed, not built: the platform as an app, one Compose app on GHCR running the first path's programs from one image with the Redpanda and TimescaleDB they need, by Docker alone; the programs as a flake package (`docs/designs/design-platform-image-2026-11-09.md`) |
-| 3 | The tooling to the practices of every qi-v2 project | the flake, the kit, the Makefile and the state documents in place; every input public, read with no login; no CI |
-| 4 | The lean core and its additions | the core, naming no source, its first path and its first stores: every minute of SPY's session from Massive on `market.raw`, each first version, and Massive's revisions on `market.corrections`, both kept forever, read by a consumer and kept by two stores, TimescaleDB's and ClickHouse's, four series each; the first cleaning, the validation, SPY's clean topic kept as the record changes and made again past its tolerance, the stores' clean series written from it; `query`, the topics read in no group; the platform's library, Massive's reader and Massive's K-line in it; acquisition re-reading 30 days, each page kept once; `make start`, run on the stack; `make check`'s tests on the test stack; the tutorial on the core, three levels, every example run on the test stack; the charting consumer, one series' chart in a browser by `@qi/chart` 3.0.0, updated as its K-lines come; a user reads the topics, not the stores |
+**What.** The working space the platform's definition defines (`qi-v2-platform-definition` 0.1.0, the input
+`definition`), in Go, built from the ground up, one product at a time, each built on the ones before it:
+`abstract-level` (the definition's interfaces in code: the open parts of the four components and the wiring of a
+working space, what the definition fixes built in), `library`, `topic-schemas`, `kafka-binding`, `acquisition`,
+`warehousing`, `visualization`, `working-space`. A product that exists and meets the standard is taken as it is. The
+standard: it works with the flake's `qi-v2` as pinned today (`make verify` passes); no package it uses has changed its
+version since it was released; everything of the qi-v2 projects it takes is an earlier product, at the version taken
+there; it satisfies the platform's definition, and is Go.
 
-## 1 The stream and the warehouse in Go
+**Stands.** The definition is taken, pinned by `flake.lock`, and the shell names its package (`QI_DEFINITION`). The
+library is there (`lib/`, `lib/README.md`), checked by `make check-lib`. The build before this one is cleared away:
+it is at the tag `old-build`, with its released products at their own tags.
 
-Everything that moves data onto, along and off the stream, in Go (`README.md`, Operations on the stream).
-
-**Stands.** Closed. Every program is Go, the TypeScript retired whole. The old platform, `go/` (the warehouse and its
-data layer, ingest, replay, the engine on the stream, the record, the live feed, topic provisioning), is removed, ahead
-of milestone 4's end, since it took a private project's executable; the core and its additions stand in its place (4).
-
-**Left.** None of its own: what the core lacks is milestone 4's Left.
-
-## 2 The platform as a product
-
-The programs and the data published as a flake package and as images, taken by a taker without this folder.
-
-**Stands.** The contract stated (`README.md`, The platform contract). The K-line data sets
-(`docs/designs/design-klines-dataset-2026-11-09.md`, `datasets/README.md`): each a fixed set of a clean series' K-lines
-over a range of its sessions, a version fixed once released, a file a month of market 1.1.0's K-lines, an image on
-GHCR one layer a file, pinned by its lock in `datasets/`, made by `dataset` from the stack's clean topic, read only and
-in no group, twice to the same bytes, and read back from its image by crane; the first,
-`qi-v2-platform-klines-massive-spy-1m` 1.0.0, SPY's clean minutes of 2024-11-06 to 2026-11-06, 502 whole sessions,
-194,880 K-lines, 25 files, released at its tag, pushed by the owner and public on GHCR, read with no login (`make
-dataset-remote-check`). A Nix taker takes a version by the flake's product `datasets` 1.0.0 (tag `datasets-1.0.0`):
-its taker pins the platform at a tag whose lock is the version; `datasets-install` installs the version's files into
-the Nix store from GHCR with no login, a file the store holds not fetched again; `lib.dataset` gives the taker's
-package each file by its hash; SPY's 1.0.0 so taken, all 25 files fetched from GHCR and a taker's package built from
-them, installed again with nothing fetched (`make dataset-take-check`). Designed, not built
-(`docs/designs/design-platform-image-2026-11-09.md`): the platform as an app, `ghcr.io/zhifengzhang-sz/qi-v2-platform`,
-one Compose app published on GHCR, which runs the first path's five programs from one image,
-`ghcr.io/zhifengzhang-sz/qi-v2-platform-programs`, with the Redpanda and TimescaleDB they need, on its own network and
-volumes, no host port; a user runs it by one reference with Docker and a Massive key of their own, and reads its
-document alone; a component of the user's a container on its network, built by a Dockerfile, the tutorial's reader
-showing it; the programs as the flake package `platform` for another qi-v2 project; the release 0.1.0, a tag for each
-of the three products, the digests in its commit, its push the owner's.
-
-**Left.**
-- What the data sets' design leaves (its What is left), each a step of its own: the installed files held from the
-  store's garbage collection; a version taken at a commit whose lock is another; a version made as the record grows; a
-  data set of another series; the image's digest in `make locks-check`; the charting consumer's K-line text taken
-  from the core.
-- The app's design's build, by a brief to come from the design; then the release 0.1.0, its push to GHCR the owner's,
-  and the check after it with no login.
-- What the design leaves (its What is left), each a step of its own: `query` in the app, with a flag naming the
-  brokers, and a host port of the app's broker; the ClickHouse writer, the printer, ClickHouse and Console in the app;
-  a catalog of the user's own, a cleaning or source plugin in an image on the platform's, the tutorial's other levels
-  as an app; the dev side's stack run by the image; a password of the user's own; the app's images in
-  `make locks-check`; other systems; CI; the package's programs as apps; a host whose user is not 1000.
-- The library taken outside this repository: a version, and market's Go form without `go.work` (milestone 4, Left).
-
-## 3 The tooling to the practices of every qi-v2 project
-
-The practices of `qi-v2-nix`'s `practices.md`: everything from outside a flake input, the locks checked, the agents'
-rules from `agents/` by the kit, the state of the work in git.
-
-**Stands.** `flake.nix` (qi-v2's shell with Go; the kit) and `flake.lock`, every input a public repository read with
-no login; the `Makefile` at the root (`install`, `agents`, `verify`, `locks-check`, the role runs, the checks,
-`modules`); `agents/` and the generated `AGENTS.md`; `docs/opening.md`, `milestones.md`, `decisions.md`, `designs/`,
-`process.md`; `PRODUCTS.md`, checked by `make products-check`; the services stack an input, `qi-v2-services`' package
-`stack` (`make stack-up`), and its test stack, for `make check`'s tests and trial runs (`make stack-test-up`, wiped by
-`make stack-test-down`); `make start`, the platform's components kept running on a stack (`dev/scripts/run.py`), run
-on both stacks; `make check` running each step once, the modules' work decided by Go's caches, the tests that reach a
-stack keyed by the test stack's state (`go.toolchain.md`, 4), the modules they need fetched by `make modules`; the
-charting consumer's page a package of the flake (`chart-page`, from `qi-v2-visualization`'s packages, with Bun and
-TypeScript from the flake's nixpkgs), checked in headless Chromium by `make check-chart`, in `make check`.
-
-**Left.** CI in the flake's shell, none today (`docs/decisions.md`, Open).
-
-## 4 The lean core and its additions
-
-The platform as a lean core, every function an addition to it, a publisher or a consumer speaking only through the
-stream by the raw market data schema (`core/README.md`; `docs/decisions.md`, 2026-11-06 to 2026-11-08).
-
-**Stands.** The core (`core/`), naming no source: the stream; its two topics, `market.raw` and `market.corrections`,
-provisioned alike, kept forever (retention unlimited, `CreateTime`); raw market data 0.3.0, each message a bar's first
-version, the source's K-line (its base market 1.1.0's K-line, from the flake's `contracts`, its other fields the
-source's, carried as written) and `read`, when its run read it, 0.2.0 and 0.1.0 read as before; market corrections
-0.1.0, each a later version and the fields that differ; every bar of a series' grid on `market.raw`, a bar without one
-from its source the zero K-line, its index its place in the grid; a copy dropped by a consumer; the topics' names. The
-platform's library (`lib/`), a module on market and the standard library alone, for any app: its package `massive`,
-Massive's K-line (the base K-line and Massive's `vw` and `n`, each optional, its base held to market's vectors),
-Massive's page schema (checked against Massive's published spec), the fetcher that saves every page, once, named by its
-content, the reader of a page. Its first path: Massive's reader, a source plugin the catalog's `massive-spy-1m` names
-(`plugins/massive-reader`), a thin program over the library; acquisition (`publishers/acquisition`), its state the two
-topics, read at each run and checked against the session's grid, each run re-reading the catalog's `reread` (30 days)
-to the last minute the catalog's `delay` (20 h) old, publishing each new minute's first version and each revised
-minute's correction, `-follow` running at its start and when the next session's last minute is `delay` old; the printer
-(`consumers/printer`). SPY's 194,880 regular-session minutes of 2024-11-06 to 2026-11-06 on `market.raw`, 194,490 of them
-twice, each copy the same value, every minute of the grid at its place; 417 corrections on `market.corrections`, Massive's
-revisions since the stack's fetches (2026-11-04: 388, `vw`; 2026-11-06: 29, `volume` and `n`, `vw` in 25, `high` in 6,
-`low` in 9). Acquisition's clean step after each series' run (`clean.go`): every minute's latest version through the
-dataset's cleaning; the series' clean topic made by its first reset, its tail each minute after its last; the damage, a
-minute whose `high` or `low` differs from its cleaned latest version; past the dataset's `tolerance` (10) a reset, the
-topic made again under its name from the TimescaleDB store's corrected raw, checked against the record, each store's
-clean series written from it. The validation, 0.1.0 (`plugins/validation`), the first cleaning, a program of its own
-folder by a line protocol (`plugins.md`, 3): every price finite and above 0, `low ≤ min(open, close)`, `max(open,
-close) ≤ high`, `volume ≥ 0`, its date after the last accepted, the zero K-line left out. Clean market data 0.1.0
-(`core/clean`): one series' and one cleaning's topic, one partition, kept forever, its K-lines' index their place in the
-clean series; SPY's, `market.clean.validation.v0-1-0.massive.SPY.M1`, 194,880 K-lines, none refused, the corrected raw's
-(`eb2593d7…`). The core's stream: a source of no group, each group's members and offsets on a topic, a topic deleted
-with its groups' offsets. `query` (`consumers/query`): the topics, series, bars, a minute's versions, the corrections,
-the groups, read in no group, a clean topic among them. The stores, each a consumer in a module of its own under
-`consumers/`, a database `massive` on its server:
-TimescaleDB's, hypertables, and ClickHouse's, `ReplacingMergeTree`s read with `FINAL`, each reading Massive's own fields
-through the library, `vw` and `n` NULL where a bar has none, of the contract's precision (`numeric(21, 6)`, `Decimal(21,
-6)`); each keeps four series from both topics: the raw (194,880, `2625a8ae…`, its rows unchanged by the migrations since), the
-corrections (417), the corrected raw, each minute's latest version (`eb2593d7…`, differing from the raw in exactly the 417
-corrected minutes), the clean (SPY's clean topic as its last reset made it, `eb2593d7…`, without `read`, `0005`); each
-series one md5 over its topic and both stores, made again from the topics alone, on the test stack from an empty
-state. `make start`: the stack up, then acquisition and both stores kept running,
-`make stack-down` pausing them and a start continuing each from where it stopped. The tutorial (`docs/tutorial/`), in
-three levels, each its page and its programs, every example run on the test stack: reading the platform (`make start
-STACK=test` with the tutorial's catalog, the topics by `query`, `clean-reader` reading the clean topic in no group on
-franz-go and market alone); a consumer on the core's stream in the group of its name (`clean-follower`, committing
-after what it has done, a copy dropped); a cleaning of one's own (`despike` 0.1.0), its clean topic made by
-acquisition, corrections of one's own up to its tolerance and past it (`correct-high`, on the test stack alone), the
-reset held off by a reader running and made once it is stopped. The charting consumer (`consumers/chart`;
-`docs/designs/design-chart-consumer-2026-11-09.md`): one series' clean topic read in the group `chart` from its start,
-each K-line checked (the offset, the index, the date; a copy dropped), served to a browser page by server-sent events, a
-`start` of the last window (3,900 K-lines by default) and each K-line after; the page, built by the flake from
-`@qi/chart` 3.0.0 (`qi-v2-visualization` at `qi-chart-3.0.0`), draws the K-lines and their volume by the library's tv
-engine and steps each one by its online component; a page holding twice the window drawn whole again; while it runs its
-series' reset is held off, and stopped and started again it serves the topic made again; on the test stack on the real
-data, SPY's last 3,900 minutes drawn, a run's 1,170 minutes stepped one by one at 9 to 27 ms each, and the page drawn
-whole again after a reset, the corrected `high`s among its K-lines. The platform contract: a user reads the topics, not
-the stores.
-
-**Left.**
-- What the charting consumer leaves (its design, What is left): more series, a forming K-line, the rest of a chart,
-  the page as a product; and a live feed of the core's topics for browser clients, a gateway on the core.
-- The other sources as plugins (Binance's, a CSV file's), and a source plugin's live stream (`plugins.md`, 5).
-- Runs in the session: Massive's free plan gives no bar of the current trading day (`lib/README.md`); acquisition on
-  `massive-spy-1m` first reads a minute 20 h after its end (`delay`).
-- A clean topic's readers stopped and started again at a reset, a reader that stops and starts itself (the charting
-  consumer among them) or one stopped and started by its process manager (none exists yet; a reader running holds the
-  reset off), and a reset cut short by a crash made whole (`docs/decisions.md`, 2026-11-08, step 8.8, and 2026-11-09).
-- CI, none today, for the core, the library, the additions and the tutorial's programs (`docs/decisions.md`, Open, CI
-  in the flake's shell).
-- The library taken outside this repository: a version, and market's Go form without `go.work` (milestone 2).
+**Left.** `abstract-level`: its Go module, checked against the definition, and its release. Then each other product,
+in the order above. CI, none today (`docs/decisions.md`, Open).

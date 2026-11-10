@@ -2,22 +2,19 @@
 
 ## Responsibility
 
-The platform owns the streaming architecture and the operations that run on the stream: the core, its topics and
-their schemas, and the additions on it, a publisher or a consumer each, among them acquisition, which reads a source
-through its plugin, and the cleanings it runs. It owns the market data: its acquisition, its record on the core's
-topics, kept forever, its cleaning, and the K-line data sets made from it, each a version fixed once released. It does
-not own the infrastructure, which `qi-v2-services` publishes, the market
-data contract, which is `qi-v2-contracts`', the chart library, which is `qi-v2-visualization`'s, the common tools,
-which are `qi-v2-nix`'s, an engine that reads its topics and what it makes, or any consumer's code.
+The platform owns the working space the platform's definition defines (`qi-v2-platform-definition`), in Go: the
+definition's interfaces in code, the topics' schemas, the binding to Kafka, acquisition, warehousing, visualization and
+their wiring; and the platform's library, what reads a source, as packages any app can use. It is built on the
+definition from the ground up, one product at a time; the library stands, and each other product has its row here once
+it is built. It does not own the definition, which is `qi-v2-platform-definition`'s, the infrastructure, which
+`qi-v2-services` publishes, the market data contract, which is `qi-v2-contracts`', the common tools, which are
+`qi-v2-nix`'s, the market model engine and what it makes, or any consumer's code.
 
 ## Products
 
 | Product | What | Form | Version | Release | Doc |
 |---|---|---|---|---|---|
-| the platform contract | the core's topics and their schemas, the programs and their flags, the plugin protocols; a user reads the topics, not the stores | `file` | `none` | `main` | `README.md` |
 | the platform's library | Go packages any app can use, on market's Go form and the standard library alone: Massive's reader | `library` | `none` | `main` | `lib/README.md` |
-| `qi-v2-platform-klines-massive-spy-1m` | a K-line data set: SPY's clean minutes of the validation 0.1.0, the sessions 2024-11-06 to 2026-11-06, a file a month of market 1.1.0's K-lines, an image on GHCR, public, one layer a file, pinned by `datasets/qi-v2-platform-klines-massive-spy-1m.lock` | `image` | `1.0.0` | `qi-v2-platform-klines-massive-spy-1m-1.0.0` | `datasets/README.md` |
-| `datasets` | the K-line data sets taken by a Nix taker: the flake's package `datasets`, whose `datasets-install` installs a version's files into the Nix store from GHCR with no login, a file the store holds not fetched again, and the flake's function `lib.dataset`, which gives a package each file by its hash; the data sets of the commit a taker pins | `flake package` | `1.0.0` | `datasets-1.0.0` | `datasets/README.md` |
 
 ## Takes
 
@@ -26,7 +23,6 @@ which are `qi-v2-nix`'s, an engine that reads its topics and what it makes, or a
 | `qi-v2` | `qi-v2-nix` | `flake.lock` |
 | `nixpkgs` | `qi-v2`, which it follows | `flake.lock` |
 | `kit` | `qi-v2-nix` | `flake.lock` |
-| `services` | `qi-v2-services` | `flake.lock` |
+| `services` | `qi-v2-services`, its package `stack` (0.3.0): the stack and the test stack | `flake.lock` |
 | `contracts` | `qi-v2-contracts`, its package `market-go` (market 1.1.0's Go form) and market's vectors | `flake.lock` |
-| `visualization` | `qi-v2-visualization`, its packages `qi-chart` (`@qi/chart` 3.0.0) and `lightweight-charts` (Lightweight Charts 5.2.1), from which the charting consumer's page is built | `flake.lock` |
 | `definition` | `qi-v2-platform-definition`, its package `qi-v2-platform-definition` (0.1.0): the platform's formal definition, its Lean as source | `flake.lock` |

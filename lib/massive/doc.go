@@ -1,6 +1,5 @@
 // Package massive reads Massive's aggregates (formerly Polygon.io's; Custom Bars, GET /v2/aggs/ticker/…/range/…), on
-// market's Go form and the standard library alone (../README.md), for any app: the platform's source plugin
-// (plugins/massive-reader) is a thin program over it.
+// market's Go form and the standard library alone (../README.md), for any app, the program around it thin.
 //
 //   - The schema (aggregates.schema.json, Schema, CheckPage): Massive's aggregates response as a JSON Schema, checked
 //     against Massive's published spec (its OpenAPI document, the operation GetStocksAggregates), which it cites; a

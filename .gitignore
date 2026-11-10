@@ -22,5 +22,3 @@ todo.md
 # the Go workspace, written by make go.work and the shell from flake.lock's market-go, and what Go writes beside it
 /go.work
 /go.work.sum
-# the core's and its additions' programs, built by make build
-/bin/
