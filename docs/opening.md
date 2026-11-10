@@ -1,4 +1,4 @@
-Opening for the next session, written 2026-11-09 by the session before (`docs/process.md`). It says where the work
+Opening for the next session, written 2026-11-11 by the session before (`docs/process.md`). It says where the work
 stands, the next tasks, and what to read.
 
 A commit this opening names from before 2026-11-08's new start is of the platform's earlier history, kept by the owner and not in this repository (`docs/decisions.md`, 2026-11-08, the history begun anew); each hash is left as it was.
@@ -10,7 +10,18 @@ A commit this opening names from before 2026-11-08's new start is of the platfor
   consumer, the data sets' maker; the tutorial, `docs/tutorial/`), every program Go, the charting consumer's page drawn
   by `@qi/chart`; its products the contract, the library, the K-line data sets and `datasets`, which gives a Nix taker
   a data set's version (`PRODUCTS.md`).
-- **This round** (the commit tagged `datasets-1.0.0`; `docs/decisions.md`, 2026-11-09: of Open on Massive's terms, the
+- **This round** (the commit after `d7c2d38`): the platform's formal definition taken, the first of three tasks that
+  make `abstract-level`, the definition's interfaces in Go (the open parts of the four components and the wiring of a
+  working space). `flake.nix`'s input `definition`, `qi-v2-platform-definition` at its tag
+  `qi-v2-platform-definition-0.1.0`, its `qi-v2` and `kit` following this flake's; `flake.lock`, written by the owner's
+  `nix flake lock`, names it at `a35a281` and holds no second `qi-v2`, `kit` or `nixpkgs`, every other node as before;
+  the shell's `QI_DEFINITION`, its package's store path, the Lean's files at its root, the same as the tag's; its rows
+  in `PRODUCTS.md` (Takes) and `README.md` (Dependencies and layout). The checks: `make verify` on the staged paths,
+  role `checker`, every `nix` offline: `check-chart` (its test run, not from the cache, on Chromium 157.0.8103.38) and
+  `products-check` (4 products, 7 taken) passing. A shell entered before this commit has no `QI_DEFINITION`: it is
+  entered again. One command of the session's reached the network without the owner's say (Standing rules learnt, the
+  last); no credential was used. No stack touched.
+- **The round before that** (the commit tagged `datasets-1.0.0`; `docs/decisions.md`, 2026-11-09: of Open on Massive's terms, the
   brief of the data sets taken by Nix, and the session's entry on how a Nix taker takes a version):
   `qi-v2-platform-klines-massive-spy-1m` 1.0.0 on GHCR, pushed and set public by the owner, `make dataset-remote-check`
   the owner's, passing, its result in `datasets/README.md` (Changes, 1.0.0), and Open's entry on Massive's terms
@@ -31,7 +42,7 @@ A commit this opening names from before 2026-11-08's new start is of the platfor
   session's first build, asked and allowed. The session's: the design's choices, a proposal. Every Nix command
   offline, through a wrapper on the shell's path; no credential used, no registry logged in to; neither stack touched.
   The 25 files are in this machine's Nix store, held by nothing, so a garbage collection removes them.
-- **The round before** (`d14180e`, tagged `qi-v2-platform-klines-massive-spy-1m-1.0.0`; `docs/decisions.md`, 2026-11-09
+- **Before it** (`d14180e`, tagged `qi-v2-platform-klines-massive-spy-1m-1.0.0`; `docs/decisions.md`, 2026-11-09
   on the K-line data set): the K-line data sets designed and built (`docs/designs/design-klines-dataset-2026-11-09.md`,
   `datasets/README.md`; the program `dataset`, `consumers/dataset`, in `CORE`; `make dataset`, `dataset-check`,
   `dataset-push`, `dataset-remote-check`, `check-datasets` in `make check`, `dev/scripts/dataset.py`; crane 0.21.6 the
@@ -75,7 +86,9 @@ A commit this opening names from before 2026-11-08's new start is of the platfor
 
 ## The next tasks
 
-By a brief to come: the app's build.
+First, by briefs to come, `abstract-level`'s other two tasks: the Go module of the definition's interfaces, `abstract/`,
+checked against the definition at `QI_DEFINITION`; then its release, 0.1.0, with the decisions of the three tasks in
+`docs/decisions.md`. Then, by a brief to come: the app's build.
 
 **The app's build**, by a brief to come from its design (`docs/designs/design-platform-image-2026-11-09.md`). The
 brief names what it allows: the Massive key's use by `make app-test`, as `make start STACK=test` uses it; the first
@@ -153,8 +166,16 @@ Read, for the app: its design and the notes beside it; `docs/decisions.md`, 2026
   key is read only by the library's fetcher, never printed or logged; a refused fetch stops the run.
 - **Nothing pushed to a registry but by the owner**, from the owner: a push to GHCR, or any registry, is the owner's,
   with a login of its own, asked each time; a session builds and checks, and logs in to no registry.
+- **`--offline` does not keep Nix from the network for an input the lock does not hold**, learnt by this session's
+  fault: after `flake.nix` named the input `definition` and before `flake.lock` held it, `nix eval --offline` on the
+  flake asked `api.github.com` for the tag and downloaded the input's source, no credential used. No Nix command is run
+  on a flake while `flake.nix` names an input its lock lacks, or a reference it has not locked: the lock is written
+  first, by the owner's command.
 
 ## Open, for the owner
+
+`agents/rules.md` says the dependencies are three; with the definition taken they are four (`README.md`, Dependencies
+and layout): the rule's restating is the owner's.
 
 In `docs/decisions.md`, Open: CI in the flake's shell; `carrier.md`'s form; the rules on the dependencies and the tools, for the Dockerfile and the app.
 Decided, proposals until the owner decides: the session's entry of 2026-11-09 on how a Nix taker takes a version (the

@@ -5,7 +5,9 @@
 # stack, by make stack-test-up and make stack-test-down; market's Go form, the package market-go of qi-v2-contracts,
 # which the Go workspace (go.work) takes, and market's vectors, which the library's tests read; @qi/chart, the
 # packages qi-chart and lightweight-charts of qi-v2-visualization, from which the charting consumer's page is built
-# (the package chart-page). Every input is a public repository, read with no login. It gives a Nix taker the K-line
+# (the package chart-page); the platform's formal definition, the package qi-v2-platform-definition of the project of
+# that name, its Lean as source, which the shell names (QI_DEFINITION). Every input is a public repository, read with
+# no login. It gives a Nix taker the K-line
 # data sets of datasets/ (the product datasets): the package datasets, which installs a version's files into the Nix
 # store from GHCR, and lib.dataset, which gives a package each file by its hash.
 {
@@ -40,7 +42,14 @@
   inputs.visualization.inputs.contracts.follows = "contracts";
   inputs.visualization.inputs.market.follows = "contracts";
 
-  outputs = { self, nixpkgs, qi-v2, kit, services, contracts, visualization }:
+  # The platform's formal definition, published by qi-v2-platform-definition at its release's tag: its package
+  # qi-v2-platform-definition, the Lake package of its Lean as source (the base, Kafka's topic, the four components and
+  # their wiring), which the shell names (QI_DEFINITION). Its qi-v2 and kit follow this flake's, and so its nixpkgs.
+  inputs.definition.url = "github:zhifengzhang-sz/qi-v2-platform-definition?ref=qi-v2-platform-definition-0.1.0";
+  inputs.definition.inputs.qi-v2.follows = "qi-v2";
+  inputs.definition.inputs.kit.follows = "kit";
+
+  outputs = { self, nixpkgs, qi-v2, kit, services, contracts, visualization, definition }:
     let
       systems = [ "x86_64-linux" ];
       forAll = f: nixpkgs.lib.genAttrs systems (system: f (import nixpkgs { inherit system; }));
@@ -52,13 +61,14 @@
           # Every program is Go: the TypeScript apps were retired (docs/decisions.md, 2026-10-28). The Go workspace:
           # QI_MARKET_GO, market-go's store path, from which make go.work writes go.work at the root (never committed),
           # written on entry too; QI_MARKET_VECTORS, market's vectors in the input's source (market/vectors), which
-          # lib/massive's tests read
+          # lib/massive's tests read; QI_DEFINITION, the definition's package, its Lean's files at its root
           uses = [
             (qi-v2.lib.go pkgs)
             {
               env = {
                 QI_MARKET_GO = "${contracts.packages.${pkgs.stdenv.hostPlatform.system}.market-go}";
                 QI_MARKET_VECTORS = "${contracts}/market/vectors";
+                QI_DEFINITION = "${definition.packages.${pkgs.stdenv.hostPlatform.system}.qi-v2-platform-definition}";
               };
               hook = ''
                 r=$(git rev-parse --show-toplevel 2>/dev/null) &&

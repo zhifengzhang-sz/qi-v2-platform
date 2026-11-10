@@ -29,3 +29,4 @@ which are `qi-v2-nix`'s, an engine that reads its topics and what it makes, or a
 | `services` | `qi-v2-services` | `flake.lock` |
 | `contracts` | `qi-v2-contracts`, its package `market-go` (market 1.1.0's Go form) and market's vectors | `flake.lock` |
 | `visualization` | `qi-v2-visualization`, its packages `qi-chart` (`@qi/chart` 3.0.0) and `lightweight-charts` (Lightweight Charts 5.2.1), from which the charting consumer's page is built | `flake.lock` |
+| `definition` | `qi-v2-platform-definition`, its package `qi-v2-platform-definition` (0.1.0): the platform's formal definition, its Lean as source | `flake.lock` |

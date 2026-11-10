@@ -29,6 +29,35 @@
         "type": "github"
       }
     },
+    "definition": {
+      "inputs": {
+        "kit": [
+          "kit"
+        ],
+        "nixpkgs": [
+          "definition",
+          "qi-v2",
+          "nixpkgs"
+        ],
+        "qi-v2": [
+          "qi-v2"
+        ]
+      },
+      "locked": {
+        "lastModified": 1794326121,
+        "narHash": "sha256-l37nQaFuAzCTB6aWrGiQPA9KyvHDHVGxMIru25miS7U=",
+        "owner": "zhifengzhang-sz",
+        "repo": "qi-v2-platform-definition",
+        "rev": "a35a2819a08d4037e0819b0c4d82892ca50496d8",
+        "type": "github"
+      },
+      "original": {
+        "owner": "zhifengzhang-sz",
+        "ref": "qi-v2-platform-definition-0.1.0",
+        "repo": "qi-v2-platform-definition",
+        "type": "github"
+      }
+    },
     "kit": {
       "inputs": {
         "nixpkgs": [
@@ -127,6 +156,7 @@
     "root": {
       "inputs": {
         "contracts": "contracts",
+        "definition": "definition",
         "kit": "kit",
         "nixpkgs": [
           "qi-v2",
