@@ -17,7 +17,7 @@ S  := dev/scripts
 PY := python3
 AGENT_KIND ?= all
 
-.PHONY: help install agents agents-check run-start run-check verify locks-check products-check check check-lib go.work modules stack-up stack-down stack-test-up stack-test-stop stack-test-down
+.PHONY: help install agents agents-check run-start run-check verify locks-check products-check check check-lib check-abstract go.work modules stack-up stack-down stack-test-up stack-test-stop stack-test-down
 
 help: ## the targets
 	@grep -E '^[a-z.-]+:.*##' $(MAKEFILE_LIST) | sed 's/:.*## /\t/' | expand -t 18
@@ -67,13 +67,14 @@ products-check: ## whether PRODUCTS.md states what the project has (the kit's ki
 
 # ---------------------------------------------------------------- the Go workspace (docs/impl/engineering/go.toolchain.md, 2)
 
-# The Go modules of this repository: the platform's library (lib/, lib/README.md). Its go.mod requires market's Go
+# The Go modules of this repository: the platform's library (lib/, lib/README.md) and the definition's interfaces
+# (abstract/, abstract/README.md), which take the standard library alone. The library's go.mod requires market's Go
 # form at v0.0.0, which go.work replaces with the store path of the flake's package market-go (QI_MARKET_GO, the
 # shell's): go.work is written here, by the shell on entry and before every target that runs Go, and never
 # committed. The targets run Go with GOPROXY=off, so that Go fetches nothing while it vets or tests: market's Go form
 # is the flake's, and every other module a module takes is in Go's module cache already, put there by make modules,
 # which each of them runs first.
-MODULES := lib
+MODULES := lib abstract
 MODULES_PKGS := $(addprefix ./,$(addsuffix /...,$(MODULES)))
 MARKET_GO := github.com/zhifengzhang-sz/qi-v2-contracts/market/go
 
@@ -95,17 +96,28 @@ ifneq ($(filter-out 1,$(FULL)),)
 $(error FULL is 1 or unset, not $(FULL))
 endif
 
-check: check-lib agents-check ## every check: the library, the agents' spec; FULL=1, every vet and every test afresh, none from Go's caches
+# A module's checks, $(1) its folder: gofmt with no unformatted file, go vet, go test (its own vet off: go vet has
+# run), with GOPROXY=off.
+ifeq ($(FULL),1)
+VET_FLAGS := -a
+TEST_FLAGS := -count=1
+endif
+define go-check
+	f=$$(gofmt -l $(1)); test -z "$$f" || { echo "gofmt: not formatted:"; echo "$$f"; exit 1; }
+	GOPROXY=off go vet $(VET_FLAGS) ./$(1)/...
+	GOPROXY=off go test -vet=off $(TEST_FLAGS) ./$(1)/...
+endef
+
+check: check-lib check-abstract agents-check ## every check: the library, the definition's interfaces, the agents' spec; FULL=1, every vet and every test afresh, none from Go's caches
 
 check-lib: modules ## the library (lib/README.md): gofmt with no unformatted file, go vet, go test (its own vet off: go vet has run), GOPROXY=off
-	f=$$(gofmt -l $(MODULES)); test -z "$$f" || { echo "gofmt: not formatted:"; echo "$$f"; exit 1; }
-ifeq ($(FULL),1)
-	GOPROXY=off go vet -a $(MODULES_PKGS)
-	GOPROXY=off go test -vet=off -count=1 $(MODULES_PKGS)
-else
-	GOPROXY=off go vet $(MODULES_PKGS)
-	GOPROXY=off go test -vet=off $(MODULES_PKGS)
-endif
+	$(call go-check,lib)
+
+# Its test of the README's table reads the definition's Lean at QI_DEFINITION, the shell's: a shell entered before
+# flake.lock held the definition has none, and the target stops there.
+check-abstract: modules ## the definition's interfaces (abstract/README.md): gofmt with no unformatted file, go vet, go test, GOPROXY=off; its tests run a working space in memory and hold its README's table to the definition at QI_DEFINITION
+	@test -n "$(QI_DEFINITION)" && test -f "$(QI_DEFINITION)/Wiring.lean" || { echo "check-abstract: no definition at QI_DEFINITION ('$(QI_DEFINITION)'): the shell gives it (flake.nix); enter it again after a change of flake.lock"; exit 1; }
+	$(call go-check,abstract)
 
 # ---------------------------------------------------------------- the services stack (docs/impl/engineering/dev.environment.md, 3)
 

@@ -15,6 +15,12 @@ platform's.
 standard library alone: what reads a source, as packages any app can use, the platform's or a user's. Its first
 package is Massive's reader: Massive's page schema, the fetcher that keeps every page, and the reader of a page.
 
+**The definition's interfaces** ([`abstract/README.md`](abstract/README.md)), `abstract-level`, a Go module of its own
+on the standard library alone: the open parts of the working space's components as Go interfaces (acquisition's
+reader, cleaner and publishers, the warehouse consumer, visualization's chart, the engine's worker), and what the
+definition fixes built in (a topic's shape, the three kinds of data, the wiring of a working space). Its README holds
+the table from each declaration of the definition to its Go name, held to the pinned definition by a test.
+
 What the project owns, gives and takes: [`PRODUCTS.md`](PRODUCTS.md). The build before this one is at the tag
 `old-build`.
 
@@ -29,7 +35,7 @@ Every program is Go. No Confluent component anywhere.
 nix develop                        # the tools (flake.nix; docs/impl/engineering/dev.environment.md, 2)
 make install                       # git's hooks, the kit, the agents' files
 make help                          # the targets
-make check                         # the library: gofmt, vet, tests; the agents' spec
+make check                         # the library, the definition's interfaces: gofmt, vet, tests; the agents' spec
 
 # infrastructure: Redpanda, Console, TimescaleDB, ClickHouse, Redis
 make stack-up                      # qi-v2-services' package `stack`, at flake.lock's pin; make stack-down stops it
@@ -46,7 +52,7 @@ What this repository needs, and nothing about who uses it; each is a public repo
 
 | Dependency | What the platform takes from it | How |
 |---|---|---|
-| [`qi-v2-platform-definition`](https://github.com/zhifengzhang-sz/qi-v2-platform-definition) | the platform's formal definition 0.1.0, in Lean: the base, Kafka's topic, the four components and their wiring | its package `qi-v2-platform-definition`, the Lean as source, an input of `flake.nix` at the tag `qi-v2-platform-definition-0.1.0` pinned by `flake.lock`, its `qi-v2` and `kit` following this flake's; the shell names its store path, `QI_DEFINITION` |
+| [`qi-v2-platform-definition`](https://github.com/zhifengzhang-sz/qi-v2-platform-definition) | the platform's formal definition 0.1.0, in Lean: the base, Kafka's topic, the four components and their wiring | its package `qi-v2-platform-definition`, the Lean as source, an input of `flake.nix` at the tag `qi-v2-platform-definition-0.1.0` pinned by `flake.lock`, its `qi-v2` and `kit` following this flake's; the shell names its store path, `QI_DEFINITION`, where `abstract/`'s test reads it |
 | [`qi-v2-services`](https://github.com/zhifengzhang-sz/qi-v2-services) | the infrastructure: Redpanda (broker, registry, Console), TimescaleDB, ClickHouse, Redis | its published package `stack`, an input of `flake.nix` at the tag `stack-0.3.0` pinned by `flake.lock`: the stack, `make stack-up`, `make stack-down`, and the test stack, `make stack-test-up`, `make stack-test-stop`, `make stack-test-down` |
 | [`qi-v2-contracts`](https://github.com/zhifengzhang-sz/qi-v2-contracts) | the market data contract, `market` 1.1.0: its Go form, the base K-line of the library's K-line; its vectors, to which the library holds its K-lines' base | its package `market-go` and its source's `market/vectors`, an input of `flake.nix` at the tag `market-1.1.0` pinned by `flake.lock`, which `go.work` (written by `make go.work` and the shell) puts in place of the module the library's `go.mod` requires at `v0.0.0` |
 | [`qi-v2-nix`](https://github.com/zhifengzhang-sz/qi-v2-nix) | the tools from one nixpkgs (Go in the shell), the pure shell, the kit for the agents' files | the inputs of `flake.nix`, pinned by `flake.lock`; `nix develop`; the tools and their versions: [`dev.environment.md`](docs/impl/engineering/dev.environment.md), 2 |
@@ -59,6 +65,7 @@ docs/opening.md …          the state of the work: opening, milestones, decisio
 dev/                       hooks (the pre-commit) and scripts (verify)
 docs/impl/engineering/     the Go toolchain, the development environment
 lib/                       the platform's library, a Go module on market and the standard library alone: Massive's reader
+abstract/                  the definition's interfaces, a Go module on the standard library alone: the parts, a topic's shape, the wiring
 go.work                    the Go workspace (make go.work), not in git
 ```
 

@@ -5,37 +5,46 @@ stands, the next tasks, and what to read.
 
 - The platform is built from the ground up on its formal definition, one product at a time (`docs/milestones.md`;
   `docs/decisions.md`, 2026-11-11). What stands: the definition taken (`qi-v2-platform-definition` 0.1.0, the input
-  `definition`, the shell's `QI_DEFINITION`), and the library (`lib/`, `lib/README.md`).
-- **This round** (the commit after `0fa98c2`, the removal): the build before cleared away, as the owner agreed to the
-  session's list. The tag `old-build` is on `0fa98c2`, the commit before it. Removed, 129 files: the core, acquisition,
-  the plugins and the catalog, the stores, the charting consumer, the printer, `query`, the data sets (their lock,
-  README, install and script) and their maker, the tutorial, the four designs, the plugins' and the carrier's
-  documents, `dev/scripts/run.py`, `dev/stack-state.mk`. Cut to what is left: `flake.nix` (the input `visualization`
-  out, and `qi-v2-ts` with it; the packages `datasets` and `chart-page` and `lib.dataset` out), `flake.lock` (those two
-  nodes dropped, every other node as before, written offline), the `Makefile` (`check` is `check-lib` and
-  `agents-check`; the five `stack-*` targets kept, no longer stopping any program first), `dev/scripts/verify.py`,
-  `.gitignore`. Restated to what stands: `README.md`, `PRODUCTS.md`, `agents/rules.md` and the checker's role,
-  `docs/` (this file, the milestones, the decisions begun anew, the process, the two engineering documents and their
-  index, the designs' index), and three places of the library's own files that pointed at a removed thing, no code
-  changed. The data sets' release tags (`datasets-1.0.0`, `qi-v2-platform-klines-massive-spy-1m-1.0.0`) and the
-  image on GHCR stay. Not in git: `bin/`, the old programs, deleted; `.reports/` left as it was.
-- **The round before** (`0fa98c2`): the definition taken, `flake.lock` written by the owner's `nix flake lock`.
-- The stack (`stack-0.3.0`) was not looked at or touched by this round; it holds the topics and the stores' databases
-  the build before wrote, which nothing here reads or writes. The test stack was not used. Outside the repository and
-  untouched: Massive's pages (`~/.local/share/qi/massive/pages/`), the data set's folder
-  (`~/.local/share/qi/datasets/`), the old runs' logs (`~/.local/state/qi/run/`).
+  `definition`, the shell's `QI_DEFINITION`); the library (`lib/`, `lib/README.md`); and `abstract-level`'s Go module
+  (`abstract/`, `abstract/README.md`), built and not released.
+- **This round**: `abstract-level`'s Go module, the third of its four tasks. `abstract/`, a module of its own on the
+  standard library alone, in the Go workspace (`MODULES` of the `Makefile`): the open parts as interfaces of one method
+  each (`Reader`, `Cleaner`, `RawPublisher`, `CleanPublisher`, `CorrectionsPublisher`, `Consumer`, `Chart`, `Worker`),
+  a part given reading ends that wait (`Cursor`, `ReadSet`) and writing ends that only append (`Appender`,
+  `AppendSet`); built in, a topic's shape (`Topic`, `Record`, `TopicLogs`), the three kinds (`Kind`) and the wiring
+  (`Wiring`, `Workspace`, `Acquisition.Run`, `Warehousing.Run`). Its README holds what the types do not hold, and the
+  table from each declaration of the definition's seven files to its Go name, 163 rows, a structure's fields and an
+  inductive's constructors among them. Its check is `make check-abstract`, in `make check` and in verify's table for
+  `abstract/`, `flake.nix` and `flake.lock`; `check-lib` now checks the library alone, both by one recipe
+  (`go-check`). How it is built where the brief left the choice: `docs/decisions.md`, 2026-11-11, the session's
+  proposal.
+- **Its review**, role `reviewer`, the Go against the Lean, declaration by declaration, and one recheck. Found and
+  fixed: the series inside acquisition made the reader wait for the cleaner to read, so the raw topics depended on the
+  cleaner (now each reader's untaken messages are held, and no part waits for another: `TestUnread`); a `ReadSet`
+  converted into an `AppendSet` (two types now: `TestSetsApart`); one log could be given for two partitions
+  (`ErrSameLog`, told where one pointer is given twice); a `Workspace` no wiring made, or a copy of one, got past the
+  checks (`Run` refuses both). Found and stated, not changed: the `Database` values of several schemas are one
+  database by their giver's keeping; `Acquisition.Run` and `Warehousing.Run` refuse a name twice where Lean's `run`
+  takes any topics, a part finding a topic by its name. The recheck found the four fixed, and one place where the
+  text said less than the code (which logs are told to be one; `Warehousing.Run` refusing a log given twice): the
+  text now says it, and was not rechecked.
+- **The shell.** A shell entered before `flake.lock` held the definition has no `QI_DEFINITION`, and
+  `make check-abstract` stops there with its name. This round's checks, and its commit, whose hook runs `make verify`,
+  were run through the flake's shell entered afresh: `nix develop --offline -c env GOPROXY=off make …`.
+- The stack (`stack-0.3.0`) and the test stack were not looked at or touched: no test of this round reaches a stack.
 - The locks: `make locks-check` not run (it calls `gh api`).
-- `main`: the removal's commit and the tag `old-build` are not pushed; their push is the owner's. `.env` in place,
-  ignored; `make install` run; the owner's local file: `todo.md`.
+- `main`: this round's commits are not pushed; the push is the owner's. `.env` in place, ignored; `make install` run;
+  the owner's local file: `todo.md`.
 
 ## The next tasks
 
-By briefs to come, `abstract-level`'s other tasks: the Go module of the definition's interfaces, checked against the
-definition at `QI_DEFINITION`; then its release. Then each other product of `docs/milestones.md`, in its order.
+By a brief to come, `abstract-level`'s fourth task: its release (`agents/rules.md`, A release: one number, written
+alike in the package's files and the flake package where it has one; an entry under Changes in its README; the
+checker's pass; its row in `PRODUCTS.md`; the tag `abstract-level-<version>`, its push the owner's). Then each other
+product of `docs/milestones.md`, in its order.
 
-Read, for `abstract-level`: the definition's files at `QI_DEFINITION` (`Kafka.lean`, `Acquisition.lean`,
-`Warehousing.lean`, `Visualization.lean`, `MarketModelEngine.lean`, `Workspace.lean`, `Wiring.lean`, its `README.md`);
-`docs/impl/engineering/go.toolchain.md` (2, 5); `Makefile`, `dev/scripts/verify.py`, `flake.nix`, `PRODUCTS.md`.
+Read, for the release: `abstract/README.md`, `abstract/go.mod`, `PRODUCTS.md`, `flake.nix`, the `Makefile`,
+`docs/impl/engineering/go.toolchain.md` (2).
 
 ## Standing rules learnt (until the owner approves them for `agents/rules.md`)
 
@@ -56,6 +65,11 @@ Read, for `abstract-level`: the definition's files at `QI_DEFINITION` (`Kafka.le
   key is read only by the library's fetcher, never printed or logged; a refused fetch stops the run.
 - **Nothing pushed to a registry but by the owner**, from the owner: a push to GHCR, or any registry, is the owner's,
   with a login of its own, asked each time; a session builds and checks, and logs in to no registry.
+- **A session commits and does not push**, from the owner (2026-11-11): the push of `main`, and of a tag, is the
+  owner's, whatever the shared rules say of a push after a commit.
+- **No command that reaches the network without asking first**, from the owner's briefs: `git fetch`, `gh`, Nix
+  without `--offline`; a Nix command that downloads is the owner's to run, and one that only evaluates is run with
+  `--offline`. A Go target is run with `GOPROXY=off` in its environment, so that `make modules` fetches nothing.
 - **`--offline` does not keep Nix from the network for an input the lock does not hold**, learnt by a session's
   fault: after `flake.nix` named the input `definition` and before `flake.lock` held it, `nix eval --offline` on the
   flake asked `api.github.com` for the tag and downloaded the input's source, no credential used. No Nix command is run
@@ -66,5 +80,6 @@ Read, for `abstract-level`: the definition's files at `QI_DEFINITION` (`Kafka.le
 ## Open, for the owner
 
 In `docs/decisions.md`, Open: CI in the flake's shell. Decided there as the session's proposal until the owner
-decides: how the removal is built where the owner's answer left the choice (2026-11-11). The wording of
-`agents/rules.md` after the removal is the session's: the owner reads it in the removal's commit.
+decides: how the removal is built where the owner's answer left the choice, and how `abstract-level`'s module is built
+where its brief left the choice (both 2026-11-11). The wording of `agents/rules.md` after the removal is the
+session's.

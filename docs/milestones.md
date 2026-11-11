@@ -14,8 +14,11 @@ version since it was released; everything of the qi-v2 projects it takes is an e
 there; it satisfies the platform's definition, and is Go.
 
 **Stands.** The definition is taken, pinned by `flake.lock`, and the shell names its package (`QI_DEFINITION`). The
-library is there (`lib/`, `lib/README.md`), checked by `make check-lib`. The build before this one is cleared away:
-it is at the tag `old-build`, with its released products at their own tags.
+library is there (`lib/`, `lib/README.md`), checked by `make check-lib`. `abstract-level`'s Go module is there
+(`abstract/`, `abstract/README.md`), checked by `make check-abstract`: its tests run a working space in memory and hold
+what the wiring's theorems state, and its README's table, from each declaration of the definition to its Go name, is
+held to the pinned definition. The build before this one is cleared away: it is at the tag `old-build`, with its
+released products at their own tags.
 
-**Left.** `abstract-level`: its Go module, checked against the definition, and its release. Then each other product,
-in the order above. CI, none today (`docs/decisions.md`, Open).
+**Left.** `abstract-level`: its release. Then each other product, in the order above. CI, none today
+(`docs/decisions.md`, Open).

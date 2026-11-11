@@ -20,6 +20,10 @@ TABLE = [
     ("lib/", ["check-lib"]),
     ("flake.nix", ["check-lib"]),
     ("flake.lock", ["check-lib"]),
+    # the definition's interfaces (abstract/README.md), and the flake, which gives them the definition
+    ("abstract/", ["check-abstract"]),
+    ("flake.nix", ["check-abstract"]),
+    ("flake.lock", ["check-abstract"]),
     ("agents/", ["agents-check"]),
     # what PRODUCTS.md states against what the project has, read from these files
     ("PRODUCTS.md", ["products-check"]),

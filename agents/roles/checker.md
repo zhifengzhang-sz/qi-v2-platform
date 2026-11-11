@@ -1,6 +1,6 @@
 ---
 name: checker
-for: "runs the platform's checks (the make targets the brief names: check, check-lib, agents-check, products-check, locks-check, verify, ...) and reports PASS or FAIL for each with the exact lines; after any change to the Go or agents/, and before a commit"
+for: "runs the platform's checks (the make targets the brief names: check, check-lib, check-abstract, agents-check, products-check, locks-check, verify, ...) and reports PASS or FAIL for each with the exact lines; after any change to the Go or agents/, and before a commit"
 model: small
 effort: low
 can: [read, search, execute]

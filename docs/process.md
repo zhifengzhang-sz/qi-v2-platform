@@ -19,7 +19,7 @@ whenever a test is done. Nothing is taken by hand: every input is a public repos
 
 | Kind | Where | In git | Made by | On a new machine |
 |---|---|---|---|---|
-| the work: the Go modules, the specifications | `lib/`, `docs/impl/` | yes | the sessions | the clone |
+| the work: the Go modules, the specifications | `lib/`, `abstract/`, `docs/impl/` | yes | the sessions | the clone |
 | the state of the work | `docs/opening.md` (the next session's opening), `docs/milestones.md`, `docs/designs/`, `docs/decisions.md` | yes | each session, at its end | the clone |
 | the rules for agents, their source | `agents/` (`rules.md`, `roles/`, `stages/`) | yes | the sessions, the owner approving | the clone |
 | the rules for agents, generated | `AGENTS.md`, `CLAUDE.md`, `.claude/agents/`, `.github/agents/`, `.github/hooks/kit.json` | no | `make agents` (in `make install`), by the kit | `make install` |
@@ -59,7 +59,7 @@ tracked file or the opening comes to rely on moves to `docs/designs/`.
    something newer than what it names (an input's branch past `flake.lock`'s commit). The session reports each outdated lock to the owner with what updates it, and updates
    none without the owner's say.
 2. **Work.** The opening's one task. Before the first build of the session, the owner is asked. Checks run in the
-   role `checker` (`make check`: `check-lib`, `agents-check`); every test that reaches a stack, and every trial run,
+   role `checker` (`make check`: `check-lib`, `check-abstract`, `agents-check`); every test that reaches a stack, and every trial run,
    is on the test stack. No fallbacks: a missing tool or input stops the run with its name.
 3. **End.** `docs/opening.md` rewritten for the next session (where it stopped, the one task, the standing rules
    learnt), `docs/milestones.md` brought up to date, every document a later session needs in `docs/designs/`;

@@ -19,8 +19,9 @@ names in `MODULES`, one workspace (2).
 Go is the flake's (`nix develop`; its version: `dev.environment.md`, 2).
 
 **The modules.** Each is a module of its own in a folder of its own, named once, in the root `Makefile`'s `MODULES`;
-what each takes is in its `go.mod`. Today there is one, the platform's library (`lib/README.md`), which takes market
-alone. They are one workspace, `go.work` at the root, which `make go.work` writes from the shell's `QI_MARKET_GO` (the
+what each takes is in its `go.mod`. Today there are two: the platform's library (`lib/README.md`), which takes market
+alone, and the definition's interfaces (`abstract/README.md`), which take the standard library alone. They are one
+workspace, `go.work` at the root, which `make go.work` writes from the shell's `QI_MARKET_GO` (the
 shell writes it on entry too) and git never holds: it uses the modules of `MODULES` and replaces market's Go form,
 which a `go.mod` requires at `v0.0.0`, by the store path of the flake's package `market-go` (the input `contracts`,
 `qi-v2-contracts` at `market-1.1.0`); `go.sum` has no line for it. A module does not require another module of the
@@ -30,7 +31,8 @@ each module their packages and their tests need but market's Go form, from the G
 checked against its `go.sum`, and fetches nothing the cache holds; Go then runs with `GOPROXY=off`, so that it
 fetches nothing while it vets or tests.
 
-`make check-lib` runs this file's checks on the modules of `MODULES`, from the root's `Makefile`, with `GOPROXY=off`.
+`make check-lib` and `make check-abstract` run this file's checks, each on its own module, from the root's `Makefile`,
+with `GOPROXY=off`; `make check` runs both.
 
 ## 3. Daily commands
 
@@ -53,6 +55,7 @@ GOPROXY=off go test -cover ./lib/...             # coverage per package
 | Variable | Tests | Value |
 |---|---|---|
 | `QI_MARKET_VECTORS` | the library's tests that hold its K-lines' base to market's vectors (`lib/README.md`) | the shell's, market's vectors in the input `contracts` |
+| `QI_DEFINITION` | the test of `abstract/` that holds its README's table to the definition's declarations (`abstract/README.md`); `make check-abstract` stops where it is not set | the shell's, the definition's package, the input `definition` |
 
 No test reaches a stack today. A test that does runs on the test stack (`make stack-test-up`, `dev.environment.md`,
 3), never on the stack, whose data is kept; the test stack is wiped when the tests are done (`make stack-test-down`).
@@ -70,7 +73,8 @@ inputs, and each runs every time: each takes under a tenth of a second.
 
 ## 5. Conventions
 
-- **Libraries and programs.** The platform's library (`lib/`) is a library; a program is a `main` package with flags,
+- **Libraries and programs.** The platform's library (`lib/`) and the definition's interfaces (`abstract/`) are
+  libraries; a program is a `main` package with flags,
   its logic tested beside it.
 - **Standard library first.** `log/slog` for logging, `flag` for options, `testing` for tests. A dependency is added
   only when the standard library has nothing.

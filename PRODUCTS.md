@@ -15,6 +15,7 @@ it is built. It does not own the definition, which is `qi-v2-platform-definition
 | Product | What | Form | Version | Release | Doc |
 |---|---|---|---|---|---|
 | the platform's library | Go packages any app can use, on market's Go form and the standard library alone: Massive's reader | `library` | `none` | `main` | `lib/README.md` |
+| `abstract-level` | the definition's interfaces in Go, on the standard library alone: the open parts of the working space's components as interfaces; a topic's shape, the three kinds of data and the wiring of a working space built in | `library` | `none` | `main` | `abstract/README.md` |
 
 ## Takes
 

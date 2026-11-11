@@ -26,7 +26,7 @@ nixpkgs gives them at `flake.lock`'s pin; the last row is not the flake's.
 
 The shell names three store paths of the flake's inputs: `QI_MARKET_GO`, market's Go form, which `go.work` takes;
 `QI_MARKET_VECTORS`, market's vectors, which the library's tests read; `QI_DEFINITION`, the definition's package, its
-Lean's files at its root.
+Lean's files at its root, which the test of `abstract/`'s table reads (`abstract/README.md`).
 
 ## 3. Infrastructure
 
@@ -71,7 +71,7 @@ images at once has hung for over 20 minutes, where `docker pull` of each image b
 ## 4. Tests
 
 ```sh
-make check                           # the library: gofmt, vet, tests; the agents' spec (go.toolchain.md, 4)
+make check                           # the library, the definition's interfaces: gofmt, vet, tests; the agents' spec (go.toolchain.md, 4)
 ```
 
 No test reaches a stack today.
