@@ -23,7 +23,7 @@ whenever a test is done. Nothing is taken by hand: every input is a public repos
 | the state of the work | `docs/opening.md` (the next session's opening), `docs/milestones.md`, `docs/designs/`, `docs/decisions.md` | yes | each session, at its end | the clone |
 | the rules for agents, their source | `agents/` (`rules.md`, `roles/`, `stages/`) | yes | the sessions, the owner approving | the clone |
 | the rules for agents, generated | `AGENTS.md`, `CLAUDE.md`, `.claude/agents/`, `.github/agents/`, `.github/hooks/kit.json` | no | `make agents` (in `make install`), by the kit | `make install` |
-| the project's machinery | `Makefile`, `dev/hooks/` (the pre-commit), `dev/scripts/` (verify), `.envrc` (direnv) | yes | the sessions | the clone |
+| the project's machinery | `Makefile`, `dev/hooks/` (the pre-commit), `dev/scripts/` (verify), `dev/taker/` (the takers' tests of the packages), `.envrc` (direnv) | yes | the sessions | the clone |
 | the Go workspace | `go.work` (and Go's `go.work.sum`): the Go modules and market's Go form at its store path (`docs/impl/engineering/go.toolchain.md`, 2) | no | `make go.work`, and the shell on entry | `nix develop` |
 | the tools | `/nix/store`, pinned by `flake.nix` and `flake.lock`; the common flakes in the public `qi-v2-nix` | the pins | `nix develop` | `nix develop` |
 | the kit | `dev/agents` → `/nix/store`, pinned by `flake.lock` | the pin | `make install` | `make install` |

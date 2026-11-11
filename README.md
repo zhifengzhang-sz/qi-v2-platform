@@ -19,7 +19,8 @@ package is Massive's reader: Massive's page schema, the fetcher that keeps every
 on the standard library alone: the open parts of the working space's components as Go interfaces (acquisition's
 reader, cleaner and publishers, the warehouse consumer, visualization's chart, the engine's worker), and what the
 definition fixes built in (a topic's shape, the three kinds of data, the wiring of a working space). Its README holds
-the table from each declaration of the definition to its Go name, held to the pinned definition by a test.
+the table from each declaration of the definition to its Go name, held to the pinned definition by a test. Released
+as the flake package `abstract-level` 0.1.0, the tag `abstract-level-0.1.0`.
 
 What the project owns, gives and takes: [`PRODUCTS.md`](PRODUCTS.md). The build before this one is at the tag
 `old-build`.
@@ -62,7 +63,7 @@ flake.nix, flake.lock      the tools, as inputs pinned by the lock (nix develop)
 PRODUCTS.md                what the platform owns, gives and takes, an index (make products-check)
 agents/                    the rules and roles of the agents that work here; AGENTS.md and CLAUDE.md are generated from it
 docs/opening.md …          the state of the work: opening, milestones, decisions, designs, process
-dev/                       hooks (the pre-commit) and scripts (verify)
+dev/                       hooks (the pre-commit), scripts (verify), and the takers' tests of the packages (taker/)
 docs/impl/engineering/     the Go toolchain, the development environment
 lib/                       the platform's library, a Go module on market and the standard library alone: Massive's reader
 abstract/                  the definition's interfaces, a Go module on the standard library alone: the parts, a topic's shape, the wiring

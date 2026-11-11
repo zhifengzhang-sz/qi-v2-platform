@@ -105,11 +105,31 @@ schema in Lean, and here for the schemas of acquisition's topics, a topic with n
 | `workspace.go` | `Component`, `Wiring`, `Workspace` and its `Run` |
 | `run.go` | how a run's parts are run and stopped together; the series inside acquisition, which hold for each reader what it has not taken |
 
+## Taking it
+
+The flake's package `abstract-level`, on `x86_64-linux`: this module as source, without its tests, with this file
+and the repository's `LICENSE`. In the package the module's files are at its root, and nothing else of the
+repository is there: the tests, the paths and the targets this file names (`make check-abstract`, `QI_DEFINITION`,
+the tests of the table below) are the repository's. Its release is 0.1.0, the tag `abstract-level-0.1.0`; a release
+is a tag `abstract-level-<version>` (Changes, below), read over HTTPS with no login. A taker pins the repository at
+the tag, an input of its `flake.nix` (`github:zhifengzhang-sz/qi-v2-platform?ref=abstract-level-0.1.0`), and its
+`go.mod` requires the module at `v0.0.0` and replaces its path with the package's store path:
+
+    require github.com/zhifengzhang-sz/qi-v2-platform/abstract v0.0.0
+
+    replace github.com/zhifengzhang-sz/qi-v2-platform/abstract v0.0.0 => /nix/store/…-abstract-level-0.1.0
+
+The module takes the standard library alone, so its `go.sum` needs no line for it.
+
 ## Its check
 
 `make check-abstract`, from the root, in the shell: `gofmt` with no unformatted file, `go vet`, `go test`, with
-`GOPROXY=off`; it is in `make check`, and `make verify` runs it for a change under `abstract/` or of the flake. Its
-tests:
+`GOPROXY=off`; it is in `make check`, and `make verify` runs it for a change under `abstract/` or of the flake.
+`make check-abstract-package` checks the package as a taker takes it: built offline, then taken by a module in a
+temporary folder whose `go.mod` replaces the module's path with the package's store path, `gofmt`, `go vet` and
+`go test` of its test (`dev/taker/abstract-level/`), which wires a working space from what the package exports and
+runs it, with `GOPROXY=off`; `make verify` runs it for a change under `abstract/`, of the flake, of `LICENSE` or of
+that test. The module's tests:
 
 - run a working space on topics, a database and a chart in memory, on finite inputs, and hold what each of the
   wiring's theorems states, the theorem's two sides compared: what the run wrote, and what the parts themselves
@@ -335,3 +355,11 @@ stands for each of its fields in it.
 | `Wiring.table_rows` | `TestTableRows` | |
 | `Wiring.visualization_chart` | `TestVisualizationChart` | |
 | `Wiring.chart_without_engine` | `TestChartWithoutEngine` | |
+
+## Changes
+
+- **0.1.0**: the first release, on `qi-v2-platform-definition` 0.1.0 and Go 1.26, the standard library alone. The
+  open parts of the four components as Go interfaces (acquisition's reader, cleaner and three publishers, the
+  warehouse consumer, visualization's chart, the engine's worker); a topic's shape, the three kinds of data and the
+  wiring of a working space built in; the table from each of the 163 declarations of the definition's seven files to
+  its Go name, or to why it is not in code.

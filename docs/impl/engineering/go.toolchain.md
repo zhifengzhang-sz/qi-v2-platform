@@ -32,7 +32,9 @@ checked against its `go.sum`, and fetches nothing the cache holds; Go then runs 
 fetches nothing while it vets or tests.
 
 `make check-lib` and `make check-abstract` run this file's checks, each on its own module, from the root's `Makefile`,
-with `GOPROXY=off`; `make check` runs both.
+with `GOPROXY=off`; `make check` runs both. `make check-abstract-package` checks the flake package `abstract-level` as
+a taker takes it, in a module of its own in a temporary folder whose `go.mod` replaces the module's path with the
+package's store path, with `GOPROXY=off` and `GOWORK=off` (`abstract/README.md`, Taking it).
 
 ## 3. Daily commands
 

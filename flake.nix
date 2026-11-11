@@ -5,7 +5,8 @@
 # stack, by make stack-test-up and make stack-test-down; market's Go form, the package market-go of qi-v2-contracts,
 # which the Go workspace (go.work) takes, and market's vectors, which the library's tests read; the platform's formal
 # definition, the package qi-v2-platform-definition of the project of that name, its Lean as source, which the shell
-# names (QI_DEFINITION). Every input is a public repository, read with no login.
+# names (QI_DEFINITION). Every input is a public repository, read with no login. The products released as packages
+# (PRODUCTS.md): abstract-level, the definition's interfaces in Go (abstract/README.md).
 {
   description = "qi-v2-platform: the streaming architecture and the operations that run on the stream; its tools";
 
@@ -37,7 +38,25 @@
     let
       systems = [ "x86_64-linux" ];
       forAll = f: nixpkgs.lib.genAttrs systems (system: f (import nixpkgs { inherit system; }));
+      # Each product's one number (its README, Changes).
+      versions = { abstract-level = "0.1.0"; };
     in {
+      # abstract-level (abstract/README.md, Taking it): the module of abstract/ as source, without its tests, its files
+      # at the package's root, for a taker's go.mod to replace the module's path with; with its README and LICENSE;
+      # the standard library alone. Checked as a taker takes it by make check-abstract-package.
+      packages = forAll (pkgs: {
+        abstract-level = pkgs.runCommand "abstract-level-${versions.abstract-level}" { } ''
+          mkdir -p $out
+          cp ${./abstract/go.mod} $out/go.mod
+          for f in ${./abstract}/*.go; do
+            case $f in *_test.go) ;; *) cp $f $out/ ;; esac
+          done
+          cp ${./abstract/README.md} $out/README.md
+          cp ${./LICENSE} $out/LICENSE
+        '';
+      });
+
+
       devShells = forAll (pkgs: {
         default = qi-v2.lib.mkPureShell pkgs {
           name = "platform";

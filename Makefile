@@ -17,7 +17,7 @@ S  := dev/scripts
 PY := python3
 AGENT_KIND ?= all
 
-.PHONY: help install agents agents-check run-start run-check verify locks-check products-check check check-lib check-abstract go.work modules stack-up stack-down stack-test-up stack-test-stop stack-test-down
+.PHONY: help install agents agents-check run-start run-check verify locks-check products-check check check-lib check-abstract check-abstract-package go.work modules stack-up stack-down stack-test-up stack-test-stop stack-test-down
 
 help: ## the targets
 	@grep -E '^[a-z.-]+:.*##' $(MAKEFILE_LIST) | sed 's/:.*## /\t/' | expand -t 18
@@ -118,6 +118,26 @@ check-lib: modules ## the library (lib/README.md): gofmt with no unformatted fil
 check-abstract: modules ## the definition's interfaces (abstract/README.md): gofmt with no unformatted file, go vet, go test, GOPROXY=off; its tests run a working space in memory and hold its README's table to the definition at QI_DEFINITION
 	@test -n "$(QI_DEFINITION)" && test -f "$(QI_DEFINITION)/Wiring.lean" || { echo "check-abstract: no definition at QI_DEFINITION ('$(QI_DEFINITION)'): the shell gives it (flake.nix); enter it again after a change of flake.lock"; exit 1; }
 	$(call go-check,abstract)
+
+# The flake package abstract-level (abstract/README.md, Taking it), checked as a taker takes it: built offline from
+# this flake (nix build --offline: nothing fetched; a file git does not track is not in it); then a module in a
+# temporary folder, the test of $(ABSTRACT_TAKER) with a go.mod written here that requires the module and replaces its
+# path with the package's store path; go vet and go test there, GOPROXY=off and GOWORK=off, so that the package alone
+# gives the module; the folder removed after.
+ABSTRACT_MODULE := github.com/zhifengzhang-sz/qi-v2-platform/abstract
+ABSTRACT_TAKER := dev/taker/abstract-level
+
+check-abstract-package: ## the flake package abstract-level built offline, and taken by a module in a temporary folder whose go.mod replaces the module's path with the package's store path: gofmt, go vet and go test of dev/taker/abstract-level/'s test, which wires a working space and runs it, GOPROXY=off
+	f=$$(gofmt -l $(ABSTRACT_TAKER)); test -z "$$f" || { echo "gofmt: not formatted:"; echo "$$f"; exit 1; }
+	@set -eu; \
+	p=$$(nix build --offline --no-link --print-out-paths .#abstract-level); \
+	echo "check-abstract-package: abstract-level built offline, $$p"; \
+	t=$$(mktemp -d); trap 'rm -rf "$$t"' EXIT; \
+	cp $(ABSTRACT_TAKER)/*.go "$$t"/; \
+	printf 'module taker\n\ngo 1.26.0\n\nrequire %s v0.0.0\n\nreplace %s v0.0.0 => %s\n' $(ABSTRACT_MODULE) $(ABSTRACT_MODULE) "$$p" > "$$t/go.mod"; \
+	cd "$$t"; \
+	GOWORK=off GOPROXY=off go vet $(VET_FLAGS) ./...; \
+	GOWORK=off GOPROXY=off go test -vet=off $(TEST_FLAGS) ./...
 
 # ---------------------------------------------------------------- the services stack (docs/impl/engineering/dev.environment.md, 3)
 

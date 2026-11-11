@@ -24,6 +24,13 @@ TABLE = [
     ("abstract/", ["check-abstract"]),
     ("flake.nix", ["check-abstract"]),
     ("flake.lock", ["check-abstract"]),
+    # the package abstract-level (abstract/README.md, Taking it): what it holds, the flake that builds it from
+    # nixpkgs, and the taker's test that takes it
+    ("abstract/", ["check-abstract-package"]),
+    ("LICENSE", ["check-abstract-package"]),
+    ("flake.nix", ["check-abstract-package"]),
+    ("flake.lock", ["check-abstract-package"]),
+    ("dev/taker/abstract-level/", ["check-abstract-package"]),
     ("agents/", ["agents-check"]),
     # what PRODUCTS.md states against what the project has, read from these files
     ("PRODUCTS.md", ["products-check"]),

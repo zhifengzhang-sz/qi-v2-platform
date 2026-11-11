@@ -17,8 +17,8 @@ there; it satisfies the platform's definition, and is Go.
 library is there (`lib/`, `lib/README.md`), checked by `make check-lib`. `abstract-level`'s Go module is there
 (`abstract/`, `abstract/README.md`), checked by `make check-abstract`: its tests run a working space in memory and hold
 what the wiring's theorems state, and its README's table, from each declaration of the definition to its Go name, is
-held to the pinned definition. The build before this one is cleared away: it is at the tag `old-build`, with its
-released products at their own tags.
+held to the pinned definition; it is released, the flake package `abstract-level` 0.1.0, the tag
+`abstract-level-0.1.0`, checked as a taker takes it (`make check-abstract-package`). The build before this one is
+cleared away: it is at the tag `old-build`, with its released products at their own tags.
 
-**Left.** `abstract-level`: its release. Then each other product, in the order above. CI, none today
-(`docs/decisions.md`, Open).
+**Left.** Each other product, in the order above, `library` the next. CI, none today (`docs/decisions.md`, Open).
