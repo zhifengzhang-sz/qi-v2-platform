@@ -28,8 +28,15 @@ stands, the next tasks, and what to read.
   takes any topics, a part finding a topic by its name. The recheck found the four fixed, and one place where the
   text said less than the code (which logs are told to be one; `Warehousing.Run` refusing a log given twice): the
   text now says it, and was not rechecked.
+- **The review made again**, on `851a372`, its run logged: `agents.run/log` holds its lines (`reviewer-851a372`,
+  start `RECORDED`, stop `PASS`, nothing changed), written by the kit's hook (`kit hook start`, `kit hook stop`),
+  called by hand around the run, the session's kind of agent having no hook of its own; the record it stages names
+  the kind `copilot`, which the kit writes for every hook's run, and the run was the role `reviewer` of this
+  session's kind. One finding: one cursor given as both the source and the corrections was not refused, so the
+  reader and the corrections' publisher would each take part of one log. Fixed: `ErrSameInput`, told where the
+  cursor is one pointer or one channel. Three texts made exact with it.
 - **The shell.** A shell entered before `flake.lock` held the definition has no `QI_DEFINITION`, and
-  `make check-abstract` stops there with its name. This round's checks, and its commit, whose hook runs `make verify`,
+  `make check-abstract` stops there with its name. This round's checks, and its commits, whose hook runs `make verify`,
   were run through the flake's shell entered afresh: `nix develop --offline -c env GOPROXY=off make …`.
 - The stack (`stack-0.3.0`) and the test stack were not looked at or touched: no test of this round reaches a stack.
 - The locks: `make locks-check` not run (it calls `gh api`).

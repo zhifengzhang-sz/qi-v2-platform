@@ -16,7 +16,7 @@ writing end (`Append`, and nothing else).
 **A topic's shape.** `Topic[K, V]` is a topic's description: its name, its number of partitions, at least one
 (`NewTopic` refuses fewer), and the types of its keys and values. `Record[K, V]` is a record as Kafka gives it to a
 reader. `TopicLogs` is a topic with what it holds, one log of records for each partition (`Topic.Logs`, which refuses
-any other number of logs, and a log given twice, `ErrSameLog`). `AnyTopic` is a topic of any schema. A part is given topics as a set: a `ReadSet`, from
+any other number of logs, and a log given twice where that can be told, `ErrSameLog`). `AnyTopic` is a topic of any schema. A part is given topics as a set: a `ReadSet`, from
 which `ReadFrom` gives a cursor on one partition, or an `AppendSet`, from which `AppendTo` gives one partition's
 writing end; a topic or a partition the set does not hold is refused (`ErrNotGiven`). The two sets are two types,
 and no conversion makes one of the other.
@@ -37,7 +37,8 @@ the ends it is given:
 wiring of a working space (`Wiring`, and the `Workspace` it makes):
 
 - acquisition alone reads the source and the corrections (`Inputs`): `Workspace.Run` gives them to `Acquisition`, and
-  to nothing else;
+  to nothing else; they are two logs, and one cursor given as both is refused (`ErrSameInput`), where it is given as
+  one pointer or one channel;
 - the clean series is made from the raw: the cleaner is given the reader's series, and the clean publisher the
   cleaner's;
 - the corrections are applied to nothing: the corrections stream reaches its publisher alone;
@@ -79,8 +80,9 @@ the implementation's to keep, and nothing here checks it:
 - what a part keeps between messages it keeps in the call: `Consumer.Consume` is called once for each partition, and
   each call is the consumer on that partition alone;
 - a `Log` a binding gives is the whole log, in one order for every cursor, and not what retention or compaction leave
-  of it; two logs given are two logs, which is told only where one pointer or one channel is given twice; and what is given from
-  outside the topics (the inputs, the chart's log, a database's logs) is no topic's log;
+  of it; two logs given are two logs, which is told only where one pointer or one channel is given twice; what is given from
+  outside the topics (the inputs, the chart's log, a database's logs) is no topic's log; and the two inputs are two
+  logs, which is told in the same way;
 - a `Database` holds a table as the set of the rows pushed into it, a row a message marked with the log it is from;
   and the `Database` values given with the consumers of several schemas, each of its own type of push, are one
   database, in which a table's name names one table.
@@ -95,7 +97,7 @@ schema in Lean, and here for the schemas of acquisition's topics, a topic with n
 | File | Holds |
 |---|---|
 | `log.go` | `Log`, `Appender`, `Cursor` |
-| `topic.go` | `Record`, `Header`, `Topic`, `AnyTopic`, `TopicLogs`, `ReadSet`, `AppendSet`, the four refusals |
+| `topic.go` | `Record`, `Header`, `Topic`, `AnyTopic`, `TopicLogs`, `ReadSet`, `AppendSet`, the five refusals |
 | `acquisition.go` | `Kind`, `AllTopics`, `Inputs`, the reader, the cleaner, the three publishers, `Acquisition` and its `Run` |
 | `warehousing.go` | `Consumer`, `Database`, `SchemaConsumer`, `Warehousing` and its `Run` |
 | `visualization.go` | `Chart` |
@@ -242,8 +244,8 @@ stands for each of its fields in it.
 | `Workspace.Output` | `Database.Pushes`, `Workspace.Run` | the logs that leave: warehousing's pushes, and the chart, which `Workspace.Run` is given to append to |
 | `Workspace.OutputMsg` | `Consumer[P]`, `Chart[View]` | |
 | `Workspace.table` | `Workspace.Table`, `Wiring.Tables` | the table's name; the consumers' `Database` values are one database, their giver's to keep |
-| `Workspace.acquisition` | `Workspace.Run`, `Acquisition.Run` | on the inputs alone |
-| `Workspace.warehousing` | `Workspace.Run`, `Warehousing.Run` | on the topics alone |
+| `Workspace.acquisition` | `Workspace.Run`, `Acquisition.Run` | on the inputs alone; `Workspace.Run` runs what `Acquisition.Run` runs, its checks made when the working space is made |
+| `Workspace.warehousing` | `Workspace.Run`, `Warehousing.Run` | on the topics alone; `Workspace.Run` runs what `Warehousing.Run` runs, its checks made when the working space is made |
 | `Workspace.visualization` | `Workspace.Run`, `Chart.Draw` | on the topics alone |
 | `Workspace.marketModelEngine` | `Workspace.Run`, `Worker.Work` | on the topics alone |
 | `Workspace.Inputs` | `Inputs` | |
@@ -319,12 +321,12 @@ stands for each of its fields in it.
 | `Wiring.OutputMsg` | `Consumer[P]`, `Wiring[View]` | |
 | `Wiring.Inputs` | `Inputs` | |
 | `Wiring.Topics` | `Wiring.Topics`, `Engine.Topics` | |
-| `Wiring.feeds` | `Inputs` | the inputs are given side by side, and nothing converts them |
-| `Wiring.acquisitions` | `Acquisition.Run` | |
+| `Wiring.feeds` | `Inputs`, `ErrSameInput` | the inputs are given side by side, and nothing converts them; they are two logs, and one cursor given as both is refused where that can be told |
+| `Wiring.acquisitions` | `Acquisition.Run` | as `Workspace.acquisition` |
 | `Wiring.acqPart` | `Workspace.acquired` | |
 | `Wiring.enginePart` | `Workspace.model` | |
 | `Wiring.visualizationIn` | `Workspace.shown`, `Workspace.model` | |
-| `Wiring.pushes` | `Warehousing.Run` | |
+| `Wiring.pushes` | `Warehousing.Run` | as `Workspace.warehousing` |
 | `Wiring.workspace` | `Wiring.Workspace` | |
 | `Wiring.acquisition_topics` | `TestAcquisitionTopics` | |
 | `Wiring.clean_topics` | `TestWiringCleanTopics` | |

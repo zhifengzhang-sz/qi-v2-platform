@@ -489,7 +489,30 @@ func TestRefused(t *testing.T) {
 	if err := f.acquisition().Run(within(t), inputs(pages, fixes), twoKinds); !errors.Is(err, ErrSameLog) {
 		t.Errorf("acquisition on a log that is a raw and a clean topic's: %v", err)
 	}
+	// the two inputs are two logs: one cursor is not both, for acquisition alone or in a working space; two cursors
+	// on one log are two, each reading the whole of it
+	both := Acquisition[page, bar, page]{
+		Reader: reader{}, Cleaner: cleaner{}, PublishRaw: f.rawPublisher(), PublishClean: f.cleanPublisher(), PublishCorrections: stopped{},
+	}
+	one := logOf(pages...).Read()
+	if err := both.Run(within(t), Inputs[page, page]{Source: one, Corrections: one}, f.topics()); !errors.Is(err, ErrSameInput) {
+		t.Errorf("acquisition on one cursor as its source and its corrections: %v", err)
+	}
+	space, err := Wiring[page, bar, page, string]{
+		Topics: f.topics(), Acquisition: both, Warehousing: f.warehousing(t), Tables: tables,
+		Shown: []AnyTopic{f.cleanBars.topic}, Chart: f.chart(),
+	}.Workspace()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := space.Run(within(t), Inputs[page, page]{Source: one, Corrections: one}, f.views); !errors.Is(err, ErrSameInput) {
+		t.Errorf("a working space on one cursor as its source and its corrections: %v", err)
+	}
 	sameEmpty(t, "a topic of runs that were refused", f.rawBars.partitions[0].all())
+	log := logOf(pages...)
+	if err := both.Run(within(t), Inputs[page, page]{Source: log.Read(), Corrections: log.Read()}, f.topics()); err != nil {
+		t.Errorf("acquisition on two cursors of one log: %v", err)
+	}
 }
 
 // A working space is run once: within one, nothing starts again.
@@ -602,6 +625,10 @@ type stopped struct{}
 func (stopped) Clean(ctx context.Context, raw Cursor[bar], clean Appender[bar]) error { return nil }
 
 func (stopped) PublishClean(ctx context.Context, clean Cursor[bar], topics AppendSet) error {
+	return nil
+}
+
+func (stopped) PublishCorrections(ctx context.Context, corrections Cursor[page], topics AppendSet) error {
 	return nil
 }
 

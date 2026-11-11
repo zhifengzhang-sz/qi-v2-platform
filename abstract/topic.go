@@ -14,6 +14,9 @@ var (
 	ErrNotGiven = errors.New("not among the topics given")
 	// ErrSameLog: one log given for two partitions, of one topic or of two. A partition's log is its own.
 	ErrSameLog = errors.New("one log for two partitions")
+	// ErrSameInput: one cursor given as both the source and the corrections stream. The two are two logs, each read
+	// whole by its own part.
+	ErrSameInput = errors.New("one cursor for the source and the corrections")
 	// ErrNotClean: a topic the engine or visualization is to read is not one of acquisition's clean topics.
 	ErrNotClean = errors.New("not one of acquisition's clean topics")
 )
@@ -65,7 +68,8 @@ func (t Topic[K, V]) Value() reflect.Type { return reflect.TypeFor[V]() }
 func (t Topic[K, V]) sealed() {}
 
 // Logs gives what the topic holds: one log of records for each partition, logs[p] that of partition p. As many logs
-// as the topic has partitions, each there and each given once (ErrSameLog), or it is refused.
+// as the topic has partitions, each there, or it is refused; so is a log given twice (ErrSameLog), where the two
+// are given as one pointer or one channel.
 func (t Topic[K, V]) Logs(logs ...Log[Record[K, V]]) (TopicLogs, error) {
 	if t.partitions < 1 {
 		return TopicLogs{}, fmt.Errorf("abstract: topic %q: %d partitions: a topic has at least one, and is made by NewTopic", t.name, t.partitions)
@@ -117,14 +121,21 @@ type TopicLogs struct {
 // logsSeen is the logs of some topics, each with the partition it is the log of.
 type logsSeen map[any]string
 
-// add notes the logs of one more topic, and refuses a log that is already another partition's. Two logs are told to
-// be one where they are given as one pointer, or one channel; that two values of another kind are two logs is
-// their giver's to keep.
+// told: whether two values given as v are told to be one: where v is a pointer or a channel, which compare by what
+// they point to. That two values of another kind are two is their giver's to keep.
+func told(v any) bool {
+	switch reflect.ValueOf(v).Kind() {
+	case reflect.Pointer, reflect.Chan:
+		return true
+	}
+	return false
+}
+
+// add notes the logs of one more topic, and refuses a log that is already another partition's, where the two are
+// told to be one (told).
 func (seen logsSeen) add(l TopicLogs) error {
 	for p, log := range l.each {
-		switch reflect.ValueOf(log).Kind() {
-		case reflect.Pointer, reflect.Chan:
-		default:
+		if !told(log) {
 			continue
 		}
 		of := fmt.Sprintf("partition %d of topic %q", p, l.topic.Name())

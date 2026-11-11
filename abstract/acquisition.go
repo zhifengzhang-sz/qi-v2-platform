@@ -54,7 +54,9 @@ func (t AllTopics) Of(k Kind) []TopicLogs {
 }
 
 // Inputs is what acquisition reads, and nothing else in a working space does: its source, the vendor's corrected raw
-// series first and then its raw series, of messages Src; and the vendor's corrections stream, of messages Corr.
+// series first and then its raw series, of messages Src; and the vendor's corrections stream, of messages Corr. They
+// are two logs, each read whole by its own part: one cursor given as both is refused (ErrSameInput), where it is
+// given as one pointer or one channel.
 type Inputs[Src, Corr any] struct {
 	Source      Cursor[Src]
 	Corrections Cursor[Corr]
@@ -66,6 +68,9 @@ func (in Inputs[Src, Corr]) check() error {
 	}
 	if in.Corrections == nil {
 		return errors.New("no corrections stream to read")
+	}
+	if source, corrections := any(in.Source), any(in.Corrections); told(source) && source == corrections {
+		return ErrSameInput
 	}
 	return nil
 }

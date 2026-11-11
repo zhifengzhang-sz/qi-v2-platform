@@ -13,8 +13,8 @@
 // writes by appending; it returns when its context is done, with the context's error, or on an error of its own. A
 // part that returns nil has stopped: what it has appended stands, and it reads no more.
 //
-// What the types hold a part to: it reads only what it is given, and it can only append. What they cannot, and the
-// definition requires (Kahn's condition), is the implementation's to keep:
+// What the types hold a part to: through what it is given it reaches nothing else, and it can only append. What
+// they cannot, and the definition requires (Kahn's condition), is the implementation's to keep:
 //
 //   - what a part appends depends on what it has read, and on nothing else: not on the time, not on which of two
 //     cursors has a message first. A part that reads several cursors waits on one at a time, in an order what it
