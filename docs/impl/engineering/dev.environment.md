@@ -6,9 +6,10 @@ and Compose 5.7.0 (section 2).
 ## 1. Repository layout
 
 This repository needs no other checkout. The infrastructure stack is `qi-v2-services`' published package `stack`,
-market's Go form and vectors are `qi-v2-contracts`' package `market-go` and its source, and the platform's formal
-definition is `qi-v2-platform-definition`'s package of that name, each an input of `flake.nix` pinned by `flake.lock`,
-a public repository read with no login.
+market's Go form and vectors are `qi-v2-contracts`' package `market-go` and its source, chanlun's Go form is
+`qi-v2-contracts`' package `chanlun-go`, at chanlun's own release, and the platform's formal definition is
+`qi-v2-platform-definition`'s package of that name, each an input of `flake.nix` pinned by `flake.lock`, a public
+repository read with no login.
 
 ## 2. Tools
 
@@ -24,9 +25,10 @@ nixpkgs gives them at `flake.lock`'s pin; the last row is not the flake's.
 | Python | 3.13.17 | the shell's, its standard library alone: the Makefile's scripts (`dev/scripts/`) |
 | Docker + Compose | 29.9.3 / 5.7.0 | the host's, not pinned: the versions the stack was last started on (section 3); the stack's program runs `docker compose` with the `docker` on the path |
 
-The shell names three store paths of the flake's inputs: `QI_MARKET_GO`, market's Go form, which `go.work` takes;
-`QI_MARKET_VECTORS`, market's vectors, which the library's tests read; `QI_DEFINITION`, the definition's package, its
-Lean's files at its root, which the test of `abstract/`'s table reads (`abstract/README.md`).
+The shell names four store paths of the flake's inputs: `QI_MARKET_GO`, market's Go form, and `QI_CHANLUN_GO`, chanlun's
+Go form, which `go.work` takes; `QI_MARKET_VECTORS`, market's vectors, which the library's tests read; `QI_DEFINITION`,
+the definition's package, its Lean's files at its root, which the test of `abstract/`'s table reads
+(`abstract/README.md`).
 
 ## 3. Infrastructure
 

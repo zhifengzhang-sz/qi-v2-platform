@@ -1,5 +1,34 @@
 {
   "nodes": {
+    "chanlun": {
+      "inputs": {
+        "kit": [
+          "kit"
+        ],
+        "nixpkgs": [
+          "chanlun",
+          "qi-v2",
+          "nixpkgs"
+        ],
+        "qi-v2": [
+          "qi-v2"
+        ]
+      },
+      "locked": {
+        "lastModified": 1794039919,
+        "narHash": "sha256-peUJfcS3MQ74H7FqyTpd9l9SX3GY7LuyXX093tIKmvM=",
+        "owner": "zhifengzhang-sz",
+        "repo": "qi-v2-contracts",
+        "rev": "3354d2b14368a0af5b90ce0755901c3a3688dd0f",
+        "type": "github"
+      },
+      "original": {
+        "owner": "zhifengzhang-sz",
+        "ref": "chanlun-3.1.0",
+        "repo": "qi-v2-contracts",
+        "type": "github"
+      }
+    },
     "contracts": {
       "inputs": {
         "kit": [
@@ -123,6 +152,7 @@
     },
     "root": {
       "inputs": {
+        "chanlun": "chanlun",
         "contracts": "contracts",
         "definition": "definition",
         "kit": "kit",

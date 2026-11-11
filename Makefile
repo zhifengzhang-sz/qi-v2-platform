@@ -68,24 +68,28 @@ products-check: ## whether PRODUCTS.md states what the project has (the kit's ki
 # ---------------------------------------------------------------- the Go workspace (docs/impl/engineering/go.toolchain.md, 2)
 
 # The Go modules of this repository: the platform's library (lib/, lib/README.md) and the definition's interfaces
-# (abstract/, abstract/README.md), which take the standard library alone. The library's go.mod requires market's Go
-# form at v0.0.0, which go.work replaces with the store path of the flake's package market-go (QI_MARKET_GO, the
-# shell's): go.work is written here, by the shell on entry and before every target that runs Go, and never
-# committed. The targets run Go with GOPROXY=off, so that Go fetches nothing while it vets or tests: market's Go form
-# is the flake's, and every other module a module takes is in Go's module cache already, put there by make modules,
-# which each of them runs first.
+# (abstract/, abstract/README.md), which take the standard library alone. The library's go.mod requires market's Go form
+# at v0.0.0, which go.work replaces with the store path of the flake's package market-go (QI_MARKET_GO, the shell's);
+# chanlun's Go form, for a module that requires it at v0.0.0 (none does yet), is replaced likewise by the store path of
+# the package chanlun-go (QI_CHANLUN_GO): go.work is written here, by the shell on entry and before every target that
+# runs Go, and never committed. The targets run Go with GOPROXY=off, so that Go fetches nothing while it vets or tests:
+# the contracts' Go forms are the flake's, and every other module a module takes is in Go's module cache already, put
+# there by make modules, which each of them runs first.
 MODULES := lib abstract
 MODULES_PKGS := $(addprefix ./,$(addsuffix /...,$(MODULES)))
 MARKET_GO := github.com/zhifengzhang-sz/qi-v2-contracts/market/go
+CHANLUN_GO := github.com/zhifengzhang-sz/qi-v2-contracts/chanlun/go
 
-go.work: ## the Go workspace at the root: the modules of MODULES, market-go at QI_MARKET_GO; written only when its text changes; never committed
-	@test -n "$(QI_MARKET_GO)" && test -f "$(QI_MARKET_GO)/go.mod" || { echo "go.work: no market-go at QI_MARKET_GO ('$(QI_MARKET_GO)'): the shell gives it (flake.nix); enter it again after a change of flake.lock"; exit 1; }
-	@new=$$(echo "// written by make go.work from flake.lock's market-go (QI_MARKET_GO); never committed"; \
+go.work: ## the Go workspace at the root: the modules of MODULES, market-go at QI_MARKET_GO, chanlun-go at QI_CHANLUN_GO; written only when its text changes; never committed
+	@test -n "$(QI_MARKET_GO)" && test -f "$(QI_MARKET_GO)/go.mod" || { echo "go.work: no market-go at QI_MARKET_GO ('$(QI_MARKET_GO)'): the shell gives it (flake.nix); enter it again after a change of flake.nix or flake.lock"; exit 1; }
+	@test -n "$(QI_CHANLUN_GO)" && test -f "$(QI_CHANLUN_GO)/go.mod" || { echo "go.work: no chanlun-go at QI_CHANLUN_GO ('$(QI_CHANLUN_GO)'): the shell gives it (flake.nix); enter it again after a change of flake.nix or flake.lock"; exit 1; }
+	@new=$$(echo "// written by make go.work from flake.lock's market-go (QI_MARKET_GO) and chanlun-go (QI_CHANLUN_GO); never committed"; \
 	  echo "go 1.26.0"; echo; echo "use ("; for m in $(MODULES); do printf '\t./%s\n' $$m; done; echo ")"; echo; \
-	  echo "replace $(MARKET_GO) v0.0.0 => $(QI_MARKET_GO)"); \
-	if [ "$$new" != "$$(cat go.work 2>/dev/null)" ]; then printf '%s\n' "$$new" > go.work; echo "go.work: written, market-go at $(QI_MARKET_GO)"; fi
+	  echo "replace $(MARKET_GO) v0.0.0 => $(QI_MARKET_GO)"; \
+	  echo "replace $(CHANLUN_GO) v0.0.0 => $(QI_CHANLUN_GO)"); \
+	if [ "$$new" != "$$(cat go.work 2>/dev/null)" ]; then printf '%s\n' "$$new" > go.work; echo "go.work: written, market-go at $(QI_MARKET_GO), chanlun-go at $(QI_CHANLUN_GO)"; fi
 
-modules: go.work ## the modules the workspace's packages and their tests need, but market's Go form (go.work's), into Go's module cache (the shell's GOMODCACHE), from the Go module proxy with no login, each checked against its go.sum; a module the cache holds is not fetched again; run first by every target that runs Go
+modules: go.work ## the modules the workspace's packages and their tests need, but the contracts' Go forms (go.work's), into Go's module cache (the shell's GOMODCACHE), from the Go module proxy with no login, each checked against its go.sum; a module the cache holds is not fetched again; run first by every target that runs Go
 	@go list -deps -test $(MODULES_PKGS) >/dev/null
 
 # ---------------------------------------------------------------- the checks (docs/impl/engineering/go.toolchain.md)

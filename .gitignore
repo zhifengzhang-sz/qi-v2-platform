@@ -19,6 +19,7 @@ todo.md
 /.claude/workflows/
 /.github/agents/
 /.github/hooks/kit.json
-# the Go workspace, written by make go.work and the shell from flake.lock's market-go, and what Go writes beside it
+# the Go workspace, written by make go.work and the shell from flake.lock's market-go and chanlun-go, and what Go
+# writes beside it
 /go.work
 /go.work.sum

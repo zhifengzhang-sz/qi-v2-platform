@@ -3,12 +3,13 @@
 ## Responsibility
 
 The platform owns the working space the platform's definition defines (`qi-v2-platform-definition`), in Go: the
-definition's interfaces in code, the topics' schemas, the binding to Kafka, acquisition, warehousing, visualization and
-their wiring; and the platform's library, what reads a source, as packages any app can use. It is built on the
-definition from the ground up, one product at a time; the library and `abstract-level` stand, and each other product has
-its row here once it is built. It does not own the definition, which is `qi-v2-platform-definition`'s, the
-infrastructure, which `qi-v2-services` publishes, the market data contract, which is `qi-v2-contracts`', the common
-tools, which are `qi-v2-nix`'s, the market model engine and what it makes, or any consumer's code.
+definition's interfaces in code, the topics' schemas, the engine's topics' among them, the binding to Kafka,
+acquisition, warehousing, visualization and their wiring; and the platform's library, what reads a source, as packages
+any app can use. It is built on the definition from the ground up, one product at a time; the library and
+`abstract-level` stand, and each other product has its row here once it is built. It does not own the definition, which
+is `qi-v2-platform-definition`'s, the infrastructure, which `qi-v2-services` publishes, the contracts, `market` and
+`chanlun`, which are `qi-v2-contracts`', the common tools, which are `qi-v2-nix`'s, the market model engine, or the
+records it makes, which are their contract's, or any consumer's code.
 
 ## Products
 
@@ -26,4 +27,5 @@ tools, which are `qi-v2-nix`'s, the market model engine and what it makes, or an
 | `kit` | `qi-v2-nix` | `flake.lock` |
 | `services` | `qi-v2-services`, its package `stack` (0.3.0): the stack and the test stack | `flake.lock` |
 | `contracts` | `qi-v2-contracts`, its package `market-go` (market 1.1.0's Go form) and market's vectors | `flake.lock` |
+| `chanlun` | `qi-v2-contracts`, its package `chanlun-go` (chanlun 3.1.0's Go form) | `flake.lock` |
 | `definition` | `qi-v2-platform-definition`, its package `qi-v2-platform-definition` (0.1.0): the platform's formal definition, its Lean as source | `flake.lock` |

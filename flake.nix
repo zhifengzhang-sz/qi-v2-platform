@@ -3,7 +3,8 @@
 # shell and its Go preset; the kit, which writes the agents' files from agents/; the services stack, the package
 # `stack` of qi-v2-services, run by make stack-up and make stack-down on the machine's Docker engine, and its test
 # stack, by make stack-test-up and make stack-test-down; market's Go form, the package market-go of qi-v2-contracts,
-# which the Go workspace (go.work) takes, and market's vectors, which the library's tests read; the platform's formal
+# which the Go workspace (go.work) takes, and market's vectors, which the library's tests read; chanlun's Go form, the
+# package chanlun-go of qi-v2-contracts at chanlun's own release, which go.work takes too; the platform's formal
 # definition, the package qi-v2-platform-definition of the project of that name, its Lean as source, which the shell
 # names (QI_DEFINITION). Every input is a public repository, read with no login. The products released as packages
 # (PRODUCTS.md): abstract-level, the definition's interfaces in Go (abstract/README.md).
@@ -27,6 +28,12 @@
   inputs.contracts.url = "github:zhifengzhang-sz/qi-v2-contracts?ref=market-1.1.0";
   inputs.contracts.inputs.qi-v2.follows = "qi-v2";
   inputs.contracts.inputs.kit.follows = "kit";
+  # chanlun's contract, published by qi-v2-contracts at its own tag: its package chanlun-go, chanlun's Go form as
+  # source, the records the engine's topics carry, which replaces the module a go.mod requires at v0.0.0
+  # (docs/impl/engineering/go.toolchain.md, 2); market's module, which it takes, is market-go's, of the input contracts
+  inputs.chanlun.url = "github:zhifengzhang-sz/qi-v2-contracts?ref=chanlun-3.1.0";
+  inputs.chanlun.inputs.qi-v2.follows = "qi-v2";
+  inputs.chanlun.inputs.kit.follows = "kit";
   # The platform's formal definition, published by qi-v2-platform-definition at its release's tag: its package
   # qi-v2-platform-definition, the Lake package of its Lean as source (the base, Kafka's topic, the four components and
   # their wiring), which the shell names (QI_DEFINITION). Its qi-v2 and kit follow this flake's, and so its nixpkgs.
@@ -34,7 +41,7 @@
   inputs.definition.inputs.qi-v2.follows = "qi-v2";
   inputs.definition.inputs.kit.follows = "kit";
 
-  outputs = { self, nixpkgs, qi-v2, kit, services, contracts, definition }:
+  outputs = { self, nixpkgs, qi-v2, kit, services, contracts, chanlun, definition }:
     let
       systems = [ "x86_64-linux" ];
       forAll = f: nixpkgs.lib.genAttrs systems (system: f (import nixpkgs { inherit system; }));
@@ -61,15 +68,16 @@
         default = qi-v2.lib.mkPureShell pkgs {
           name = "platform";
           # Go and gopls, their caches under ~/.cache/platform/; GOTOOLCHAIN=local: the flake's go, never another.
-          # Every program is Go. The Go workspace: QI_MARKET_GO, market-go's store path, from which make go.work
-          # writes go.work at the root (never committed), written on entry too; QI_MARKET_VECTORS, market's vectors
-          # in the input's source (market/vectors), which lib/massive's tests read; QI_DEFINITION, the definition's
-          # package, its Lean's files at its root
+          # Every program is Go. The Go workspace: QI_MARKET_GO and QI_CHANLUN_GO, market-go's and chanlun-go's store
+          # paths, from which make go.work writes go.work at the root (never committed), written on entry too;
+          # QI_MARKET_VECTORS, market's vectors in the input's source (market/vectors), which lib/massive's tests
+          # read; QI_DEFINITION, the definition's package, its Lean's files at its root
           uses = [
             (qi-v2.lib.go pkgs)
             {
               env = {
                 QI_MARKET_GO = "${contracts.packages.${pkgs.stdenv.hostPlatform.system}.market-go}";
+                QI_CHANLUN_GO = "${chanlun.packages.${pkgs.stdenv.hostPlatform.system}.chanlun-go}";
                 QI_MARKET_VECTORS = "${contracts}/market/vectors";
                 QI_DEFINITION = "${definition.packages.${pkgs.stdenv.hostPlatform.system}.qi-v2-platform-definition}";
               };

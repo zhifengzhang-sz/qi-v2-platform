@@ -21,15 +21,16 @@ Go is the flake's (`nix develop`; its version: `dev.environment.md`, 2).
 **The modules.** Each is a module of its own in a folder of its own, named once, in the root `Makefile`'s `MODULES`;
 what each takes is in its `go.mod`. Today there are two: the platform's library (`lib/README.md`), which takes market
 alone, and the definition's interfaces (`abstract/README.md`), which take the standard library alone. They are one
-workspace, `go.work` at the root, which `make go.work` writes from the shell's `QI_MARKET_GO` (the
-shell writes it on entry too) and git never holds: it uses the modules of `MODULES` and replaces market's Go form,
-which a `go.mod` requires at `v0.0.0`, by the store path of the flake's package `market-go` (the input `contracts`,
-`qi-v2-contracts` at `market-1.1.0`); `go.sum` has no line for it. A module does not require another module of the
-workspace in its `go.mod`: the workspace gives it, and a requirement of a workspace module at a version sends Go to
-the module proxy for it. Every target that runs Go on them runs `make modules` first, which puts in Go's module cache
-each module their packages and their tests need but market's Go form, from the Go module proxy with no login, each
-checked against its `go.sum`, and fetches nothing the cache holds; Go then runs with `GOPROXY=off`, so that it
-fetches nothing while it vets or tests.
+workspace, `go.work` at the root, which `make go.work` writes from the shell's `QI_MARKET_GO` and `QI_CHANLUN_GO` (the
+shell writes it on entry too) and git never holds: it uses the modules of `MODULES` and replaces market's Go form, which
+a `go.mod` requires at `v0.0.0`, by the store path of the flake's package `market-go` (the input `contracts`,
+`qi-v2-contracts` at `market-1.1.0`), and chanlun's Go form, for a module that requires it at `v0.0.0` (none does yet),
+by the store path of the package `chanlun-go` (the input `chanlun`, `qi-v2-contracts` at `chanlun-3.1.0`); `go.sum` has
+no line for either. A module does not require another module of the workspace in its `go.mod`: the workspace gives it,
+and a requirement of a workspace module at a version sends Go to the module proxy for it. Every target that runs Go on
+them runs `make modules` first, which puts in Go's module cache each module their packages and their tests need but the
+contracts' Go forms, from the Go module proxy with no login, each checked against its `go.sum`, and fetches nothing the
+cache holds; Go then runs with `GOPROXY=off`, so that it fetches nothing while it vets or tests.
 
 `make check-lib` and `make check-abstract` run this file's checks, each on its own module, from the root's `Makefile`,
 with `GOPROXY=off`; `make check` runs both. `make check-abstract-package` checks the flake package `abstract-level` as
