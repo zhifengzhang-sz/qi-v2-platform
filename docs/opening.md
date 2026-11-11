@@ -6,48 +6,40 @@ stands, the next tasks, and what to read.
 - The platform is built from the ground up on its formal definition, one product at a time (`docs/milestones.md`;
   `docs/decisions.md`, 2026-11-11). What stands: the definition taken (`qi-v2-platform-definition` 0.1.0, the input
   `definition`, the shell's `QI_DEFINITION`); the library (`lib/`, `lib/README.md`); `abstract-level` (`abstract/`,
-  `abstract/README.md`), released 0.1.0: the flake's package `abstract-level`, the tag `abstract-level-0.1.0` on the
-  commit of this opening, neither pushed: the push of `main` and of the tag waits for the owner's yes.
-- **This round**: `abstract-level`'s fourth task, its release (`docs/decisions.md`, 2026-11-11: the owner's brief, and
-  the session's proposal on how it is built). The package (`flake.nix`, `versions`, `packages`): `go.mod`, the
-  module's Go files but its tests, its README and `LICENSE`, at its root. Its number, 0.1.0, in the flake, in
-  `abstract/README.md` (Taking it, Changes) and in its row of `PRODUCTS.md`, the row that stood restated (Form
-  `flake package`, Version `0.1.0`, Release `abstract-level-0.1.0`), not a second row. Its check,
-  `make check-abstract-package`: the package built by `nix build --offline`, its files held to exactly what it is
-  stated to hold, each the work tree's; then a module in a temporary folder, the test of
-  `dev/taker/abstract-level/` beside a `go.mod` the target writes, replacing the module's path with the package's
-  store path, `gofmt`, `go vet`, `go test` with `GOWORK=off` and `GOPROXY=off`, the test wiring a working space from
-  what the package exports and running it. In verify's table for `abstract/`, `flake.nix`, `flake.lock`, `LICENSE`
-  and the taker's test; not in `make check`. `docs/decisions.md`, as the session's proposals, the choices of tasks 1
-  and 3 no entry held (how the definition was taken; how the module's two reviews were settled) and this round's.
-- **Its review**, role `reviewer`, on `7570d70`, its run logged (`reviewer-7570d70`, start `RECORDED`, stop `PASS`,
-  nothing changed). Three findings: the package's check passed whatever the package held (fixed: its files held to
-  the list, each compared, a trial on three wrong copies failing each); the row of `PRODUCTS.md` restated where the
-  brief asks a new row (not taken: one product has one row, its form now the flake package; the owner's to decide,
-  Open below); the decision's entry said the package is made as `market-go` is, `LICENSE` included, where
-  `market-go` holds none (fixed: the layout `market-go`'s, the `LICENSE` as the definition's package holds its own).
-  Wording fixed: `doc.go` in the README's files, the reason no `go.sum` line is needed, the Shapes of the entry on
-  the definition, the taker's module not one of `MODULES`; not taken: `make check`'s "every check", which stood
-  before and is not this change's. The reviewer, having no `git`, read the work tree and not the commits' messages:
-  the entries on tasks 1 to 3 rest on the session's reading of `0fa98c2`, `e2b1b14`, `851a372` and `abfe7bb`.
-- **The checks**, role `checker`, every nix offline and `GOPROXY=off`, through the flake's shell: `make locks-check`
-  with the owner's yes (it calls `gh api`), every lock current; `make verify VERIFY=--all` passing before the first
-  commit and again after the fixes, each run logged; after the last commit, `git status --porcelain`,
-  `git rev-parse HEAD` and the full `make verify` in one command, as the round's report gives it.
-- The stack (`stack-0.3.0`) and the test stack were not looked at or touched: no test of this round reaches a stack.
-- `main`: this round's commits and the tag are not pushed; the push is the owner's. `.env` in place, ignored;
-  `make install` run.
+  `abstract/README.md`), released 0.1.0: the flake's package `abstract-level`, the tag `abstract-level-0.1.0` on
+  `09cc343`; chanlun 3.1.0's Go form, taken for `topic-schemas` (`2c954ca`: the input `chanlun`, the shell's
+  `QI_CHANLUN_GO`, `go.work`'s replace).
+- **This round**: `topic-schemas`' second task of three, the module `schemas/`, the schema of every topic. Stopped
+  before any file of it was written, by the owner's answers to the session's questions (`docs/decisions.md`,
+  2026-11-11, the last two entries of Decided). The brief has each schema encode through the contracts' own Go
+  codecs, and the contracts give none for what it names: market 1.1.0's Go form has a codec for the ongoing K-line
+  alone (`EncodeOngoingKLine`, `DecodeOngoingKLine`), none for `KLine`, and its vectors are ongoing K-lines;
+  chanlun 3.1.0's has one for the run alone (`EncodeRun`, `DecodeRun`), none for its six records, and a record cannot
+  go through it alone, the run's rules bounding every position by its merged bars; its vectors are runs. The owner:
+  the module waits until market's Go form gives a codec for `KLine` and chanlun's one for each record, neither a
+  text written here nor a K-line through the ongoing K-line's codec; a topic's schema has no key. No build this
+  session (the owner's answer), so nothing was built or checked; this round changes `docs/decisions.md`,
+  `docs/milestones.md` and this file alone.
+- The stack (`stack-0.3.0`) and the test stack were not looked at or touched.
+- `main` stood level with `origin/main` as `git` last saw it, before this round's commit; this round's commit is not
+  pushed, and the push is the owner's. `.env` in place, ignored; `make install` run.
 
 ## The next tasks
 
-First, the review of this release by a session that did not write it: the task is done when each of its findings is
-fixed or dropped by the owner. A fix moves the tag `abstract-level-0.1.0` to the commit that holds it, the tag not
-being pushed. Then the owner's push of `main` and of the tag. Then, by a brief to come, the next product of
-`docs/milestones.md`, `library`.
-
-Read, for the review: `flake.nix` (`versions`, `packages`), the `Makefile` (`check-abstract-package`),
-`dev/scripts/verify.py`, `dev/taker/abstract-level/taker_test.go`, `abstract/README.md` (Taking it, Its check,
-Changes), `PRODUCTS.md`, `docs/decisions.md` (the last four entries of Decided).
+1. The review of `abstract-level` 0.1.0 by a session that did not write it, still to be made: the task is done when
+   each of its findings is fixed or dropped by the owner; a fix moves the tag `abstract-level-0.1.0` to the commit
+   that holds it, the tag not being pushed. Read: `flake.nix` (`versions`, `packages`), the `Makefile`
+   (`check-abstract-package`), `dev/scripts/verify.py`, `dev/taker/abstract-level/taker_test.go`,
+   `abstract/README.md` (Taking it, Its check, Changes), `PRODUCTS.md`, `docs/decisions.md` (the entries on
+   `abstract-level`).
+2. In `qi-v2-contracts`, by the owner's brief there: market's Go form a codec for `KLine`, chanlun's one for each of
+   its six records, each in a release; then each taken here, its lock moved by the owner's command.
+3. Then `topic-schemas`' second task, as briefed, its schemas with no key. Read, for it: the brief; `docs/decisions.md`
+   (the last two entries of Decided); `abstract/README.md`, `abstract/acquisition.go` (`Kind`),
+   `abstract/definition_test.go` (how a README's table is held to the definition); the `Makefile` (`go.work`,
+   `MODULES`, `check-abstract`, `check-abstract-package`); `dev/scripts/verify.py`; `PRODUCTS.md`; the contracts'
+   READMEs at `QI_MARKET_GO` and `QI_CHANLUN_GO`. chanlun's vectors are in the input's source, `chanlun/vectors`,
+   which no shell variable names yet.
 
 ## Standing rules learnt (until the owner approves them for `agents/rules.md`)
 
@@ -90,5 +82,5 @@ Changes), `PRODUCTS.md`, `docs/decisions.md` (the last four entries of Decided).
   row back beside it.
 - In `docs/decisions.md`, Open: CI in the flake's shell. Decided there as the session's proposals until the owner
   decides: how the definition was taken, how the removal was built, how `abstract-level`'s module was built and its
-  reviews settled, and how its release is built (all 2026-11-11). The wording of `agents/rules.md` after the removal
+  reviews settled, how its release is built, and how chanlun is taken (all 2026-11-11). The wording of `agents/rules.md` after the removal
   is the session's.

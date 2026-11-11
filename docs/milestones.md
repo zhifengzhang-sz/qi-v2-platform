@@ -18,7 +18,10 @@ library is there (`lib/`, `lib/README.md`), checked by `make check-lib`. `abstra
 (`abstract/`, `abstract/README.md`), checked by `make check-abstract`: its tests run a working space in memory and hold
 what the wiring's theorems state, and its README's table, from each declaration of the definition to its Go name, is
 held to the pinned definition; it is released, the flake package `abstract-level` 0.1.0, the tag
-`abstract-level-0.1.0`, checked as a taker takes it (`make check-abstract-package`). The build before this one is
-cleared away: it is at the tag `old-build`, with its released products at their own tags.
+`abstract-level-0.1.0`, checked as a taker takes it (`make check-abstract-package`). chanlun 3.1.0's Go form is taken,
+for `topic-schemas` (the input `chanlun`, the shell's `QI_CHANLUN_GO`). The build before this one is cleared away: it
+is at the tag `old-build`, with its released products at their own tags.
 
-**Left.** Each other product, in the order above, `library` the next. CI, none today (`docs/decisions.md`, Open).
+**Left.** Each other product, in the order above, `library` the next. `topic-schemas`' module waits for the contracts'
+codecs: market's for `KLine`, chanlun's for each of its six records (`docs/decisions.md`, 2026-11-11). CI, none today
+(`docs/decisions.md`, Open).
