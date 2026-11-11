@@ -96,6 +96,7 @@ schema in Lean, and here for the schemas of acquisition's topics, a topic with n
 
 | File | Holds |
 |---|---|
+| `doc.go` | the package's documentation: what a part is, what the types hold it to, what is built in |
 | `log.go` | `Log`, `Appender`, `Cursor` |
 | `topic.go` | `Record`, `Header`, `Topic`, `AnyTopic`, `TopicLogs`, `ReadSet`, `AppendSet`, the five refusals |
 | `acquisition.go` | `Kind`, `AllTopics`, `Inputs`, the reader, the cleaner, the three publishers, `Acquisition` and its `Run` |
@@ -119,13 +120,15 @@ the tag, an input of its `flake.nix` (`github:zhifengzhang-sz/qi-v2-platform?ref
 
     replace github.com/zhifengzhang-sz/qi-v2-platform/abstract v0.0.0 => /nix/store/…-abstract-level-0.1.0
 
-The module takes the standard library alone, so its `go.sum` needs no line for it.
+A module replaced by a folder has no line in `go.sum`, and this one takes the standard library alone, so a taker's
+`go.sum` gains no line from it.
 
 ## Its check
 
 `make check-abstract`, from the root, in the shell: `gofmt` with no unformatted file, `go vet`, `go test`, with
 `GOPROXY=off`; it is in `make check`, and `make verify` runs it for a change under `abstract/` or of the flake.
-`make check-abstract-package` checks the package as a taker takes it: built offline, then taken by a module in a
+`make check-abstract-package` checks the package as a taker takes it: built offline, its files exactly `go.mod`, this
+file, `LICENSE` and the module's Go files but its tests, each the same as the repository's; then taken by a module in a
 temporary folder whose `go.mod` replaces the module's path with the package's store path, `gofmt`, `go vet` and
 `go test` of its test (`dev/taker/abstract-level/`), which wires a working space from what the package exports and
 runs it, with `GOPROXY=off`; `make verify` runs it for a change under `abstract/`, of the flake, of `LICENSE` or of

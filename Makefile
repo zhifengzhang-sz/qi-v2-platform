@@ -120,10 +120,11 @@ check-abstract: modules ## the definition's interfaces (abstract/README.md): gof
 	$(call go-check,abstract)
 
 # The flake package abstract-level (abstract/README.md, Taking it), checked as a taker takes it: built offline from
-# this flake (nix build --offline: nothing fetched; a file git does not track is not in it); then a module in a
-# temporary folder, the test of $(ABSTRACT_TAKER) with a go.mod written here that requires the module and replaces its
-# path with the package's store path; go vet and go test there, GOPROXY=off and GOWORK=off, so that the package alone
-# gives the module; the folder removed after.
+# this flake (nix build --offline: nothing fetched; a file git does not track is not in it); what it holds, exactly
+# go.mod, README.md, LICENSE and abstract/'s Go files but its tests, each the same as the work tree's; then a module
+# in a temporary folder, the test of $(ABSTRACT_TAKER) with a go.mod written here that requires the module and
+# replaces its path with the package's store path; go vet and go test there, GOPROXY=off and GOWORK=off, so that the
+# package alone gives the module; the folder removed after.
 ABSTRACT_MODULE := github.com/zhifengzhang-sz/qi-v2-platform/abstract
 ABSTRACT_TAKER := dev/taker/abstract-level
 
@@ -132,6 +133,14 @@ check-abstract-package: ## the flake package abstract-level built offline, and t
 	@set -eu; \
 	p=$$(nix build --offline --no-link --print-out-paths .#abstract-level); \
 	echo "check-abstract-package: abstract-level built offline, $$p"; \
+	want=$$( { printf '%s\n' go.mod README.md LICENSE; ( cd abstract && ls *.go | grep -v '_test\.go$$' ); } | sort ); \
+	got=$$( ls -A "$$p" | sort ); \
+	test "$$got" = "$$want" || { echo "check-abstract-package: the package holds:"; echo "$$got"; echo "and should hold:"; echo "$$want"; exit 1; }; \
+	for f in $$want; do \
+	  s=abstract/$$f; test "$$f" != LICENSE || s=LICENSE; \
+	  cmp -s "$$p/$$f" "$$s" || { echo "check-abstract-package: $$f in the package is not $$s"; exit 1; }; \
+	done; \
+	echo "check-abstract-package: the package holds $$(echo "$$want" | wc -l) files, go.mod, README.md, LICENSE and the module's Go files but its tests, each the work tree's"; \
 	t=$$(mktemp -d); trap 'rm -rf "$$t"' EXIT; \
 	cp $(ABSTRACT_TAKER)/*.go "$$t"/; \
 	printf 'module taker\n\ngo 1.26.0\n\nrequire %s v0.0.0\n\nreplace %s v0.0.0 => %s\n' $(ABSTRACT_MODULE) $(ABSTRACT_MODULE) "$$p" > "$$t/go.mod"; \

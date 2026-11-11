@@ -5,59 +5,55 @@ stands, the next tasks, and what to read.
 
 - The platform is built from the ground up on its formal definition, one product at a time (`docs/milestones.md`;
   `docs/decisions.md`, 2026-11-11). What stands: the definition taken (`qi-v2-platform-definition` 0.1.0, the input
-  `definition`, the shell's `QI_DEFINITION`); the library (`lib/`, `lib/README.md`); and `abstract-level`'s Go module
-  (`abstract/`, `abstract/README.md`), built and not released.
-- **This round**: `abstract-level`'s Go module, the third of its four tasks. `abstract/`, a module of its own on the
-  standard library alone, in the Go workspace (`MODULES` of the `Makefile`): the open parts as interfaces of one method
-  each (`Reader`, `Cleaner`, `RawPublisher`, `CleanPublisher`, `CorrectionsPublisher`, `Consumer`, `Chart`, `Worker`),
-  a part given reading ends that wait (`Cursor`, `ReadSet`) and writing ends that only append (`Appender`,
-  `AppendSet`); built in, a topic's shape (`Topic`, `Record`, `TopicLogs`), the three kinds (`Kind`) and the wiring
-  (`Wiring`, `Workspace`, `Acquisition.Run`, `Warehousing.Run`). Its README holds what the types do not hold, and the
-  table from each declaration of the definition's seven files to its Go name, 163 rows, a structure's fields and an
-  inductive's constructors among them. Its check is `make check-abstract`, in `make check` and in verify's table for
-  `abstract/`, `flake.nix` and `flake.lock`; `check-lib` now checks the library alone, both by one recipe
-  (`go-check`). How it is built where the brief left the choice: `docs/decisions.md`, 2026-11-11, the session's
-  proposal.
-- **Its review**, role `reviewer`, the Go against the Lean, declaration by declaration, and one recheck. Found and
-  fixed: the series inside acquisition made the reader wait for the cleaner to read, so the raw topics depended on the
-  cleaner (now each reader's untaken messages are held, and no part waits for another: `TestUnread`); a `ReadSet`
-  converted into an `AppendSet` (two types now: `TestSetsApart`); one log could be given for two partitions
-  (`ErrSameLog`, told where one pointer is given twice); a `Workspace` no wiring made, or a copy of one, got past the
-  checks (`Run` refuses both). Found and stated, not changed: the `Database` values of several schemas are one
-  database by their giver's keeping; `Acquisition.Run` and `Warehousing.Run` refuse a name twice where Lean's `run`
-  takes any topics, a part finding a topic by its name. The recheck found the four fixed, and one place where the
-  text said less than the code (which logs are told to be one; `Warehousing.Run` refusing a log given twice): the
-  text now says it, and was not rechecked.
-- **The review made again**, on `851a372`, its run logged: `agents.run/log` holds its lines (`reviewer-851a372`,
-  start `RECORDED`, stop `PASS`, nothing changed), written by the kit's hook (`kit hook start`, `kit hook stop`),
-  called by hand around the run, the session's kind of agent having no hook of its own; the record it stages names
-  the kind `copilot`, which the kit writes for every hook's run, and the run was the role `reviewer` of this
-  session's kind. One finding: one cursor given as both the source and the corrections was not refused, so the
-  reader and the corrections' publisher would each take part of one log. Fixed: `ErrSameInput`, told where the
-  cursor is one pointer or one channel. Three texts made exact with it.
-- **The shell.** A shell entered before `flake.lock` held the definition has no `QI_DEFINITION`, and
-  `make check-abstract` stops there with its name. This round's checks, and its commits, whose hook runs `make verify`,
-  were run through the flake's shell entered afresh: `nix develop --offline -c env GOPROXY=off make …`.
+  `definition`, the shell's `QI_DEFINITION`); the library (`lib/`, `lib/README.md`); `abstract-level` (`abstract/`,
+  `abstract/README.md`), released 0.1.0: the flake's package `abstract-level`, the tag `abstract-level-0.1.0` on the
+  commit of this opening, neither pushed: the push of `main` and of the tag waits for the owner's yes.
+- **This round**: `abstract-level`'s fourth task, its release (`docs/decisions.md`, 2026-11-11: the owner's brief, and
+  the session's proposal on how it is built). The package (`flake.nix`, `versions`, `packages`): `go.mod`, the
+  module's Go files but its tests, its README and `LICENSE`, at its root. Its number, 0.1.0, in the flake, in
+  `abstract/README.md` (Taking it, Changes) and in its row of `PRODUCTS.md`, the row that stood restated (Form
+  `flake package`, Version `0.1.0`, Release `abstract-level-0.1.0`), not a second row. Its check,
+  `make check-abstract-package`: the package built by `nix build --offline`, its files held to exactly what it is
+  stated to hold, each the work tree's; then a module in a temporary folder, the test of
+  `dev/taker/abstract-level/` beside a `go.mod` the target writes, replacing the module's path with the package's
+  store path, `gofmt`, `go vet`, `go test` with `GOWORK=off` and `GOPROXY=off`, the test wiring a working space from
+  what the package exports and running it. In verify's table for `abstract/`, `flake.nix`, `flake.lock`, `LICENSE`
+  and the taker's test; not in `make check`. `docs/decisions.md`, as the session's proposals, the choices of tasks 1
+  and 3 no entry held (how the definition was taken; how the module's two reviews were settled) and this round's.
+- **Its review**, role `reviewer`, on `7570d70`, its run logged (`reviewer-7570d70`, start `RECORDED`, stop `PASS`,
+  nothing changed). Three findings: the package's check passed whatever the package held (fixed: its files held to
+  the list, each compared, a trial on three wrong copies failing each); the row of `PRODUCTS.md` restated where the
+  brief asks a new row (not taken: one product has one row, its form now the flake package; the owner's to decide,
+  Open below); the decision's entry said the package is made as `market-go` is, `LICENSE` included, where
+  `market-go` holds none (fixed: the layout `market-go`'s, the `LICENSE` as the definition's package holds its own).
+  Wording fixed: `doc.go` in the README's files, the reason no `go.sum` line is needed, the Shapes of the entry on
+  the definition, the taker's module not one of `MODULES`; not taken: `make check`'s "every check", which stood
+  before and is not this change's. The reviewer, having no `git`, read the work tree and not the commits' messages:
+  the entries on tasks 1 to 3 rest on the session's reading of `0fa98c2`, `e2b1b14`, `851a372` and `abfe7bb`.
+- **The checks**, role `checker`, every nix offline and `GOPROXY=off`, through the flake's shell: `make locks-check`
+  with the owner's yes (it calls `gh api`), every lock current; `make verify VERIFY=--all` passing before the first
+  commit and again after the fixes, each run logged; after the last commit, `git status --porcelain`,
+  `git rev-parse HEAD` and the full `make verify` in one command, as the round's report gives it.
 - The stack (`stack-0.3.0`) and the test stack were not looked at or touched: no test of this round reaches a stack.
-- The locks: `make locks-check` not run (it calls `gh api`).
-- `main`: this round's commits are not pushed; the push is the owner's. `.env` in place, ignored; `make install` run;
-  the owner's local file: `todo.md`.
+- `main`: this round's commits and the tag are not pushed; the push is the owner's. `.env` in place, ignored;
+  `make install` run.
 
 ## The next tasks
 
-By a brief to come, `abstract-level`'s fourth task: its release (`agents/rules.md`, A release: one number, written
-alike in the package's files and the flake package where it has one; an entry under Changes in its README; the
-checker's pass; its row in `PRODUCTS.md`; the tag `abstract-level-<version>`, its push the owner's). Then each other
-product of `docs/milestones.md`, in its order.
+First, the review of this release by a session that did not write it: the task is done when each of its findings is
+fixed or dropped by the owner. A fix moves the tag `abstract-level-0.1.0` to the commit that holds it, the tag not
+being pushed. Then the owner's push of `main` and of the tag. Then, by a brief to come, the next product of
+`docs/milestones.md`, `library`.
 
-Read, for the release: `abstract/README.md`, `abstract/go.mod`, `PRODUCTS.md`, `flake.nix`, the `Makefile`,
-`docs/impl/engineering/go.toolchain.md` (2).
+Read, for the review: `flake.nix` (`versions`, `packages`), the `Makefile` (`check-abstract-package`),
+`dev/scripts/verify.py`, `dev/taker/abstract-level/taker_test.go`, `abstract/README.md` (Taking it, Its check,
+Changes), `PRODUCTS.md`, `docs/decisions.md` (the last four entries of Decided).
 
 ## Standing rules learnt (until the owner approves them for `agents/rules.md`)
 
 - **No `--remove-orphans` on the stack, and `-v` only on the test stack** (`make stack-test-down`), from the owner: the
-  compose project `services` holds containers and volumes that are not the stack's (on this machine `fff-postgres`,
-  `qicore-qdrant`, `qicore-chromadb` and their volumes), which `--remove-orphans` removes, and `-v` removes the stack's
+  compose project `services` holds containers and volumes that are not the stack's (on this machine, other
+  programs' containers and their volumes), which `--remove-orphans` removes, and `-v` removes the stack's
   volumes, which hold the data.
 - **Every test and trial run on the test stack**, from the owner: the stack's data is kept, so nothing a test writes
   there can be taken out again; the test stack is wiped whenever a test is done; a run there keeps its state and its
@@ -83,10 +79,16 @@ Read, for the release: `abstract/README.md`, `abstract/go.mod`, `PRODUCTS.md`, `
   on a flake while `flake.nix` names an input its lock lacks, or a reference it has not locked: the lock is written
   first, by the owner's command. The Makefile's `nix` commands run with no `--offline`, so an offline session runs
   them through a wrapper first on the path inside the shell.
+- **A reviewer is given what it cannot read itself**, learnt by this round's review: the role reads files and runs
+  nothing, `git` among them, so a review of a commit is given the commit's diff and the messages it is checked
+  against as files in `.reports/`, named in its brief.
 
 ## Open, for the owner
 
-In `docs/decisions.md`, Open: CI in the flake's shell. Decided there as the session's proposal until the owner
-decides: how the removal is built where the owner's answer left the choice, and how `abstract-level`'s module is built
-where its brief left the choice (both 2026-11-11). The wording of `agents/rules.md` after the removal is the
-session's.
+- The row of `abstract-level` in `PRODUCTS.md`: the brief asks a new row; the row that stood, Form `library`, was
+  restated as the flake package, so that one product has one row. Kept as it is unless the owner wants the library's
+  row back beside it.
+- In `docs/decisions.md`, Open: CI in the flake's shell. Decided there as the session's proposals until the owner
+  decides: how the definition was taken, how the removal was built, how `abstract-level`'s module was built and its
+  reviews settled, and how its release is built (all 2026-11-11). The wording of `agents/rules.md` after the removal
+  is the session's.
