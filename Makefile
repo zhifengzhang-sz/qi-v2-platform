@@ -15,55 +15,58 @@ endif
 # The scripts (dev/scripts/), run by the flake's Python.
 S  := dev/scripts
 PY := python3
-AGENT_KIND ?= all
 
-.PHONY: help install agents agents-check run-start run-check verify locks-check products-check check check-lib check-abstract check-abstract-package go.work modules stack-up stack-down stack-test-up stack-test-stop stack-test-down
+.PHONY: help agents-check check check-lib check-abstract check-abstract-package go.work modules stack-up stack-down stack-test-up stack-test-stop stack-test-down
 
 help: ## the targets
 	@grep -E '^[a-z.-]+:.*##' $(MAKEFILE_LIST) | sed 's/:.*## /\t/' | expand -t 18
 
 # ---------------------------------------------------------------- the project set up (docs/process.md, The machine)
 
-install: ## the project set up on this machine: git's hooks at dev/hooks (the pre-commit runs make verify); the kit linked at dev/agents from flake.lock's pin, then make agents
-	git config core.hooksPath dev/hooks
-	nix build "$(KIT)" -o dev/agents
+# The kit's part, as qi-v2-nix's practices.md gives it (section 8): the kit at dev/agents, the pre-commit hook that
+# runs make verify, each kind's agent files from agents/ (agents/README.md), a role's run checked on its output, the
+# locks and PRODUCTS.md checked. verify then runs the project's own checks (dev/scripts/verify.py): the targets that
+# check the staged paths, one after another; VERIFY=--all for every one.
+
+# the kit at the commit flake.lock names (section 1), read by nix when make install needs it
+KIT = $(shell nix eval --raw --impure --expr 'let l = builtins.fromJSON (builtins.readFile ./flake.lock); k = l.nodes.$${l.nodes.$${l.root}.inputs.kit}.locked; in "github:$${k.owner}/$${k.repo}/$${k.rev}?dir=$${k.dir}"')
+NEEDKIT = @test -x dev/agents/bin/kit || { echo "$@: no kit at dev/agents: make install"; exit 1; }
+# the kit for the checks: the one make install linked, else run from KIT (CI, or a machine before make install)
+KITRUN = $(if $(wildcard dev/agents/bin/kit),dev/agents/bin/kit,nix run "$(KIT)" --)
+
+.PHONY: install agents run-start run-check locks-check products-check verify
+
+install: ## the kit at dev/agents, the pre-commit hook that runs make verify, then make agents
+	mkdir -p dev && nix build "$(KIT)" -o dev/agents
+	hook=$$(git rev-parse --git-path hooks/pre-commit) && printf '#!/bin/sh\nexec make verify\n' > "$$hook" && chmod +x "$$hook"
 	$(MAKE) agents
 
-# The kit: the flake kit of the public qi-v2-nix, at the commit flake.lock pins (nix build --inputs-from drops its
-# ?dir=, so its reference is read from the lock); read when install runs, not by every other target.
-KIT = $(shell $(PY) -c "import json; n = json.load(open('flake.lock'))['nodes']['kit']['locked']; print(f\"{n['type']}:{n['owner']}/{n['repo']}/{n['rev']}?dir={n['dir']}\")")
+agents: ## each kind's files from agents/ (kit generate)
+	$(NEEDKIT)
+	dev/agents/bin/kit generate
 
-# The agents (agents/README.md): the spec in agents/, each kind's files (AGENTS.md, CLAUDE.md, .claude/agents/,
-# .github/agents/) written from it by the kit, ignored by git.
-agents: ## each kind's agent files from agents/ (AGENTS.md, CLAUDE.md, .claude/agents/, .github/agents/), by the kit at dev/agents; AGENT_KIND=claude-code|copilot|all (default all); after any change to agents/
-	@test -x dev/agents/bin/kit || { echo "agents: no kit at dev/agents: make install"; exit 1; }
-	dev/agents/bin/kit generate --kind $(AGENT_KIND) --root .
+run-start: ## before a role's run, ROLE=<role> (kit run-start)
+	$(NEEDKIT)
+	dev/agents/bin/kit run-start --role "$(ROLE)"
 
+run-check: ## after it, ROLE=<role>, FILES=<a,b> for a role that writes them (kit run-check)
+	$(NEEDKIT)
+	dev/agents/bin/kit run-check --role "$(ROLE)" $(if $(FILES),--files "$(FILES)")
+
+locks-check: ## whether each lock's source has moved past it (kit locks; then the project's own locks)
+	$(KITRUN) locks --root .
+
+products-check: ## whether PRODUCTS.md states what the project has (kit products)
+	$(KITRUN) products --root .
+
+verify: ## the checks for what is staged, run by the pre-commit hook (then the project's own checks)
+	@if git diff --cached --name-only | grep -qE '^(PRODUCTS\.md|[^/]+\.lock)$$'; then $(MAKE) products-check; fi
+	@$(PY) $(S)/verify.py $(VERIFY)
+
+# The project's own: agents/ decoded by the kit, nothing written; make verify runs it where agents/ is staged
 agents-check: ## agents/ decoded by the kit, nothing written
-	@test -x dev/agents/bin/kit || { echo "agents-check: no kit at dev/agents: make install"; exit 1; }
+	$(NEEDKIT)
 	dev/agents/bin/kit check --root .
-
-# A role's run checked on its output, where the agent's kind cannot restrict its tools: run-start before the run,
-# run-check after it (the kit's README).
-run-start: ## before a role's run: the work tree recorded; make run-start ROLE=reviewer
-	@test -x dev/agents/bin/kit || { echo "run-start: no kit at dev/agents: make install"; exit 1; }
-	@test -n "$(ROLE)" || { echo "run-start: ROLE=<role> is needed"; exit 1; }
-	dev/agents/bin/kit run-start --role $(ROLE) --root .
-
-run-check: ## after it: what changed against the role's writes (none: nothing; brief-files: only FILES=a,b; else reported); make run-check ROLE=writer FILES=docs/x.md
-	@test -x dev/agents/bin/kit || { echo "run-check: no kit at dev/agents: make install"; exit 1; }
-	@test -n "$(ROLE)" || { echo "run-check: ROLE=<role> is needed"; exit 1; }
-	dev/agents/bin/kit run-check --role $(ROLE) $(if $(FILES),--files $(FILES)) --root .
-
-verify: ## the checks a commit requires (dev/scripts/verify.py): the targets that check the staged paths, one after another; VERIFY=--all for every one; the pre-commit hook runs it
-	$(PY) $(S)/verify.py $(VERIFY)
-
-locks-check: ## whether each lock is outdated (docs/process.md, A session): each input of flake.lock against its source (the kit's kit locks), the project's one lock; a line a lock, current or outdated with what updates it; changes nothing
-	@dev/agents/bin/kit locks --root .
-
-products-check: ## whether PRODUCTS.md states what the project has (the kit's kit products)
-	@test -x dev/agents/bin/kit || { echo "products-check: no kit at dev/agents: make install"; exit 1; }
-	dev/agents/bin/kit products --root .
 
 # ---------------------------------------------------------------- the Go workspace (docs/impl/engineering/go.toolchain.md, 2)
 

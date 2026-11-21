@@ -11,12 +11,13 @@
 {
   description = "qi-v2-platform: the streaming architecture and the operations that run on the stream; its tools";
 
-  # The common flakes, in the public qi-v2-nix (its README.md), pinned by this lock: qi-v2, one nixpkgs for every
-  # project (this flake's), the pure shell (mkPureShell) and its presets; the kit, which make install builds from
-  # this lock's pin and links at dev/agents
-  inputs.qi-v2.url = "github:zhifengzhang-sz/qi-v2-nix?dir=qi-v2";
+  # The common flakes, in the public qi-v2-nix (its README.md), each by its release branch, so that each release comes
+  # by nix flake update (its practices.md, 3), pinned by this lock: qi-v2, one nixpkgs for every project (this
+  # flake's), the pure shell (mkPureShell) and its presets; the kit, which make install builds from this lock's pin
+  # and links at dev/agents
+  inputs.qi-v2.url = "github:zhifengzhang-sz/qi-v2-nix?dir=qi-v2&ref=release/qi-v2";
   inputs.nixpkgs.follows = "qi-v2/nixpkgs";
-  inputs.kit.url = "github:zhifengzhang-sz/qi-v2-nix?dir=kit";
+  inputs.kit.url = "github:zhifengzhang-sz/qi-v2-nix?dir=kit&ref=release/kit";
   inputs.kit.inputs.qi-v2.follows = "qi-v2";
   # The services stack, published by qi-v2-services at its tag: its package `stack` (make stack-up, stack-down) and its
   # test stack (make stack-test-up, stack-test-stop, stack-test-down)
@@ -98,7 +99,7 @@
           needs = [
             { tool = "docker"; by = "the services stack and its test stack, qi-v2-services' Redpanda, TimescaleDB and ClickHouse, which the stack's targets and the tests that reach a stack need"; }
           ];
-          # this project's shell, which the Makefile and the pre-commit hook look for
+          # this project's shell, which the Makefile looks for
           env = { PLATFORM_SHELL = "1"; };
           closing = ''echo "platform: make help lists the targets; docs/opening.md says where the work stands"'';
         };

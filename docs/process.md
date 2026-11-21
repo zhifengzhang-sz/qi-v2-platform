@@ -23,7 +23,8 @@ whenever a test is done. Nothing is taken by hand: every input is a public repos
 | the state of the work | `docs/opening.md` (the next session's opening), `docs/milestones.md`, `docs/designs/`, `docs/decisions.md` | yes | each session, at its end | the clone |
 | the rules for agents, their source | `agents/` (`rules.md`, `roles/`, `stages/`) | yes | the sessions, the owner approving | the clone |
 | the rules for agents, generated | `AGENTS.md`, `CLAUDE.md`, `.claude/agents/`, `.github/agents/`, `.github/hooks/kit.json` | no | `make agents` (in `make install`), by the kit | `make install` |
-| the project's machinery | `Makefile`, `dev/hooks/` (the pre-commit), `dev/scripts/` (verify), `dev/taker/` (the takers' tests of the packages), `.envrc` (direnv) | yes | the sessions | the clone |
+| the project's machinery | `Makefile` (the kit's part as `qi-v2-nix`'s `practices.md` gives it, section 8, then the project's own), `dev/scripts/` (verify, the project's own part of `make verify`), `dev/taker/` (the takers' tests of the packages), `.envrc` (direnv) | yes | the sessions | the clone |
+| the pre-commit hook | git's hooks folder (`git rev-parse --git-path hooks/pre-commit`): `exec make verify`, so it runs in this project's shell, and outside it make stops with the shell's name | no | `make install` | `make install` |
 | the Go workspace | `go.work` (and Go's `go.work.sum`): the Go modules, and market's and chanlun's Go forms at their store paths (`docs/impl/engineering/go.toolchain.md`, 2) | no | `make go.work`, and the shell on entry | `nix develop` |
 | the tools | `/nix/store`, pinned by `flake.nix` and `flake.lock`; the common flakes in the public `qi-v2-nix` | the pins | `nix develop` | `nix develop` |
 | the kit | `dev/agents` → `/nix/store`, pinned by `flake.lock` | the pin | `make install` | `make install` |
@@ -55,9 +56,8 @@ tracked file or the opening comes to rely on moves to `docs/designs/`.
 
 1. **Start.** On a new machine, The machine above; else `git pull`. Then `nix develop` and, after a change of
    `flake.lock` or `agents/`, `make install`. `AGENTS.md` (read by every agent) sends the session to
-   `docs/opening.md`, then to the files it names. Then `make locks-check`: a lock is outdated when its source has
-   something newer than what it names (an input's branch past `flake.lock`'s commit). The session reports each outdated lock to the owner with what updates it, and updates
-   none without the owner's say.
+   `docs/opening.md`, then to the files it names. Then `make locks-check`, each outdated lock reported to the owner
+   as the kit's shared rules say (`AGENTS.md`, The session: a lock is outdated).
 2. **Work.** The opening's one task. Before the first build of the session, the owner is asked. Checks run in the
    role `checker` (`make check`: `check-lib`, `check-abstract`, `agents-check`); every test that reaches a stack, and every trial run,
    is on the test stack. No fallbacks: a missing tool or input stops the run with its name.

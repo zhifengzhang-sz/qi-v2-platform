@@ -1,15 +1,24 @@
-Opening for the next session, written 2026-11-11 by the session before (`docs/process.md`). It says where the work
+Opening for the next session, written 2026-11-21 by the session before (`docs/process.md`). It says where the work
 stands, the next tasks, and what to read.
 
 ## Where the work stands
 
+- **This round** (2026-11-21, the owner's brief): the project brought in line with the kit's shared rules
+  (`docs/decisions.md`, 2026-11-21, the three entries). `flake.nix` takes `qi-v2` and `kit` by their release branches;
+  the `Makefile` and `.gitignore` hold the kit's part exactly as `qi-v2-nix`'s `practices.md`, section 8, gives it,
+  the project's own after it (`dev/scripts/verify.py` after the kit's line in `make verify`, `agents-check` the
+  project's); `dev/hooks/` is gone, the pre-commit hook being the kit's, written by `make install`. The session edited
+  files and built nothing; the owner runs the lock's update, `make install` and the commit. Nothing was built or
+  checked this round. `PRODUCTS.md` already had a row in Takes for every flake input and was not changed;
+  `agents/`, with `checker` and `reviewer`, and `docs/opening.md`, `milestones.md`, `designs/` and `decisions.md` were
+  all there; `AGENTS.md` and `CLAUDE.md` are not tracked; no tracked file names a private project.
 - The platform is built from the ground up on its formal definition, one product at a time (`docs/milestones.md`;
   `docs/decisions.md`, 2026-11-11). What stands: the definition taken (`qi-v2-platform-definition` 0.1.0, the input
   `definition`, the shell's `QI_DEFINITION`); the library (`lib/`, `lib/README.md`); `abstract-level` (`abstract/`,
   `abstract/README.md`), released 0.1.0: the flake's package `abstract-level`, the tag `abstract-level-0.1.0` on
   `09cc343`; chanlun 3.1.0's Go form, taken for `topic-schemas` (`2c954ca`: the input `chanlun`, the shell's
   `QI_CHANLUN_GO`, `go.work`'s replace).
-- **This round**: `topic-schemas`' second task of three, the module `schemas/`, the schema of every topic. Stopped
+- **The round before** (2026-11-11): `topic-schemas`' second task of three, the module `schemas/`, the schema of every topic. Stopped
   before any file of it was written, by the owner's answers to the session's questions (`docs/decisions.md`,
   2026-11-11, the last two entries of Decided). The brief has each schema encode through the contracts' own Go
   codecs, and the contracts give none for what it names: market 1.1.0's Go form has a codec for the ongoing K-line
@@ -18,14 +27,17 @@ stands, the next tasks, and what to read.
   go through it alone, the run's rules bounding every position by its merged bars; its vectors are runs. The owner:
   the module waits until market's Go form gives a codec for `KLine` and chanlun's one for each record, neither a
   text written here nor a K-line through the ongoing K-line's codec; a topic's schema has no key. No build this
-  session (the owner's answer), so nothing was built or checked; this round changes `docs/decisions.md`,
+  session (the owner's answer), so nothing was built or checked; that round changed `docs/decisions.md`,
   `docs/milestones.md` and this file alone.
 - The stack (`stack-0.3.0`) and the test stack were not looked at or touched.
-- `main` stood level with `origin/main` as `git` last saw it, before this round's commit; this round's commit is not
-  pushed, and the push is the owner's. `.env` in place, ignored; `make install` run.
+- `main` stood one commit ahead of `origin/main` as `git` last saw it (`6b38790`, the round before's), before this
+  round's commit; neither is pushed, and the push is the owner's. `.env` in place, ignored.
 
 ## The next tasks
 
+0. Before any other, by the owner: `git config --unset core.hooksPath` (else `make install` writes its hook into
+   `dev/hooks/`, which is gone, and stops); the lock updated for `qi-v2` and `kit` at their release branches
+   (`nix flake update qi-v2 kit`); `make install`; then `make check` and `make locks-check` in the role `checker`.
 1. The review of `abstract-level` 0.1.0 by a session that did not write it, still to be made: the task is done when
    each of its findings is fixed or dropped by the owner; a fix moves the tag `abstract-level-0.1.0` to the commit
    that holds it, the tag not being pushed. Read: `flake.nix` (`versions`, `packages`), the `Makefile`
@@ -76,6 +88,18 @@ stands, the next tasks, and what to read.
   against as files in `.reports/`, named in its brief.
 
 ## Open, for the owner
+
+- `abstract-level` 0.1.0 has no release branch: the shared rules (A release) have `release/abstract-level` moved to
+  the release's tag, a push and so the owner's
+  (`git push origin abstract-level-0.1.0^{commit}:refs/heads/release/abstract-level`).
+- `services`, `contracts`, `chanlun` and `definition` follow tags; each moves to its project's release branch once
+  there is one, by the owner's say (`docs/decisions.md`, 2026-11-21).
+- A commit made outside the project's shell is now refused by the hook, where `dev/hooks/pre-commit` entered the
+  shell for it: the session's proposal (`docs/decisions.md`, 2026-11-21, the session), kept unless the owner wants
+  `make verify` to enter the shell itself, as `qi-v2-contracts`' `dev/scripts/verify.sh` does.
+- `agents/rules.md` (The repository) and `docs/process.md` (A session, 3) still say a session pushes after a commit,
+  where the standing rule above, from the owner, says the push is the owner's: its wording for `agents/rules.md` is
+  the owner's to approve.
 
 - The row of `abstract-level` in `PRODUCTS.md`: the brief asks a new row; the row that stood, Form `library`, was
   restated as the flake package, so that one product has one row. Kept as it is unless the owner wants the library's

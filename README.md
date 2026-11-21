@@ -34,7 +34,7 @@ Every program is Go. No Confluent component anywhere.
 ```sh
 # once a machine: Nix with flakes, a Docker engine (docs/process.md, The machine)
 nix develop                        # the tools (flake.nix; docs/impl/engineering/dev.environment.md, 2)
-make install                       # git's hooks, the kit, the agents' files
+make install                       # the kit, the pre-commit hook (make verify), the agents' files
 make help                          # the targets
 make check                         # the library, the definition's interfaces: gofmt, vet, tests; the agents' spec
 
@@ -56,14 +56,14 @@ What this repository needs, and nothing about who uses it; each is a public repo
 | [`qi-v2-platform-definition`](https://github.com/zhifengzhang-sz/qi-v2-platform-definition) | the platform's formal definition 0.1.0, in Lean: the base, Kafka's topic, the four components and their wiring | its package `qi-v2-platform-definition`, the Lean as source, an input of `flake.nix` at the tag `qi-v2-platform-definition-0.1.0` pinned by `flake.lock`, its `qi-v2` and `kit` following this flake's; the shell names its store path, `QI_DEFINITION`, where `abstract/`'s test reads it |
 | [`qi-v2-services`](https://github.com/zhifengzhang-sz/qi-v2-services) | the infrastructure: Redpanda (broker, registry, Console), TimescaleDB, ClickHouse, Redis | its published package `stack`, an input of `flake.nix` at the tag `stack-0.3.0` pinned by `flake.lock`: the stack, `make stack-up`, `make stack-down`, and the test stack, `make stack-test-up`, `make stack-test-stop`, `make stack-test-down` |
 | [`qi-v2-contracts`](https://github.com/zhifengzhang-sz/qi-v2-contracts) | the market data contract, `market` 1.1.0: its Go form, the base K-line of the library's K-line; its vectors, to which the library holds its K-lines' base. `chanlun` 3.1.0: its Go form, the records the engine's topics carry, for their schemas | market's: its package `market-go` and its source's `market/vectors`, the input `contracts` of `flake.nix`, at the tag `market-1.1.0`; chanlun's: its package `chanlun-go`, the input `chanlun`, at the tag `chanlun-3.1.0`; each pinned by `flake.lock`, and each Go form put by `go.work` (written by `make go.work` and the shell) in place of the module required at `v0.0.0`: market's by the library's `go.mod`, chanlun's by none yet |
-| [`qi-v2-nix`](https://github.com/zhifengzhang-sz/qi-v2-nix) | the tools from one nixpkgs (Go in the shell), the pure shell, the kit for the agents' files | the inputs of `flake.nix`, pinned by `flake.lock`; `nix develop`; the tools and their versions: [`dev.environment.md`](docs/impl/engineering/dev.environment.md), 2 |
+| [`qi-v2-nix`](https://github.com/zhifengzhang-sz/qi-v2-nix) | the tools from one nixpkgs (Go in the shell), the pure shell, the kit for the agents' files | the inputs `qi-v2` and `kit` of `flake.nix`, each by its release branch, pinned by `flake.lock`; `nix develop`; the tools and their versions: [`dev.environment.md`](docs/impl/engineering/dev.environment.md), 2 |
 
 ```
 flake.nix, flake.lock      the tools, as inputs pinned by the lock (nix develop); Makefile, the targets, run in that shell
 PRODUCTS.md                what the platform owns, gives and takes, an index (make products-check)
 agents/                    the rules and roles of the agents that work here; AGENTS.md and CLAUDE.md are generated from it
 docs/opening.md …          the state of the work: opening, milestones, decisions, designs, process
-dev/                       hooks (the pre-commit), scripts (verify), and the takers' tests of the packages (taker/)
+dev/                       scripts (verify), and the takers' tests of the packages (taker/)
 docs/impl/engineering/     the Go toolchain, the development environment
 lib/                       the platform's library, a Go module on market and the standard library alone: Massive's reader
 abstract/                  the definition's interfaces, a Go module on the standard library alone: the parts, a topic's shape, the wiring
